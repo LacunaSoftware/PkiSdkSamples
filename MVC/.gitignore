@@ -5,3 +5,5 @@
 [Rr]elease/
 packages/
 MVC/App_Data/
+MVC/LacunaPkiLicense.config
+*.user
