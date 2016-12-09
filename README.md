@@ -4,7 +4,7 @@ Lacuna PKI SDK Samples
 This project contains sample applications demonstrating the use of the [Lacuna PKI SDK](https://www.lacunasoftware.com/en/products/pki_sdk)
 with different .NET technologies.
 
-To run the samples, you will need a license. If you don't have one, request a trial license at
+To run the samples, you will need a license. If you don't have one, request a free trial license at
 [our website](http://www.lacunasoftware.com/en/home/contact).
 
 The following sample projects are available:
