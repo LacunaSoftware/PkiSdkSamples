@@ -1,40 +1,31 @@
 ﻿@{
-	ViewBag.Title = "Lacuna PKI Samples";
+    ViewBag.Title = "Home Page";
 }
 
-<h2>REST PKI Samples</h2>
+<div class="jumbotron">
+    <h1>ASP.NET</h1>
+    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
+    <p><a href="http://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+</div>
 
-Choose one of the following samples:
-<ul>
-	@*<li><a href="/Authentication">Authentication with digital certificate</a></li>
-	<li>
-		PAdES signature
-		<ul>
-			<li><a href="/PadesSignature">Create a signature with a file already on server</a></li>
-			<li><a href="/Upload?rc=PadesSignature">Create a signature with a file uploaded by user</a></li>
-			<li><a href="/Upload?rc=OpenPadesSignature">Open/validate an existing signature</a></li>
-		</ul>
-	</li>
-	<li>
-		CAdES signature
-		<ul>
-			<li><a href="/CadesSignature">Create a signature with a file already on server</a></li>
-			<li><a href="/Upload?rc=CadesSignature">Create a signature with a file uploaded by user</a></li>
-			<li><a href="/Upload?rc=OpenCadesSignature">Open/validate an existing CAdES signature</a></li>
-		</ul>
-	</li>*@
-	<li>
-		XML signature
-		<ul>
-			@*<li><a href="/XmlFullSignature">Create a full XML signature (enveloped signature)</a></li>*@
-			<li><a href="/XmlElementSignature">Create a XML element signature</a></li>
-		</ul>
-	</li>
-	@*<li>
-		Sign a batch of files
-		<ul>
-			<li><a href="/BatchSignature">Simple batch signature</a></li>
-			<li><a href="/BatchSignatureOptimized">Optimized batch signature</a> (better performance but more complex Javascript)</li>
-		</ul>
-	</li>*@
-</ul>
+<div class="row">
+    <div class="col-md-4">
+        <h2>Getting started</h2>
+        <p>
+            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
+            enables a clean separation of concerns and gives you full control over markup
+            for enjoyable, agile development.
+        </p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Get more libraries</h2>
+        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Web Hosting</h2>
+        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
+    </div>
+</div>
