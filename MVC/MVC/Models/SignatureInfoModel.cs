@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace MVC.Classes {
+namespace MVC.Models {
 	public class SignatureInfoModel {
 		public string File { get; set; }
 	}

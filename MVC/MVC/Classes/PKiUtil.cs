@@ -1,4 +1,5 @@
 ﻿using Lacuna.Pki;
+using Lacuna.Pki.Cades;
 using Lacuna.Pki.Xml;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,10 @@ namespace MVC.Classes {
 		public static XmlPolicySpec GetXmlSignaturePolicy() {
 			return XmlPolicySpec.GetXmlDSigBasic(getTrustArbitrator());
 		}
+
+		public static CadesPolicySpec GetCadesSignaturePolicy() {
+			return CadesPolicySpec.GetCadesBes(getTrustArbitrator());
+		} 
 
 		private static ITrustArbitrator getTrustArbitrator() {
 			// Aceitando certificados da ICP-Brasil e de raízes confiáveis no Windows

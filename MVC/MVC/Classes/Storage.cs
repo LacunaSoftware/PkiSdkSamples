@@ -35,5 +35,9 @@ namespace MVC.Classes {
 		public static byte[] GetSampleNFeContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleNFe.xml"));
 		}
+
+		public static byte[] GetSampleDocContent() {
+			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleDocument.pdf"));
+		}
 	}
 }

@@ -136,6 +136,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Classes\PkiUtil.cs" />
+    <Compile Include="Controllers\CadesSignatureController.cs" />
     <Compile Include="Models\SignatureInfoModel.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
@@ -155,6 +156,8 @@
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\js\jquery.blockUI.js" />
     <Content Include="Content\js\lacuna-web-pki-2.5.0.js" />
+    <Content Include="Content\PdfStamp.png" />
+    <Content Include="Content\SampleDocument.xml" />
     <Content Include="Content\SampleNFe.xml" />
     <Content Include="favicon.ico" />
     <Content Include="Content\fonts\glyphicons-halflings-regular.svg" />
@@ -203,6 +206,10 @@
     <Content Include="Views\XmlElementSignature\Index.cshtml" />
     <Content Include="Views\XmlElementSignature\SignatureInfo.cshtml" />
     <Content Include="Views\XmlElementSignature\Complete.cshtml" />
+    <Content Include="Views\CadesSignature\Index.cshtml" />
+    <Content Include="Views\CadesSignature\Complete.cshtml" />
+    <Content Include="Views\CadesSignature\SignatureInfo.cshtml" />
+    <Content Include="Content\SampleDocument.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
