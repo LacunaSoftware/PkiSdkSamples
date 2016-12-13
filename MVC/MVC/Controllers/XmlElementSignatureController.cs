@@ -20,21 +20,7 @@ namespace MVC.Controllers {
 
 		// POST: XmlElementSignature
 		[HttpPost]
-		public ActionResult Index(XmlSignatureModel model) {
-			if (model.ToSignHash == null || model.ToSignHash == "") {
-				return startSignature(model);
-			} else {
-				return completeSignature(model);
-			}
-		}
-
-		// GET: XmlElementSignature/SignatureInfo
-		[HttpGet]
-		public ActionResult SignatureInfo(SignatureInfoModel model) {
-			return View(model);
-		}
-
-		private ActionResult startSignature(XmlSignatureModel model) {
+		public ActionResult Index(SignatureStartModel model) {
 
 			byte[] toSignHash, transferData;
 			SignatureAlgorithm signatureAlg;
@@ -50,7 +36,7 @@ namespace MVC.Controllers {
 				signer.SetToSignElementId("NFe35141214314050000662550010001084271182362300");
 
 				// Decode the user's certificate and set as the signer certificate
-				signer.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(model.Certificate)));
+				signer.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(model.CertContent)));
 
 				// Set the signature policy
 				signer.SetPolicy(MVC.Classes.PkiUtil.GetXmlSignaturePolicy());
@@ -61,19 +47,34 @@ namespace MVC.Controllers {
 
 			} catch (ValidationException ex) {
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
-
-				return View(); 
+				return View();
 			}
 
-			model.ToSignHash = Convert.ToBase64String(toSignHash);
-			model.TransferData = Convert.ToBase64String(transferData);
-			model.DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid;
+			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
+				CertThumb = model.CertThumb,
+				ToSignHash = Convert.ToBase64String(toSignHash),
+				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid,
+				TransferData = Convert.ToBase64String(transferData)
+			};
 
-			ModelState.Clear();
+			return RedirectToAction("Complete");
+		}
+
+		// GET: XmlElementSignature/Complete
+		[HttpGet]
+		public ActionResult Complete() {
+
+			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
+			if (model == null) {
+				return RedirectToAction("Index");
+			}
+
 			return View(model);
 		}
 
-		private ActionResult completeSignature(XmlSignatureModel model) {
+		// POST: XmlElementSignature/Complete
+		[HttpPost]
+		public ActionResult Complete(SignatureCompleteModel model) {
 
 			byte[] signatureContent;
 
@@ -95,7 +96,6 @@ namespace MVC.Controllers {
 
 			} catch (ValidationException ex) {
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
-
 				return View();
 			}
 
@@ -107,5 +107,10 @@ namespace MVC.Controllers {
 			});
 		}
 
+		// GET: XmlElementSignature/SignatureInfo
+		[HttpGet]
+		public ActionResult SignatureInfo(SignatureInfoModel model) {
+			return View(model);
+		}
     }
 }

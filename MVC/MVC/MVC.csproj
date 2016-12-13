@@ -144,7 +144,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\XmlSignatureModel.cs" />
+    <Compile Include="Models\SignatureCompleteModel.cs" />
+    <Compile Include="Models\SignatureStartModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +202,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\XmlElementSignature\Index.cshtml" />
     <Content Include="Views\XmlElementSignature\SignatureInfo.cshtml" />
+    <Content Include="Views\XmlElementSignature\Complete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
