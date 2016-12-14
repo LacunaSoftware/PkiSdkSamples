@@ -156,6 +156,8 @@
     <Content Include="Content\css\bootstrap.min.css" />
     <Content Include="Content\js\jquery.blockUI.js" />
     <Content Include="Content\js\lacuna-web-pki-2.5.0.js" />
+    <Content Include="Content\js\signature-forms3.js" />
+    <Content Include="Content\js\signature-forms.js" />
     <Content Include="Content\PdfStamp.png" />
     <Content Include="Content\SampleDocument.xml" />
     <Content Include="Content\SampleNFe.xml" />
@@ -210,6 +212,14 @@
     <Content Include="Views\CadesSignature\Complete.cshtml" />
     <Content Include="Views\CadesSignature\SignatureInfo.cshtml" />
     <Content Include="Content\SampleDocument.pdf" />
+    <Content Include="Views\Shared\SignatureStart.cshtml" />
+    <Content Include="Views\XmlElementSignature\Index2.cshtml" />
+    <Content Include="Views\Shared\SignatureStart2.cshtml" />
+    <Content Include="Views\Shared\SignatureComplete.cshtml" />
+    <Content Include="Views\Shared\SignatureComplete2.cshtml" />
+    <Content Include="Views\XmlElementSignature\Complete2.cshtml" />
+    <Content Include="Views\XmlElementSignature\Index3.cshtml" />
+    <Content Include="Views\XmlElementSignature\Complete3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

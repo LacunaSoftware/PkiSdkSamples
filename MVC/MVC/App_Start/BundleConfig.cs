@@ -21,6 +21,11 @@ namespace MVC {
 						 "~/Content/js/bootstrap.js",
 						 "~/Content/js/respond.js"));
 
+			bundles.Add(new ScriptBundle("~/bundles/lib").Include(
+						 "~/Content/js/lacuna-web-pki-{version}.js",
+						 "~/Content/js/signature-forms.js",
+						 "~/Content/js/signature-forms3.js"));
+
 			bundles.Add(new StyleBundle("~/Content/css").Include(
 						 "~/Content/css/bootstrap.css",
 						 "~/Content/css/bootstrap-theme.css",
