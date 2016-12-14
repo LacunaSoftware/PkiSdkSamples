@@ -13,8 +13,8 @@ namespace MVC.Classes {
 		}
 
 		public static ICadesPolicyMapper GetCadesSignaturePolicy() {
-			return CadesPolicySpec.GetCadesBes(getTrustArbitrator());
-		} 
+			return CadesPoliciesForGeneration.GetCadesBasic(getTrustArbitrator());
+		}
 
 		private static ITrustArbitrator getTrustArbitrator() {
 			// Aceitando certificados da ICP-Brasil e de raízes confiáveis no Windows
