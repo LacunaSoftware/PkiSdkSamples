@@ -18,7 +18,13 @@ namespace MVC.Controllers {
             return View();
         }
 
-		// POST: XmlElementSignature
+		/**
+		 * POST: XmlElementSignature
+		 * 
+		 * This action is called once the user's certificate encoding has been read, and contains the
+		 * logic to prepare the byte array that needs to be actually signed with the user's private key
+		 * (the "to-sign-hash-bytes").
+		 */
 		[HttpPost]
 		public ActionResult Index(SignatureStartModel model) {
 
@@ -46,10 +52,18 @@ namespace MVC.Controllers {
 				toSignHash = signer.GenerateToSignHash(out signatureAlg, out transferData);
 
 			} catch (ValidationException ex) {
+				// Some of the operations above may throw a ValidationException, for instance if the certificate
+				// encoding cannot be read or if the certificate is expired. 
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
 				return View();
 			}
 
+			// On the next step (Complete action), we'll need once again some information:
+			// - The thumpprint of the selected certificate
+			// - The "to-sign-bytes"
+			// - The OID of the digest algorithm to be used during the signature operation
+			// - The "transfer data"
+			// We'll store this value on TempData, that will store in dictionary shared between actions.
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertThumb = model.CertThumb,
 				ToSignHash = toSignHash,
@@ -64,6 +78,8 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult Complete() {
 
+			// Recovery data from Start() action, if returns null, it'll be redirected to Index 
+			// action again.
 			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
 			if (model == null) {
 				return RedirectToAction("Index");
@@ -72,7 +88,12 @@ namespace MVC.Controllers {
 			return View(model);
 		}
 
-		// POST: XmlElementSignature/Complete
+		/**
+		 * POST: XmlElementSignature/Complete
+		 * 
+		 * This action is called once the "to-sign-bytes" are signed using the user's certificate. After signature,
+		 * it'll be redirect to SignatureInfo action to show the signature file.
+		 */
 		[HttpPost]
 		public ActionResult Complete(SignatureCompleteModel model) {
 
@@ -95,13 +116,15 @@ namespace MVC.Controllers {
 				signatureContent = signer.GetSignedXml();
 
 			} catch (ValidationException ex) {
+				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
 				return View();
 			}
 
+			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
+			// With this filename, it can show a link to download the signature file.
 			var extension = ".xml";
 			var filename = Storage.StoreFile(signatureContent, extension).Replace('.', '_');
-
 			return RedirectToAction("SignatureInfo", new SignatureInfoModel() {
 				File = filename
 			});
