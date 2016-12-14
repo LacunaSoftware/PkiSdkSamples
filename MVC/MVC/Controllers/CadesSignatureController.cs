@@ -20,7 +20,7 @@ namespace MVC.Controllers {
 		// POST: CadesSignature
 		[HttpPost]
 		public ActionResult Index(SignatureStartModel model) {
-			byte[] toSign;
+			byte[] toSignBytes;
 			SignatureAlgorithm signatureAlg;
 
 			try {
@@ -39,7 +39,8 @@ namespace MVC.Controllers {
 
 				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
-				toSign = cadesSigner.GenerateToSignBytes(out signatureAlg);
+				toSignBytes = cadesSigner.GenerateToSignBytes(out signatureAlg);
+				
 
 			} catch (ValidationException ex) {
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
@@ -49,7 +50,8 @@ namespace MVC.Controllers {
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertContent = model.CertContent,
 				CertThumb = model.CertThumb,
-				ToSign = Convert.ToBase64String(toSign),
+				ToSignBytes = Convert.ToBase64String(toSignBytes),
+				ToSignHash = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes)),
 				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid
 			};
 
@@ -85,7 +87,7 @@ namespace MVC.Controllers {
 				cadesSigner.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(model.CertContent)));
 
 				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
-				cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(model.Signature), Convert.FromBase64String(model.ToSign));
+				cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(model.Signature), Convert.FromBase64String(model.ToSignBytes));
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
 				cadesSigner.ComputeSignature();

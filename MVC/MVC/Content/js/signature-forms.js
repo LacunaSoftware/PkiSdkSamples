@@ -6,14 +6,9 @@
 	// -------------------------------------------------------------------------------------------------
 	// Function called once the page is loaded
 	// -------------------------------------------------------------------------------------------------
-	function init(form) {
+	function init(fe) {
 
-		formElements.form = form;
-		formElements.certificateSelect = form.find('select');
-		formElements.signButton = form.find('button[data-role="sign"]');
-		formElements.refreshButton = form.find('button[data-role="refresh"]');
-		formElements.certThumbField = form.find('input[name="CertThumb"]');
-		formElements.certContentField = form.find('input[name="CertContent"]');
+		formElements = fe;
 
 		// Wireup of button clicks
 		formElements.signButton.click(startSignature);
@@ -124,13 +119,13 @@ var signatureCompleteForm = (function () {
 	// -------------------------------------------------------------------------------------------------
 	// Function called once the page is loaded
 	// -------------------------------------------------------------------------------------------------
-	function init(form) {
+	function init(fe) {
 
-		formElements.form = form;
-		formElements.certThumbField = form.find('input[name="CertThumb"]');
-		formElements.toSignHashField = form.find('input[name="ToSignHash"]');
-		formElements.digestAlgorithmOidField = form.find('input[name="DigestAlgorithmOid"]');
-		formElements.signatureField = form.find('input[name="Signature"]');
+		formElements = fe;
+
+		if (!formElements.formIsValid) {
+			return;
+		}
 
 		// Block the UI while we get things ready
 		$.blockUI({ message: 'Assinando ...' });
@@ -172,6 +167,8 @@ var signatureCompleteForm = (function () {
 		// Show the message to the user. You might want to substitute the alert below with a more user-friendly UI
 		// component to show the error.
 		alert(message);
+
+		formElements.tryAgainButton.show();
 	}
 
 	return {

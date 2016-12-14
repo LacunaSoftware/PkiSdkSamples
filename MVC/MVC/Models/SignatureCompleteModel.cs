@@ -7,7 +7,7 @@ namespace MVC.Models {
 	public class SignatureCompleteModel {
 		public string CertThumb { get; set; }
 		public string CertContent { get; set; }
-		public string ToSign { get; set; }
+		public string ToSignBytes { get; set; }
 		public string ToSignHash { get; set; }
 		public string TransferData { get; set; }
 		public string DigestAlgorithmOid { get; set; }

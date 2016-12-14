@@ -12,7 +12,7 @@ namespace MVC.Classes {
 			return XmlPolicySpec.GetXmlDSigBasic(getTrustArbitrator());
 		}
 
-		public static CadesPolicySpec GetCadesSignaturePolicy() {
+		public static ICadesPolicyMapper GetCadesSignaturePolicy() {
 			return CadesPolicySpec.GetCadesBes(getTrustArbitrator());
 		} 
 

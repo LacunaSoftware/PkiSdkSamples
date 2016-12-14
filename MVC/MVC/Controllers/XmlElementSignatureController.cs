@@ -15,7 +15,7 @@ namespace MVC.Controllers {
 		[HttpGet]
         public ActionResult Index() {
 
-            return View("Index3");
+            return View();
         }
 
 		// POST: XmlElementSignature
@@ -47,7 +47,7 @@ namespace MVC.Controllers {
 
 			} catch (ValidationException ex) {
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
-				return View("Index3");
+				return View();
 			}
 
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
@@ -69,7 +69,7 @@ namespace MVC.Controllers {
 				return RedirectToAction("Index");
 			}
 
-			return View("Complete3", model);
+			return View(model);
 		}
 
 		// POST: XmlElementSignature/Complete
@@ -96,7 +96,7 @@ namespace MVC.Controllers {
 
 			} catch (ValidationException ex) {
 				ModelState.AddModelError("", ex.ValidationResults.ToString());
-				return View("Complete3");
+				return View();
 			}
 
 			var extension = ".xml";

@@ -11,4 +11,3 @@
 /// <reference path="respond.matchmedia.addlistener.min.js" />
 /// <reference path="respond.min.js" />
 /// <reference path="signature-forms.js" />
-/// <reference path="signature-forms3.js" />
