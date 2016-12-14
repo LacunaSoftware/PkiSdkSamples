@@ -9,7 +9,26 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace MVC.Controllers {
+
 	public class CadesSignatureController : Controller {
+
+		/**
+			This method defines the signature policy that will be used on the signature.
+		 */
+		private ICadesPolicyMapper getSignaturePolicy() {
+
+			var policy = CadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
+
+#if DEBUG
+			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
+			// corresponds to the ICP-Brasil roots only), with our custom trust arbitrator which accepts test certificates
+			// (see Util.GetTrustArbitrator())
+			return new CadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
+#else
+			return policy;
+#endif
+		}
+
 		// GET: CadesSignature
 		[HttpGet]
 		public ActionResult Index() {
@@ -41,7 +60,7 @@ namespace MVC.Controllers {
 				cadesSigner.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
 
 				// Set the signature policy
-				cadesSigner.SetPolicy(Util.GetCadesSignaturePolicy());
+				cadesSigner.SetPolicy(getSignaturePolicy());
 
 				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
@@ -57,11 +76,11 @@ namespace MVC.Controllers {
 
 			// On the next step (Complete action), we'll need once again some information:
 			// - The content of the selected certificate used to validate the signature in complete action.
-			// - The thumpprint of the selected certificate
+			// - The thumbprint of the selected certificate
 			// - The "to-sign-bytes"
-			// - The "to-sign-hash-bytes"
+			// - The "to-sign-hash" (digest of the "to-sign-bytes")
 			// - The OID of the digest algorithm to be used during the signature operation
-			// We'll store this value on TempData, that will store in dictionary shared between actions.
+			// We'll store these values on TempData, which is a dictionary shared between actions.
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertContent = model.CertContent,
 				CertThumb = model.CertThumb,
@@ -103,7 +122,7 @@ namespace MVC.Controllers {
 
 				// Set the document to be signed and the policy, exactly like in the Start method
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
-				cadesSigner.SetPolicy(Util.GetCadesSignaturePolicy());
+				cadesSigner.SetPolicy(getSignaturePolicy());
 
 				// Set signer's certificate
 				cadesSigner.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
@@ -125,10 +144,9 @@ namespace MVC.Controllers {
 
 			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
 			// With this filename, it can show a link to download the signature file.
-			var extension = ".p7s";
-			var filename = Storage.StoreFile(signatureContent, extension).Replace('.', '_');
+			var file = Storage.StoreFile(signatureContent, ".p7s");
 			return RedirectToAction("SignatureInfo", new SignatureInfoModel() {
-				File = filename
+				File = file
 			});
 		}
 

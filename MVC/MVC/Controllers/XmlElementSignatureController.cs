@@ -9,9 +9,28 @@ using System.Web;
 using System.Web.Mvc;
 
 namespace MVC.Controllers {
+
     public class XmlElementSignatureController : Controller {
 
-        // GET: XmlElementSignature
+		/**
+			This method defines the signature policy that will be used on the signature.
+		 */
+		private XmlPolicySpec getSignaturePolicy() {
+
+			var policy = BrazilXmlPolicySpec.GetNFePadraoNacional();
+
+#if DEBUG
+			// During debug only, we clear the policy's default trust arbitrator (which, in the case of
+			// the policy returned by BrazilXmlPolicySpec.GetNFePadraoNacional(), corresponds to the ICP-Brasil roots only),
+			// and use our custom trust arbitrator which accepts test certificates (see Util.GetTrustArbitrator())
+			policy.ClearTrustArbitrators();
+			policy.AddTrustArbitrator(Util.GetTrustArbitrator());
+#endif
+
+			return policy;
+		}
+
+		// GET: XmlElementSignature
 		[HttpGet]
         public ActionResult Index() {
 
@@ -45,7 +64,7 @@ namespace MVC.Controllers {
 				signer.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
 
 				// Set the signature policy
-				signer.SetPolicy(Util.GetXmlSignaturePolicy());
+				signer.SetPolicy(getSignaturePolicy());
 
 				// Generate the "to-sign-hash-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
@@ -104,7 +123,7 @@ namespace MVC.Controllers {
 
 				// Set the document to be signed and the policy, exactly like in the Start method
 				signer.SetXml(Storage.GetSampleNFeContent());
-				signer.SetPolicy(Util.GetXmlSignaturePolicy());
+				signer.SetPolicy(getSignaturePolicy());
 
 				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
 				signer.SetPrecomputedSignature(model.Signature, model.TransferData);
@@ -123,10 +142,9 @@ namespace MVC.Controllers {
 
 			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
 			// With this filename, it can show a link to download the signature file.
-			var extension = ".xml";
-			var filename = Storage.StoreFile(signatureContent, extension).Replace('.', '_');
+			var file = Storage.StoreFile(signatureContent, ".xml");
 			return RedirectToAction("SignatureInfo", new SignatureInfoModel() {
-				File = filename
+				File = file
 			});
 		}
 
@@ -135,5 +153,5 @@ namespace MVC.Controllers {
 		public ActionResult SignatureInfo(SignatureInfoModel model) {
 			return View(model);
 		}
-    }
+	}
 }

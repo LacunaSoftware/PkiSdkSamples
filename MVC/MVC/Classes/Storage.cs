@@ -19,17 +19,24 @@ namespace MVC.Classes {
 			if (!Directory.Exists(appDataPath)) {
 				Directory.CreateDirectory(appDataPath);
 			}
-			var id = Guid.NewGuid().ToString();
-			var filename = id + extension;
+			var filename = Guid.NewGuid() + extension;
 			File.WriteAllBytes(Path.Combine(appDataPath, filename), content);
-
-			return filename;
+			return filename.Replace('.', '_');
 		}
 
 		// Função que simula a recuperação de um arquivo previamente armazenado
-		public static byte[] GetFile(string fileId, string extension) {
-			var path = HttpContext.Current.Server.MapPath("~/App_Data/" + fileId + extension);
-			return File.ReadAllBytes(path);
+		public static bool TryGetFile(string fileId, out byte[] content, out string extension) {
+			var filename = fileId.Replace('_', '.');
+			var path = HttpContext.Current.Server.MapPath("~/App_Data/" + filename);
+			var fileInfo = new FileInfo(path);
+			if (!fileInfo.Exists) {
+				content = null;
+				extension = null;
+				return false;
+			}
+			extension = fileInfo.Extension;
+			content = File.ReadAllBytes(path);
+			return true;
 		}
 
 		public static byte[] GetSampleNFeContent() {

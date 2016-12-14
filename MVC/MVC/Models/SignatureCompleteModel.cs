@@ -4,7 +4,9 @@ using System.Linq;
 using System.Web;
 
 namespace MVC.Models {
+
 	public class SignatureCompleteModel {
+
 		public byte[] CertThumb { get; set; }
 		public string CertThumbBase64 {
 			get {
@@ -14,6 +16,7 @@ namespace MVC.Models {
 				CertThumb = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 		public byte[] CertContent { get; set; }
 		public string CertContentBase64 {
 			get {
@@ -23,6 +26,7 @@ namespace MVC.Models {
 				CertContent = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 		public byte[] ToSignBytes { get; set; }
 		public string ToSignBytesBase64 {
 			get {
@@ -32,6 +36,7 @@ namespace MVC.Models {
 				ToSignBytes = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 		public byte[] ToSignHash { get; set; }
 		public string ToSignHashBase64 {
 			get {
@@ -41,6 +46,7 @@ namespace MVC.Models {
 				ToSignHash = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 		public byte[] TransferData { get; set; }
 		public string TransferDataBase64 {
 			get {
@@ -50,7 +56,9 @@ namespace MVC.Models {
 				TransferData = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 		public string DigestAlgorithmOid { get; set; }
+
 		public byte[] Signature { get; set; }
 		public string SignatureBase64 {
 			get {
@@ -60,5 +68,6 @@ namespace MVC.Models {
 				Signature = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		} 
+
 	}
 }

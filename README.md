@@ -38,7 +38,7 @@ Download the file [TestCertificates.zip](TestCertificates.zip) to get the certif
 
 If you need a certificate with a particular information, [contact us](http://support.lacunasoftware.com/).
 
-Always remember to **remove the trust in the Lacuna Test PKI security context when you're moving to a production environment**. Better yet, use some sort of conditional compilation so that the test PKI is only trusted when running in debug mode.
+Always remember to **remove the trust in the Lacuna Test PKI root CA when you're moving to a production environment** (see the method Util.GetTrustArbitrator() from the sample project you are using).
 
 See Also
 --------
