@@ -18,3 +18,7 @@
 #messagesPanel > div:first-child {
 	margin-top: 20px;
 }
+
+.blockMsg {
+	font-size: 36px;
+}

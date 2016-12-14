@@ -9,8 +9,8 @@
 	@Html.ValidationSummary("", new { @class = "text-danger" })
 
 	@* Hidden fields used to pass data from the action to the "signature form" javascript (see below) and vice-versa *@
-	@Html.HiddenFor(m => m.CertThumb, new { id = "certThumb" })
-	@Html.HiddenFor(m => m.CertContent, new { id = "certContent" })
+	@Html.HiddenFor(m => m.CertThumbBase64, new { id = "certThumb" })
+	@Html.HiddenFor(m => m.CertContentBase64, new { id = "certContent" })
 	
 	<div class="form-group">
 		<label>File to sign</label>

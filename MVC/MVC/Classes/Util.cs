@@ -1,5 +1,6 @@
 ﻿using Lacuna.Pki;
 using Lacuna.Pki.Cades;
+using Lacuna.Pki.Stores;
 using Lacuna.Pki.Xml;
 using System;
 using System.Collections.Generic;
@@ -7,16 +8,20 @@ using System.Linq;
 using System.Web;
 
 namespace MVC.Classes {
-	public class PkiUtil {
+	public class Util {
 		public static XmlPolicySpec GetXmlSignaturePolicy() {
-			return XmlPolicySpec.GetXmlDSigBasic(getTrustArbitrator());
+			return XmlPolicySpec.GetXmlDSigBasic(GetTrustArbitrator());
 		}
 
 		public static ICadesPolicyMapper GetCadesSignaturePolicy() {
-			return CadesPoliciesForGeneration.GetCadesBasic(getTrustArbitrator());
+			return CadesPoliciesForGeneration.GetCadesBasic(GetTrustArbitrator());
 		}
 
-		private static ITrustArbitrator getTrustArbitrator() {
+		public static INonceStore GetNonceStore() {
+			return new FileSystemNonceStore(HttpContext.Current.Server.MapPath("~/App_Data"));
+		}
+
+		public static ITrustArbitrator GetTrustArbitrator() {
 			// Aceitando certificados da ICP-Brasil e de raízes confiáveis no Windows
 			var trustArbitrator = new LinkedTrustArbitrator(TrustArbitrators.PkiBrazil, TrustArbitrators.Windows);
 #if DEBUG

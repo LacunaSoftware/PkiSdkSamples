@@ -135,8 +135,11 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Classes\PkiUtil.cs" />
+    <Compile Include="Classes\Util.cs" />
+    <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\CadesSignatureController.cs" />
+    <Compile Include="Models\AuthenticationInfoModel.cs" />
+    <Compile Include="Models\AuthenticationModel.cs" />
     <Compile Include="Models\SignatureInfoModel.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
@@ -211,6 +214,8 @@
     <Content Include="Content\SampleDocument.pdf" />
     <Content Include="Views\XmlElementSignature\Index.cshtml" />
     <Content Include="Views\XmlElementSignature\Complete.cshtml" />
+    <Content Include="Views\Authentication\Index.cshtml" />
+    <Content Include="Views\Authentication\AuthenticationInfo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

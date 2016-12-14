@@ -32,10 +32,10 @@ namespace MVC.Controllers {
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
 
 				// Decode the user's certificate and set as the signer certificate
-				cadesSigner.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(model.CertContent)));
+				cadesSigner.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
 
 				// Set the signature policy
-				cadesSigner.SetPolicy(MVC.Classes.PkiUtil.GetCadesSignaturePolicy());
+				cadesSigner.SetPolicy(Util.GetCadesSignaturePolicy());
 
 				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
@@ -50,8 +50,8 @@ namespace MVC.Controllers {
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertContent = model.CertContent,
 				CertThumb = model.CertThumb,
-				ToSignBytes = Convert.ToBase64String(toSignBytes),
-				ToSignHash = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes)),
+				ToSignBytes = toSignBytes,
+				ToSignHash = signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes),
 				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid
 			};
 
@@ -81,13 +81,13 @@ namespace MVC.Controllers {
 
 				// Set the document to be signed and the policy, exactly like in the Start method
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
-				cadesSigner.SetPolicy(MVC.Classes.PkiUtil.GetCadesSignaturePolicy());
+				cadesSigner.SetPolicy(Util.GetCadesSignaturePolicy());
 
 				// Set signer's certificate
-				cadesSigner.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(model.CertContent)));
+				cadesSigner.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
 
 				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
-				cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(model.Signature), Convert.FromBase64String(model.ToSignBytes));
+				cadesSigner.SetPrecomputedSignature(model.Signature, model.ToSignBytes);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
 				cadesSigner.ComputeSignature();

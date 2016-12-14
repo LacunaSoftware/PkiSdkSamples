@@ -36,10 +36,10 @@ namespace MVC.Controllers {
 				signer.SetToSignElementId("NFe35141214314050000662550010001084271182362300");
 
 				// Decode the user's certificate and set as the signer certificate
-				signer.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(model.CertContent)));
+				signer.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
 
 				// Set the signature policy
-				signer.SetPolicy(MVC.Classes.PkiUtil.GetXmlSignaturePolicy());
+				signer.SetPolicy(Util.GetXmlSignaturePolicy());
 
 				// Generate the "to-sign-hash-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
@@ -52,9 +52,9 @@ namespace MVC.Controllers {
 
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertThumb = model.CertThumb,
-				ToSignHash = Convert.ToBase64String(toSignHash),
+				ToSignHash = toSignHash,
 				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid,
-				TransferData = Convert.ToBase64String(transferData)
+				TransferData = transferData
 			};
 
 			return RedirectToAction("Complete");
@@ -83,10 +83,10 @@ namespace MVC.Controllers {
 
 				// Set the document to be signed and the policy, exactly like in the Start method
 				signer.SetXml(Storage.GetSampleNFeContent());
-				signer.SetPolicy(MVC.Classes.PkiUtil.GetXmlSignaturePolicy());
+				signer.SetPolicy(Util.GetXmlSignaturePolicy());
 
 				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
-				signer.SetPrecomputedSignature(Convert.FromBase64String(model.Signature), Convert.FromBase64String(model.TransferData));
+				signer.SetPrecomputedSignature(model.Signature, model.TransferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
 				signer.ComputeSignature();

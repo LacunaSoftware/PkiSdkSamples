@@ -1,0 +1,41 @@
+﻿@model MVC.Models.AuthenticationModel
+@{
+	ViewBag.Title = "Certificate Authentication";
+}
+
+<h2>Certificate Authentication</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "authForm", role = "form" })) {
+	@Html.ValidationSummary("", new { @class = "text-danger" })
+
+	@* Hidden fields used to pass data from the action to the "signature form" javascript (see below) and vice-versa *@
+	@Html.HiddenFor(m => m.CertificateBase64, new { id = "certificateField" })
+	@Html.HiddenFor(m => m.NonceBase64, new { id = "nonceField" })
+	@Html.HiddenFor(m => m.DigestAlgorithm, new { id = "digestAlgorithmField" })
+	@Html.HiddenFor(m => m.SignatureBase64, new { id = "signatureField" })
+
+	<div class="form-group">
+		<label for="certificateSelect">Choose a certificate</label>
+		<select id="certificateSelect" class="form-control"></select>
+	</div>
+
+	<button id="signInButton" type="button" class="btn btn-primary">Sign In</button>
+	<button id="refreshButton" type="button" class="btn btn-default">Refresh Certificates</button>
+}
+
+@section Scripts {
+	<script>
+		$(document).ready(function () {
+			authenticationForm.init({
+				form: $('#authForm'),
+				certificateSelect: $('#certificateSelect'),
+				signInButton: $('#signInButton'),
+				refreshButton: $('#refreshButton'),
+				certificateField: $('#certificateField'),
+				nonceField: $('#nonceField'),
+				digestAlgorithmField: $('#digestAlgorithmField'),
+				signatureField: $('#signatureField')
+			});
+		});
+	</script>
+}
