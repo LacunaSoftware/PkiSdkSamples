@@ -22,12 +22,12 @@
 			<li><a href="/Upload?rc=OpenCadesSignature">Open/validate an existing CAdES signature</a></li>
 		</ul>
 		</li>--%>
-		<%--<li>XML signature
+		<li>XML signature
 		<ul>
-			<li><a href="/XmlFullSignature">Create a full XML signature (enveloped signature)</a></li>
+			<%--<li><a href="/XmlFullSignature">Create a full XML signature (enveloped signature)</a></li>--%>
 			<li><a runat="server" href="~/XmlElementSignature">Create a XML element signature</a></li>
 		</ul>
-		</li>--%>
+		</li>
 		<%--<li>
 		Sign a batch of files
 		<ul>
