@@ -10,10 +10,10 @@ To run the samples, you will need a license. If you don't have one, request a fr
 The following sample projects are available:
 
 * [ASP.NET MVC](MVC/)
+* [ASP.NET Web Forms](WebForms/)
 
 Coming soon:
 
-* WebForms
 * Web API / SPA
 
 Test certificates
