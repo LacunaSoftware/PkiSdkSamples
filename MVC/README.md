@@ -18,10 +18,10 @@ To run the project:
 
 1. [Download](https://github.com/LacunaSoftware/PkiSdkSamples/archive/master.zip) or clone the repository
 
-2. Open the solution file `MVC\MVC.sln` on Visual Studio
+2. Copy your SDK license file (`LacunaPkiLicense.config`) to the folder `MVC\MVC`
 
-3. Notice the a missing file in the project root named `LacunaPkiLicense.config`. Copy your license file to this location.
-   
+3. Open the solution file `MVC\PkiSdkMvcSamples.sln` on Visual Studio
+
 4. Run the solution. Make sure your system allows automatic Nuget package restore (if it doesn't, manually restore the packages).
 
 See Also
