@@ -46,7 +46,7 @@ namespace WebForms {
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate
 				// encoding cannot be read or if the certificate is expired. 
-				ModelState.AddModelError("", ex.ValidationResults.ToString());
+				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
 				return;
 			}
 
@@ -79,7 +79,7 @@ namespace WebForms {
 
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
-				ModelState.AddModelError("", ex.ValidationResults.ToString());
+				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
 				return;
 			}
 

@@ -62,7 +62,6 @@
 				submitCertificateButton: $('#<%= SubmitCertificateButton.ClientID %>'),
 				submitSignatureButton: $('#<%= SubmitSignatureButton.ClientID %>'),
 				<%-- Hidden fields to pass data to and from the server-side code-behind --%>
-				transferDataField: $('#<%= TransferDataField.ClientID %>'),
 				certThumbField: $('#<%= CertThumbField.ClientID %>'),
 				certContentField: $('#<%= CertContentField.ClientID %>'),
 				toSignHashField: $('#<%= ToSignHashField.ClientID %>'),
