@@ -80,6 +80,7 @@ namespace WebForms {
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
 				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
+				FormIsValidField.Value = Convert.ToString(false);
 				return;
 			}
 
