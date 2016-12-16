@@ -30,5 +30,9 @@ namespace WebForms.Classes {
 		public static byte[] GetSampleDocContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleDocument.pdf"));
 		}
+
+		public static byte[] GetPdfStampContent() {
+			return File.ReadAllBytes(Path.Combine(ContentPath, "PdfStamp.png"));
+		}
 	}
 }

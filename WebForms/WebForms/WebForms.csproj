@@ -130,6 +130,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\PdfStamp.png" />
     <Content Include="Content\SampleNFe.xml" />
     <Content Include="Content\Site.css" />
     <Content Include="Download.aspx" />
@@ -145,6 +146,8 @@
     <Content Include="LacunaPkiLicense.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="PadesSignature.aspx" />
+    <Content Include="PadesSignatureInfo.aspx" />
     <Content Include="XmlElementSignature.aspx" />
     <Content Include="XmlElementSignatureInfo.aspx" />
     <Content Include="Content\SampleDocument.pdf" />
@@ -234,6 +237,7 @@
       <DependentUpon>CadesSignatureInfo.aspx</DependentUpon>
     </Compile>
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
+    <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Default.aspx.cs">
@@ -252,6 +256,20 @@
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="PadesSignature.aspx.cs">
+      <DependentUpon>PadesSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PadesSignature.aspx.designer.cs">
+      <DependentUpon>PadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PadesSignatureInfo.aspx.cs">
+      <DependentUpon>PadesSignatureInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PadesSignatureInfo.aspx.designer.cs">
+      <DependentUpon>PadesSignatureInfo.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
