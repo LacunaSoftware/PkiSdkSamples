@@ -1,9 +1,9 @@
 ﻿@model MVC.Models.SignatureStartModel
 @{
-	ViewBag.Title = "CAdES Signature";
+	ViewBag.Title = "PAdES Signature";
 }
 
-<h2>CAdES Signature</h2>
+<h2>PAdES Signature</h2>
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "signForm", role = "form" })) {
 	@Html.ValidationSummary("", new { @class = "text-danger" })

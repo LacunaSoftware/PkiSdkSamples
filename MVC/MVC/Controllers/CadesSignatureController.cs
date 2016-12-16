@@ -114,8 +114,8 @@ namespace MVC.Controllers {
 		 */
 		[HttpPost]
 		public ActionResult Complete(SignatureCompleteModel model) {
-
 			byte[] signatureContent;
+
 			try {
 
 				var cadesSigner = new CadesSigner();
@@ -145,14 +145,30 @@ namespace MVC.Controllers {
 			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
 			// With this filename, it can show a link to download the signature file.
 			var file = Storage.StoreFile(signatureContent, ".p7s");
-			return RedirectToAction("SignatureInfo", new SignatureInfoModel() {
-				File = file
-			});
+
+			// On the next step (Complete action), we'll need once again some information:
+			// - The content of the selected certificate used to validate the signature in complete action.
+			// - The filename to be available to download in next action.
+			// We'll store these values on TempData, which is a dictionary shared between actions.
+			TempData["SignatureInfoModel"] = new SignatureInfoModel() {
+				File = file,
+				UserCert = PKCertificate.Decode(model.CertContent)
+			};
+			
+			return RedirectToAction("SignatureInfo");
 		}
 
 		// GET: CadesSignature/SignatureInfo
 		[HttpGet]
-		public ActionResult SignatureInfo(SignatureInfoModel model) {
+		public ActionResult SignatureInfo() {
+
+			// Recovery data from Conplete() action, if returns null, it'll be redirected to Index 
+			// action again.
+			var model = TempData["SignatureInfoModel"] as SignatureInfoModel;
+			if (model == null) {
+				return RedirectToAction("Index");
+			}
+
 			return View(model);
 		}
 	}
