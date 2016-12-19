@@ -174,21 +174,30 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
+    <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
+    <Compile Include="Controllers\CadesSignatureController.cs" />
+    <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AuthenticationPostResponse.cs" />
     <Compile Include="Models\AuthenticationPostRequest.cs" />
+    <Compile Include="Models\SignatureCompleteRequest.cs" />
+    <Compile Include="Models\SignatureCompleteResponse.cs" />
+    <Compile Include="Models\SignatureStartRequest.cs" />
     <Compile Include="Models\CertificateModel.cs" />
+    <Compile Include="Models\SignatureStartResponse.cs" />
     <Compile Include="Models\ValidationErrorModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\app.js" />
     <Content Include="app\controllers\authentication.js" />
+    <Content Include="app\controllers\signature-results-dialog.js" />
     <Content Include="app\controllers\validation-results-dialog.js" />
     <Content Include="app\controllers\certificate-dialog.js" />
     <Content Include="app\controllers\xml-element-signature.js" />
@@ -196,6 +205,7 @@
     <Content Include="app\controllers\pades-signature.js" />
     <Content Include="app\controllers\home.js" />
     <Content Include="app\views\authentication.html" />
+    <Content Include="app\views\dialogs\signature-results.html" />
     <Content Include="app\views\dialogs\validation-results.html" />
     <Content Include="app\views\dialogs\message.html" />
     <Content Include="app\views\dialogs\certificate.html" />

@@ -47,6 +47,18 @@ app.factory('util', ['$uibModal', 'blockUI', function ($modal, blockUI) {
 		});
 	};
 
+	var showSignatureResults = function (data) {
+		return $modal.open({
+			templateUrl: 'app/views/dialogs/signature-results.html',
+			controller: 'signatureResultsDialogController',
+			size: 'lg',
+			resolve: {
+				model: function () { return data.certificate; },
+				filename: function () { return data.filename }
+			}
+		});
+	};
+
 	var showCertificate = function (model) {
 		return $modal.open({
 			templateUrl: 'app/views/dialogs/certificate.html',
@@ -82,6 +94,7 @@ app.factory('util', ['$uibModal', 'blockUI', function ($modal, blockUI) {
 
 	return {
 		showMessage: showMessage,
+		showSignatureResults: showSignatureResults,
 		showCertificate: showCertificate,
 		showValidationResults: showValidationResults,
 		handleServerError: handleServerError
