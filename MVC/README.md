@@ -25,7 +25,7 @@ To run the project:
 See Also
 --------
 
-* [Sample projects with other .NET technologies](https://github.com/LacunaSoftware/PkiSdkSamples)
+* [Sample projects with other .NET technologies](../)
 * [Online documentation](http://pki.lacunasoftware.com/Help)
 * [Lacuna PKI SDK package on Nuget](https://www.nuget.org/packages/Lacuna.Pki)
 * [Test certificates](../TestCertificates.md)
