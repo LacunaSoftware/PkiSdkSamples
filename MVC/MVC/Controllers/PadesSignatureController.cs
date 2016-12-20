@@ -64,12 +64,35 @@ namespace MVC.Controllers {
 
 				// Set the signature's visual representation options (this is optional). For more information, see
 				// http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
-				var visual = new PadesVisualRepresentation() {
-					SignerName = cert.SubjectDisplayName,  // used to compose the message "Signed by XXX"
-					SigningTime = true,                    // whether to include or not the signing time on the visual representation
-					ImageBytes = Storage.GetPdfStampContent() // background image of the visual representation
+				var visual = new PadesVisualRepresentation2() {
+
+					// Text of the visual representation
+					Text = new PadesVisualText() {
+
+						// used to compose the message
+						CustomText = String.Format("Assinado digitalmente por {0}", cert.SubjectDisplayName),
+
+						// Specify that the signing time should also be rendered
+						IncludeSigningTime = true,
+
+						// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
+						HorizontalAlign = PadesTextHorizontalAlign.Left
+					},
+					// Background image of the visual representation
+					Image = new PadesVisualImage() {
+
+						// We'll use as background the image in Content/PdfStamp.png
+						Content = Storage.GetPdfStampContent(),
+
+						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
+						Opacity = 70,
+
+						// Align the image to the right
+						HorizontalAlign = PadesHorizontalAlign.Right
+					},
+					// Set the position of the visual representation
+					Position = PadesVisualAutoPositioning.GetFootnote()
 				};
-				visual.SetPosition(PadesVisualPosition.Footnote); // set the position of the visual representation
 				padesSigner.SetVisualRepresentation(visual);
 
 				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must
