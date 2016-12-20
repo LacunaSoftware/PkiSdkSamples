@@ -9,8 +9,6 @@ For other languages, please visit the [repository root](https://github.com/Lacun
 To run the samples, you will need a license. If you don't have one, request a trial license at
 [our website](http://www.lacunasoftware.com/en/home/contact).
 
-If you need test certificates for development or staging environments, [click here](https://github.com/LacunaSoftware/PkiSdkSamples#test-certificates).
-
 Running the project
 -------------------
 
@@ -30,3 +28,4 @@ See Also
 * [Sample projects with other .NET technologies](https://github.com/LacunaSoftware/PkiSdkSamples)
 * [Online documentation](http://pki.lacunasoftware.com/Help)
 * [Lacuna PKI SDK package on Nuget](https://www.nuget.org/packages/Lacuna.Pki)
+* [Test certificates](../TestCertificates.md)

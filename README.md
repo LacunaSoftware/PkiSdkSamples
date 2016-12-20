@@ -1,7 +1,7 @@
 Lacuna PKI SDK Samples
 ======================
 
-This project contains sample applications demonstrating the use of the [Lacuna PKI SDK](https://www.lacunasoftware.com/en/products/pki_sdk)
+This repository contains sample projects demonstrating the use of the [Lacuna PKI SDK](https://www.lacunasoftware.com/en/products/pki_sdk)
 with different .NET technologies.
 
 Choose one of the following sample projects:
