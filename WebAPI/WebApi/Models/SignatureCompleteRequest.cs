@@ -8,5 +8,6 @@ namespace WebApi.Models {
 		public byte[] Certificate { get; set; }
 		public byte[] Signature { get; set; }
 		public byte[] ToSignBytes { get; set; }
+		public byte[] TransferData { get; set; }
 	}
 }
