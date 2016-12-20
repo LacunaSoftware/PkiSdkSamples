@@ -42,6 +42,7 @@ namespace MVC.Controllers {
 		*/
 		[HttpPost]
 		public ActionResult Index(SignatureStartModel model) {
+
 			byte[] toSignBytes, transferData;
 			SignatureAlgorithm signatureAlg;
 
@@ -69,7 +70,7 @@ namespace MVC.Controllers {
 					// Text of the visual representation
 					Text = new PadesVisualText() {
 
-						// used to compose the message
+						// Compose the message
 						CustomText = String.Format("Assinado digitalmente por {0}", cert.SubjectDisplayName),
 
 						// Specify that the signing time should also be rendered
@@ -85,7 +86,7 @@ namespace MVC.Controllers {
 						Content = Storage.GetPdfStampContent(),
 
 						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-						Opacity = 70,
+						Opacity = 80,
 
 						// Align the image to the right
 						HorizontalAlign = PadesHorizontalAlign.Right
@@ -99,6 +100,7 @@ namespace MVC.Controllers {
 				// be used on the client-side, based on the signature policy, as well as the "transfer data",
 				// a byte-array that will be needed on the next step.
 				toSignBytes = padesSigner.GetToSignBytes(out signatureAlg, out transferData);
+
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate
 				// encoding cannot be read or if the certificate is expired.
@@ -128,7 +130,7 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult Complete() {
 
-			// Recovery data from Start() action, if returns null, it'll be redirected to Index 
+			// Recovery data from Index action, if returns null, it'll be redirected to Index 
 			// action again.
 			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
 			if (model == null) {
@@ -170,16 +172,15 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
-			// With this filename, it can show a link to download the signature file.
-			var file = Storage.StoreFile(signatureContent, ".pdf");
-
 			// On the next step (Complete action), we'll need once again some information:
 			// - The content of the selected certificate used to validate the signature in complete action.
 			// - The filename to be available to download in next action.
 			// We'll store these values on TempData, which is a dictionary shared between actions.
 			TempData["SignatureInfoModel"] = new SignatureInfoModel() {
-				File = file,
+
+				// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
+				// With this filename, it can show a link to download the signature file.
+				File = Storage.StoreFile(signatureContent, ".pdf"),
 				UserCert = PKCertificate.Decode(model.CertContent)
 			};
 
@@ -190,7 +191,7 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult SignatureInfo() {
 
-			// Recovery data from Conplete() action, if returns null, it'll be redirected to Index 
+			// Recovery data from Conplete action, if returns null, it'll be redirected to Index 
 			// action again.
 			var model = TempData["SignatureInfoModel"] as SignatureInfoModel;
 			if (model == null) {

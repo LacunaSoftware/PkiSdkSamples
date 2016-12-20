@@ -41,10 +41,11 @@ namespace MVC.Controllers {
 		 * 
 		 * This action is called once the user's certificate encoding has been read, and contains the
 		 * logic to prepare the byte array that needs to be actually signed with the user's private key
-		 * (the "to-sign-bytes).
+		 * (the "to-sign-bytes").
 		 */ 
 		[HttpPost]
 		public ActionResult Index(SignatureStartModel model) {
+
 			byte[] toSignBytes;
 			SignatureAlgorithm signatureAlg;
 
@@ -96,7 +97,7 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult Complete() {
 
-			// Recovery data from Start() action, if returns null, it'll be redirected to Index 
+			// Recovery data from Index action, if returns null, it'll be redirected to Index 
 			// action again.
 			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
 			if (model == null) {
@@ -110,7 +111,7 @@ namespace MVC.Controllers {
 		 * POST: CadesSignature/Complete
 		 * 
 		 * This action is called once the "to-sign-bytes" are signed using the user's certificate. After signature,
-		 * it'll be redirect to SignatureInfo action to show the signature file.
+		 * it'll be redirected to SignatureInfo action to show the signature file.
 		 */
 		[HttpPost]
 		public ActionResult Complete(SignatureCompleteModel model) {
@@ -142,16 +143,15 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
-			// With this filename, it can show a link to download the signature file.
-			var file = Storage.StoreFile(signatureContent, ".p7s");
-
-			// On the next step (Complete action), we'll need once again some information:
+			// On the next step (SignatureInfo action), we'll need once again some information:
 			// - The content of the selected certificate used to validate the signature in complete action.
 			// - The filename to be available to download in next action.
 			// We'll store these values on TempData, which is a dictionary shared between actions.
 			TempData["SignatureInfoModel"] = new SignatureInfoModel() {
-				File = file,
+
+				// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
+				// With this filename, it can show a link to download the signature file.
+				File = Storage.StoreFile(signatureContent, ".p7s"),
 				UserCert = PKCertificate.Decode(model.CertContent)
 			};
 			
