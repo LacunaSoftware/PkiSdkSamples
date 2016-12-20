@@ -1,7 +1,7 @@
-Lacuna PKI SDK sample project in ASP.NET Web Forms
-==================================================
+Lacuna PKI SDK sample project in ASP.NET Web API / Single Page Application
+==========================================================================
 
-This folder contains a ASP.NET Web Forms application that shows how to use the
+This folder contains a ASP.NET Web API project and Single Page Application (SPA) that shows how to use the
 [Lacuna PKI SDK](https://www.lacunasoftware.com/en/products/pki_sdk).
 
 For other technologies, please visit the [repository root](https://github.com/LacunaSoftware/PkiSdkSamples).
@@ -17,9 +17,9 @@ To run the project:
 
 1. [Download](https://github.com/LacunaSoftware/PkiSdkSamples/archive/master.zip) or clone the repository
 
-2. Copy your SDK license file (`LacunaPkiLicense.config`) to the folder `WebForms\WebForms`
+2. Copy your SDK license file (`LacunaPkiLicense.config`) to the folder `WebAPI\WebApi`
 
-3. Open the solution file `WebForms\PkiSdkWebFormsSamples.sln` on Visual Studio
+3. Open the solution file `WebAPI\PkiSdkWebApiSamples.sln` on Visual Studio
 
 4. Run the solution. Make sure your system allows automatic Nuget package restore (if it doesn't, manually restore the packages).
 
