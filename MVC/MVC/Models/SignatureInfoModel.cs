@@ -7,5 +7,6 @@ using System.Web;
 namespace MVC.Models {
 	public class SignatureInfoModel {
 		public string File { get; set; }
+		public PKCertificate UserCert { get; set; }
 	}
 }
