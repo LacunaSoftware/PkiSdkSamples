@@ -10,7 +10,7 @@
 		<label>File to sign</label>
 		<p>You'll be signing <a href='/Content/SampleDocument.pdf'>this sample document</a>.</p>
 
-		<%-- Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see javascript below). --%>
+		<%-- Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see Script/signature-forms.js). --%>
 		<div class="form-group">
 			<label for="certificateSelect">Selecione um certificado</label>
 			<select id="certificateSelect" class="form-control"></select>
@@ -45,6 +45,7 @@
 	<asp:Button ID="SubmitCertificateButton" runat="server" OnClick="SubmitCertificateButton_Click" Style="display: none;" />
 	<asp:Button ID="SubmitSignatureButton" runat="server" OnClick="SubmitSignatureButton_Click" Style="display: none;" />
 
+	<%-- TryAgain button, that'll be showed only if some error occured in "code-behind" actions. --%>
 	<asp:HyperLink ID="TryAgainButton" runat="server" href="CadesSignature" class="btn btn-default" Text="Try Again" style="display: none;" />
 
 	<script>
@@ -65,9 +66,9 @@
 				toSignHashField: $('#<%= ToSignHashField.ClientID %>'),
 				digestAlgorithmField: $('#<%= DigestAlgorithmField.ClientID %>'),
 				signatureField: $('#<%= SignatureField.ClientID %>'),
-				<%-- Try Again Button for the case the complete action not works or the signature process is canceled --%>
-				tryAgainButton: $('#<%= TryAgainButton.ClientID %>'),
-				formIsValid: $('#<%= FormIsValidField.ClientID %>')
+				formIsValid: $('#<%= FormIsValidField.ClientID %>'),
+				<%-- Reference to TryAgainButton for the case the complete action not works or the signature process is canceled --%>
+				tryAgainButton: $('#<%= TryAgainButton.ClientID %>')
 			});
 		});
 		<%-- Client-side function called when the user clicks the "Sign In" button --%>

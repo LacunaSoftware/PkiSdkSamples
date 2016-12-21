@@ -49,6 +49,7 @@
 	<asp:Button ID="SubmitCertificateButton" runat="server" OnClick="SubmitCertificateButton_Click" Style="display: none;" />
 	<asp:Button ID="SubmitSignatureButton" runat="server" OnClick="SubmitSignatureButton_Click" Style="display: none;" />
 
+	<%-- TryAgain button, that'll be showed only if some error occured in "code-behind" actions. --%>
 	<asp:HyperLink ID="TryAgainButton" runat="server" href="XmlElementSignature" class="btn btn-default" Text="Try Again" style="display: none;" />
 
 	<script>
@@ -69,9 +70,9 @@
 				toSignHashField: $('#<%= ToSignHashField.ClientID %>'),
 				digestAlgorithmField: $('#<%= DigestAlgorithmField.ClientID %>'),
 				signatureField: $('#<%= SignatureField.ClientID %>'),
+				formIsValid: $('#<%= FormIsValidField.ClientID %>'),
 				<%-- Try Again Button for the case the complete action not works or the signature process is canceled --%>
-				tryAgainButton: $('#<%= TryAgainButton.ClientID %>'),
-				formIsValid: $('#<%= FormIsValidField.ClientID %>')
+				tryAgainButton: $('#<%= TryAgainButton.ClientID %>')
 			});
 		});
 		<%-- Client-side function called when the user clicks the "Sign In" button --%>

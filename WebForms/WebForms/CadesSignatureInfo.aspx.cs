@@ -10,7 +10,7 @@ namespace WebForms {
 
 	public partial class CadesSignatureInfo : System.Web.UI.Page {
 
-		protected string file { get; private set; }
+		protected string signatureFile { get; private set; }
 		protected PKCertificate certificate { get; private set; }
 
 		protected void Page_Load(object sender, EventArgs e) {
@@ -20,7 +20,7 @@ namespace WebForms {
 			}
 
 			if (!IsPostBack) {
-				this.file = PreviousPage.File;
+				this.signatureFile = PreviousPage.SignatureFile;
 				this.certificate = PreviousPage.Certificate;
 			}
 		}

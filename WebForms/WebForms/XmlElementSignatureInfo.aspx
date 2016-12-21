@@ -4,7 +4,7 @@
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<h2>Xml Element Signature</h2>
 
-	<p>File signed successfully! <a href="Download?file=<%= file.Replace(".", "_") %>">Click here to download the signed file</a></p>
+	<p>File signed successfully! <a href="Download?file=<%= signatureFile.Replace(".", "_") %>">Click here to download the signed file</a></p>
 
 	<p>User certificate information:</p>
 	<ul>
