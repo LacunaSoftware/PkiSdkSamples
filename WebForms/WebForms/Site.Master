@@ -35,7 +35,9 @@
 				<%--Site Scripts--%>
 				<asp:ScriptReference Name="BlockUI" />
 				<asp:ScriptReference Name="WebPKI" />
-				<asp:ScriptReference Name="SignatureForms" />
+				<asp:ScriptReference Name="AuthenticationForm" />
+				<asp:ScriptReference Name="SignatureForm" />
+				<asp:ScriptReference Name="BatchSignatureForm" />
 			</Scripts>
 		</asp:ScriptManager>
 
@@ -53,14 +55,14 @@
 				<div id="navbar" class="collapse navbar-collapse">
 					<ul class="nav navbar-nav">
 						<li><a runat="server" href="~/Authentication">Authentication</a></li>
-						<%--<li class="dropdown">
+						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">PAdES signature <span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li><a href="/PadesSignature">With file already on server</a></li>
-								<li><a href="/Upload?rc=PadesSignature">With file uploaded by user</a></li>
-								<li><a href="/Upload?rc=OpenPadesSignature">Open/validate existing signature</a></li>
+								<%--<li><a href="/Upload?rc=PadesSignature">With file uploaded by user</a></li>
+								<li><a href="/Upload?rc=OpenPadesSignature">Open/validate existing signature</a></li>--%>
 							</ul>
-						</li>--%>
+						</li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">CAdES signature <span class="caret"></span></a>
 							<ul class="dropdown-menu">
@@ -76,13 +78,13 @@
 								<li><a runat="server" href="~/XmlElementSignature">XML element signature</a></li>
 							</ul>
 						</li>
-						<%--<li class="dropdown">
+						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Batch signature <span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li><a href="/BatchSignature">Simple batch signature</a></li>
-								<li><a href="/BatchSignatureOptimized">Optimized batch signature</a></li>
+								<%--<li><a href="/BatchSignatureOptimized">Optimized batch signature</a></li>--%>
 							</ul>
-						</li>--%>
+						</li>
 					</ul>
 				</div>
 				<!--/.nav-collapse -->
