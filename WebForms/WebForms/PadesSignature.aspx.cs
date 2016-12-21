@@ -11,7 +11,7 @@ using WebForms.Classes;
 namespace WebForms {
 	public partial class PadesSignature : System.Web.UI.Page {
 
-		public string File { get; private set; }
+		public string SignatureFile { get; private set; }
 		public PKCertificate Certificate { get; private set; }
 		
 		protected void Page_Load(object sender, EventArgs e) {
@@ -47,7 +47,7 @@ namespace WebForms {
 					// Text of the visual representation
 					Text = new PadesVisualText() {
 
-						// used to compose the message
+						// Compose the message
 						CustomText = String.Format("Assinado digitalmente por {0}", cert.SubjectDisplayName),
 
 						// Specify that the signing time should also be rendered
@@ -59,7 +59,7 @@ namespace WebForms {
 					// Background image of the visual representation
 					Image = new PadesVisualImage() {
 
-						// We'll use as background the image in Content/PdfStamp.png
+						// We'll use the image in Content/PdfStamp.png
 						Content = Storage.GetPdfStampContent(),
 
 						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
@@ -85,10 +85,16 @@ namespace WebForms {
 				return;
 			}
 
-			TransferDataField.Value = Convert.ToBase64String(transferData);
+			// On the next step (SubmitSignatureButton_Click action), we'll need once again some information:
+			// - The "to-sign-hash" (digest of the "to-sign-bytes")
+			// - The "transfer data"
+			// - The OID of the digest algorithm to be used during the signature operation
+			// We'll set the hidden fields on this page, that'll be loaded again.
 			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
+			TransferDataField.Value = Convert.ToBase64String(transferData);
 			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 
+			// We'll hide the signatureControlPanel, because it's unnecessary on the next steps of the signature.
 			signatureControlsPanel.Visible = false;
 		}
 
@@ -103,7 +109,7 @@ namespace WebForms {
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "transfer data" recovered from the database
+				// Set the signature computed on the client-side, along with the "transfer data" recovered from the page
 				padesSigner.SetPreComputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(TransferDataField.Value));
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
@@ -115,15 +121,15 @@ namespace WebForms {
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
 				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
+				// Set hidden field to indicate in signature-forms.js that the signature failed here.
 				FormIsValidField.Value = Convert.ToString(false);
 				return;
 			}
 
-			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
-			// With this filename, it can show a link to download the signature file.
-			this.File = Storage.StoreFile(signatureContent, ".pdf");
-
-			// Pass user's PKCertificate to be rendered in XmlElementSignatureInfo page
+			// Pass the following fields to be used on CadesSignatureInfo page:
+			// - The signature file will be stored on the folder "App_Data/". Its name will be passed by SignatureFile field.
+			// - The user's certificate
+			this.SignatureFile = Storage.StoreFile(signatureContent, ".pdf");
 			this.Certificate = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
 
 			Server.Transfer("PadesSignatureInfo.aspx");
