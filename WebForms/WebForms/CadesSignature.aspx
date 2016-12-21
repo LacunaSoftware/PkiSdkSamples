@@ -1,16 +1,16 @@
-﻿<%@ Page Title="Xml Element Signature" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="XmlElementSignature.aspx.cs" Inherits="WebForms.XmlElementSignature" %>
+﻿<%@ Page Title="Cades Signature" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CadesSignature.aspx.cs" Inherits="WebForms.CadesSignature" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 
-	<h2>Xml Element Signature</h2>	
+	<h2>CAdES Signature</h2>
 
 	<asp:ValidationSummary runat="server" CssClass="text-danger" />
 
 	<asp:Panel ID="signatureControlsPanel" runat="server">
 		<label>File to sign</label>
-		<p>You are signing the <i>infNFe</i> node of <a href='/Content/SampleNFe.xml'>this sample XML</a>.</p>
+		<p>You'll be signing <a href='/Content/SampleDocument.pdf'>this sample document</a>.</p>
 
-		<%-- Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see javascript below). --%>
+		<%-- Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see Script/signature-forms.js). --%>
 		<div class="form-group">
 			<label for="certificateSelect">Selecione um certificado</label>
 			<select id="certificateSelect" class="form-control"></select>
@@ -26,15 +26,11 @@
 	</asp:Panel>
 
 	<%--
-		Hidden fields used to store state between the signature steps
-	--%>
-	<asp:HiddenField runat="server" ID="TransferDataField" />
-
-	<%--
 		Hidden fields used to pass data from the "code behind" to the "signature form" javascript (see below) and vice-versa 
 	--%>
 	<asp:HiddenField runat="server" ID="CertThumbField" />
 	<asp:HiddenField runat="server" ID="CertContentField" />
+	<asp:HiddenField runat="server" ID="ToSignBytesField" />
 	<asp:HiddenField runat="server" ID="ToSignHashField" />
 	<asp:HiddenField runat="server" ID="DigestAlgorithmField" />
 	<asp:HiddenField runat="server" ID="SignatureField" />
@@ -50,7 +46,7 @@
 	<asp:Button ID="SubmitSignatureButton" runat="server" OnClick="SubmitSignatureButton_Click" Style="display: none;" />
 
 	<%-- TryAgain button, that'll be showed only if some error occured in "code-behind" actions. --%>
-	<asp:HyperLink ID="TryAgainButton" runat="server" href="XmlElementSignature" class="btn btn-default" Text="Try Again" style="display: none;" />
+	<asp:HyperLink ID="TryAgainButton" runat="server" href="CadesSignature" class="btn btn-default" Text="Try Again" style="display: none;" />
 
 	<script>
 		<%--
@@ -71,7 +67,7 @@
 				digestAlgorithmField: $('#<%= DigestAlgorithmField.ClientID %>'),
 				signatureField: $('#<%= SignatureField.ClientID %>'),
 				formIsValid: $('#<%= FormIsValidField.ClientID %>'),
-				<%-- Try Again Button for the case the complete action not works or the signature process is canceled --%>
+				<%-- Reference to TryAgainButton for the case the complete action not works or the signature process is canceled --%>
 				tryAgainButton: $('#<%= TryAgainButton.ClientID %>')
 			});
 		});

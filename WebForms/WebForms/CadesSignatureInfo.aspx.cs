@@ -7,7 +7,8 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 
 namespace WebForms {
-	public partial class XmlElementSignatureInfo : System.Web.UI.Page {
+
+	public partial class CadesSignatureInfo : System.Web.UI.Page {
 
 		protected string signatureFile { get; private set; }
 		protected PKCertificate certificate { get; private set; }

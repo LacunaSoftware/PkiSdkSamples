@@ -11,7 +11,7 @@ using WebForms.Classes;
 namespace WebForms {
 	public partial class XmlElementSignature : System.Web.UI.Page {
 
-		public string File { get; private set; }
+		public string SignatureFile { get; private set; }
 		public PKCertificate Certificate { get; private set; }
 
 		protected void Page_Load(object sender, EventArgs e) {
@@ -39,7 +39,7 @@ namespace WebForms {
 				// Set the signature policy
 				signer.SetPolicy(getSignaturePolicy());
 
-				// Generate the "to-sign-hash-bytes". This method also yields the signature algorithm that must
+				// Generate the "to-sign-hash". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
 				toSignHash = signer.GenerateToSignHash(out signatureAlg, out transferData);
 
@@ -50,10 +50,16 @@ namespace WebForms {
 				return;
 			}
 
+			// On the next step (SubmitSignatureButton_Click action), we'll need once again some information:
+			// - The "to-sign-hash"
+			// - The "to-sign-bytes" passed by TransferData field
+			// - The OID of the digest algorithm to be used during the signature operation
+			// We'll set the hidden fields on this page, that'll be loaded again.
 			ToSignHashField.Value = Convert.ToBase64String(toSignHash);
-			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 			TransferDataField.Value = Convert.ToBase64String(transferData);
+			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 
+			// We'll hide the signatureControlPanel, because it's unnecessary on the next steps of the signature.
 			signatureControlsPanel.Visible = false;
 		}
 
@@ -62,13 +68,14 @@ namespace WebForms {
 			byte[] signatureContent;
 
 			try {
+
 				var signer = new XmlElementSigner();
 
-				// Set the document to be signed and the policy, exactly like in the Start method
+				// Set the document to be signed and the policy, exactly like in the previous action (SubmitCertificateButton_Click)
 				signer.SetXml(Storage.GetSampleNFeContent());
 				signer.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
+				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the page
 				signer.SetPrecomputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(TransferDataField.Value));
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
@@ -80,14 +87,15 @@ namespace WebForms {
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
 				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
+				// Set hidden field to indicate in signature-forms.js that the signature failed here.
+				FormIsValidField.Value = Convert.ToString(false);
 				return;
 			}
 
-			// Store the signature file on the folder "App_Data/" and redirects to the XmlElementSignatureInfo action with the filename.
-			// With this filename, it can show a link to download the signature file.
-			this.File = Storage.StoreFile(signatureContent, ".xml");
-
-			// Pass user's PKCertificate to be rendered in XmlElementSignatureInfo page
+			// Pass the following fields to be used on CadesSignatureInfo page:
+			// - The signature file will be stored on the folder "App_Data/". Its name will be passed by SignatureFile field.
+			// - The user's certificate
+			this.SignatureFile = Storage.StoreFile(signatureContent, ".xml");
 			this.Certificate = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
 
 			Server.Transfer("XmlElementSignatureInfo.aspx");

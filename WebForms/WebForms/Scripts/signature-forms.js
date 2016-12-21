@@ -132,6 +132,12 @@ var signatureForm = (function () {
 
 		isSigning = (formElements.toSignHashField.val() !== null && formElements.toSignHashField.val() !== '');
 
+		isValid = !(formElements.formIsValid.val() == 'False');
+		if (!isValid) {
+			formElements.tryAgainButton.show();
+			return;
+		}
+
 		// Block the UI while we get things ready
 		$.blockUI({ message: isSigning ? 'Assinando ...' : 'Inicializando ...' });
 

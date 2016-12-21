@@ -124,10 +124,13 @@
   <ItemGroup>
     <Content Include="Authentication.aspx" />
     <Content Include="AuthenticationSuccess.aspx" />
+    <Content Include="CadesSignature.aspx" />
+    <Content Include="CadesSignatureInfo.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\SampleNFe.xml" />
     <Content Include="Content\Site.css" />
     <Content Include="Download.aspx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -144,6 +147,7 @@
     </Content>
     <Content Include="XmlElementSignature.aspx" />
     <Content Include="XmlElementSignatureInfo.aspx" />
+    <Content Include="Content\SampleDocument.pdf" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -215,6 +219,21 @@
     <Compile Include="AuthenticationSuccess.aspx.designer.cs">
       <DependentUpon>AuthenticationSuccess.aspx</DependentUpon>
     </Compile>
+    <Compile Include="CadesSignature.aspx.cs">
+      <DependentUpon>CadesSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CadesSignature.aspx.designer.cs">
+      <DependentUpon>CadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CadesSignatureInfo.aspx.cs">
+      <DependentUpon>CadesSignatureInfo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CadesSignatureInfo.aspx.designer.cs">
+      <DependentUpon>CadesSignatureInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Default.aspx.cs">

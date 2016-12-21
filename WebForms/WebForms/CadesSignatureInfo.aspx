@@ -1,8 +1,8 @@
-﻿<%@ Page Title="Xml Element Signature" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="XmlElementSignatureInfo.aspx.cs" Inherits="WebForms.XmlElementSignatureInfo" %>
-<%@ PreviousPageType VirtualPath="~/XmlElementSignature.aspx" %>
+﻿<%@ Page Title="Cades Signature" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="CadesSignatureInfo.aspx.cs" Inherits="WebForms.CadesSignatureInfo" %>
+<%@ PreviousPageType VirtualPath="~/CadesSignature.aspx" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
-	<h2>Xml Element Signature</h2>
+	<h2>CAdES Signature</h2>
 
 	<p>File signed successfully! <a href="Download?file=<%= signatureFile.Replace(".", "_") %>">Click here to download the signed file</a></p>
 

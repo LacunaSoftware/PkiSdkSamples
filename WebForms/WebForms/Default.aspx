@@ -15,13 +15,13 @@
 			<li><a href="/Upload?rc=OpenPadesSignature">Open/validate an existing signature</a></li>
 		</ul>
 		</li>--%>
-		<%--<li>CAdES signature
+		<li>CAdES signature
 		<ul>
 			<li><a runat="server" href="~/CadesSignature">Create a signature with a file already on server</a></li>
-			<li><a href="/Upload?rc=CadesSignature">Create a signature with a file uploaded by user</a></li>
-			<li><a href="/Upload?rc=OpenCadesSignature">Open/validate an existing CAdES signature</a></li>
+			<%--<li><a href="/Upload?rc=CadesSignature">Create a signature with a file uploaded by user</a></li>
+			<li><a href="/Upload?rc=OpenCadesSignature">Open/validate an existing CAdES signature</a></li>--%>
 		</ul>
-		</li>--%>
+		</li>
 		<li>XML signature
 		<ul>
 			<%--<li><a href="/XmlFullSignature">Create a full XML signature (enveloped signature)</a></li>--%>
