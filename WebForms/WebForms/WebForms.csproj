@@ -124,6 +124,7 @@
   <ItemGroup>
     <Content Include="Authentication.aspx" />
     <Content Include="AuthenticationSuccess.aspx" />
+    <Content Include="BatchSignature.aspx" />
     <Content Include="CadesSignature.aspx" />
     <Content Include="CadesSignatureInfo.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -148,9 +149,21 @@
     </Content>
     <Content Include="PadesSignature.aspx" />
     <Content Include="PadesSignatureInfo.aspx" />
+    <Content Include="Scripts\App\signature-form.js" />
+    <Content Include="Scripts\App\authentication-form.js" />
     <Content Include="XmlElementSignature.aspx" />
     <Content Include="XmlElementSignatureInfo.aspx" />
     <Content Include="Content\SampleDocument.pdf" />
+    <Content Include="Content\01.pdf" />
+    <Content Include="Content\02.pdf" />
+    <Content Include="Content\03.pdf" />
+    <Content Include="Content\04.pdf" />
+    <Content Include="Content\05.pdf" />
+    <Content Include="Content\06.pdf" />
+    <Content Include="Content\07.pdf" />
+    <Content Include="Content\08.pdf" />
+    <Content Include="Content\09.pdf" />
+    <Content Include="Content\10.pdf" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -166,7 +179,7 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
-    <Content Include="Scripts\signature-forms.js" />
+    <Content Include="Scripts\App\batch-signature-form.js" />
     <Content Include="Scripts\WebForms\DetailsView.js" />
     <Content Include="Scripts\WebForms\Focus.js" />
     <Content Include="Scripts\WebForms\GridView.js" />
@@ -221,6 +234,13 @@
     </Compile>
     <Compile Include="AuthenticationSuccess.aspx.designer.cs">
       <DependentUpon>AuthenticationSuccess.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BatchSignature.aspx.cs">
+      <DependentUpon>BatchSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BatchSignature.aspx.designer.cs">
+      <DependentUpon>BatchSignature.aspx</DependentUpon>
     </Compile>
     <Compile Include="CadesSignature.aspx.cs">
       <DependentUpon>CadesSignature.aspx</DependentUpon>

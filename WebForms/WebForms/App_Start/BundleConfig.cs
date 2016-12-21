@@ -51,8 +51,16 @@ namespace WebForms {
 				DebugPath = "~/Scripts/lacuna-web-pki-2.5.0.js",
 			});
 
-			ScriptManager.ScriptResourceMapping.AddDefinition("SignatureForms", new ScriptResourceDefinition {
-				Path = "~/Scripts/signature-forms.js"
+			ScriptManager.ScriptResourceMapping.AddDefinition("AuthenticationForm", new ScriptResourceDefinition {
+				Path = "~/Scripts/App/authentication-form.js"
+			});
+
+			ScriptManager.ScriptResourceMapping.AddDefinition("SignatureForm", new ScriptResourceDefinition {
+				Path = "~/Scripts/App/signature-form.js"
+			});
+
+			ScriptManager.ScriptResourceMapping.AddDefinition("BatchSignatureForm", new ScriptResourceDefinition {
+				Path = "~/Scripts/App/batch-signature-form.js"
 			});
 		}
 	}
