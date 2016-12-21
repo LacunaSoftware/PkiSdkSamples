@@ -147,7 +147,7 @@ namespace WebForms {
 
 			}
 
-			Session["TransferData"] = transferData;
+			TransferDataFileId.Value = Storage.StoreFile(transferData);
 			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
 			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 		}
@@ -158,20 +158,16 @@ namespace WebForms {
 
 			try {
 
+				var transferData = Storage.GetFile(TransferDataFileId.Value);
+				Storage.DeleteFile(TransferDataFileId.Value);
+
 				var padesSigner = new PadesSigner();
 
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				var signature = Convert.FromBase64String(SignatureField.Value);
-				if (DocumentIndex == 4) {
-					signature[0] = 0;
-					signature[1] = 0;
-					signature[2] = 0;
-				}
-
 				// Set the signature computed on the client-side, along with the "transfer data" recovered from the database
-				padesSigner.SetPreComputedSignature(signature, (byte[])Session["TransferData"]);
+				padesSigner.SetPreComputedSignature(Convert.FromBase64String(SignatureField.Value), transferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
 				padesSigner.ComputeSignature();

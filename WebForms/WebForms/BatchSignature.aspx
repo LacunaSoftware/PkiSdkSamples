@@ -41,6 +41,7 @@
 			</asp:Panel>
 
 			<asp:HiddenField runat="server" ID="DocumentIndexField" />
+			<asp:HiddenField runat="server" ID="TransferDataFileId" />
 
 			<asp:HiddenField runat="server" ID="CertThumbField" />
 			<asp:HiddenField runat="server" ID="CertContentField" />
