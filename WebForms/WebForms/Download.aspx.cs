@@ -24,7 +24,7 @@ namespace WebForms {
 				Response.Redirect("~/");
 			}
 
-			var filename = fileId + extension;
+			var filename = "download" + extension;
 			Response.ContentType = MimeMapping.GetMimeMapping(filename);
 			Response.AddHeader("Content-Disposition", "attachment; filename=" + filename);
 			Response.BinaryWrite(content);
