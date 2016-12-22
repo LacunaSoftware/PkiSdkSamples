@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="Batch Signature" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="BatchSignature.aspx.cs" Inherits="WebForms.BatchSignature" %>
 
 <%--
-	This page used the Javascript module "batch signature form" (see file Scripts/Apps/batch-signature-form.js). That javascript is only a sample,
+	This page uses the Javascript module "batch signature form" (see file Scripts/Apps/batch-signature-form.js). That javascript is only a sample,
 	you are encouraged to alter it to meet your application's needs.
 --%>
 
