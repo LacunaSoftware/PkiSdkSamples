@@ -116,7 +116,7 @@ namespace WebForms {
 			try {
 
 				// Decode the user's certificate
-				var cert = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
+				var cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
 
 				// Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();
@@ -186,7 +186,7 @@ namespace WebForms {
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "transfer data" recovered from the database
+				// Set the signature computed on the client-side, along with the "transfer data"
 				padesSigner.SetPreComputedSignature(Convert.FromBase64String(SignatureField.Value), transferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
@@ -245,17 +245,7 @@ namespace WebForms {
 		 *	This method defines the signature policy that will be used on the signature.
 		 */
 		private IPadesPolicyMapper getSignaturePolicy() {
-
-			var policy = PadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
-
-#if DEBUG
-			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
-			// corresponds to the ICP-Brasil roots only), with our custom trust arbitrator which accepts test certificates
-			// (see Util.GetTrustArbitrator())
-			return new PadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
-#else
-			return policy;
-#endif
+			return PadesPoliciesForGeneration.GetPadesBasic(Util.GetTrustArbitrator());
 		}
 
 		/*

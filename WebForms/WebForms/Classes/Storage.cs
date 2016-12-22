@@ -77,5 +77,9 @@ namespace WebForms.Classes {
 		public static byte[] GetBatchDocContent(int id) {
 			return File.ReadAllBytes(Path.Combine(ContentPath, string.Format("{0:D2}.pdf", ((id - 1) % 10) + 1)));
 		}
+
+		public static byte[] GetSampleCadesSignatureOfPdf() {
+			return File.ReadAllBytes(Path.Combine(ContentPath, "SamplePdfSigned.p7s"));
+		}
 	}
 }

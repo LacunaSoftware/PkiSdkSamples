@@ -58,7 +58,7 @@
 			<%--
 				Hidden fields used to pass data from the code-behind to the javascript and vice-versa 
 			--%>
-			<asp:HiddenField runat="server" ID="CertContentField" />
+			<asp:HiddenField runat="server" ID="CertificateField" />
 			<asp:HiddenField runat="server" ID="ToSignHashField" />
 			<asp:HiddenField runat="server" ID="DigestAlgorithmField" />
 			<asp:HiddenField runat="server" ID="SignatureField" />
@@ -108,7 +108,7 @@
 				submitSignatureButton: $('#<%= SubmitSignatureButton.ClientID %>'),
 
 				<%-- Hidden fields to pass data to and from the code-behind --%>
-				certContentField: $('#<%= CertContentField.ClientID %>'),
+				certificateField: $('#<%= CertificateField.ClientID %>'),
 				toSignHashField: $('#<%= ToSignHashField.ClientID %>'),
 				digestAlgorithmField: $('#<%= DigestAlgorithmField.ClientID %>'),
 				signatureField: $('#<%= SignatureField.ClientID %>')
