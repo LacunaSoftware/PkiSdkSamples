@@ -149,6 +149,7 @@
     </Content>
     <Content Include="PadesSignature.aspx" />
     <Content Include="PadesSignatureInfo.aspx" />
+    <Content Include="PdfMarksFromCades.aspx" />
     <Content Include="Scripts\App\signature-form.js" />
     <Content Include="Scripts\App\authentication-form.js" />
     <Content Include="XmlElementSignature.aspx" />
@@ -289,6 +290,13 @@
     </Compile>
     <Compile Include="PadesSignatureInfo.aspx.designer.cs">
       <DependentUpon>PadesSignatureInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PdfMarksFromCades.aspx.cs">
+      <DependentUpon>PdfMarksFromCades.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PdfMarksFromCades.aspx.designer.cs">
+      <DependentUpon>PdfMarksFromCades.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
