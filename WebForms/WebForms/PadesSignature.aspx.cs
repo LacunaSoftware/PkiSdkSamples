@@ -79,6 +79,7 @@ namespace WebForms {
 				// We won't be needing the "transfer data" anymore, so we delete it
 				Storage.DeleteFile(TransferDataFileIdField.Value);
 
+				// Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();
 
 				// Set the signature policy, exactly like in the Start method
@@ -101,7 +102,7 @@ namespace WebForms {
 				return;
 			}
 
-			// Pass the following fields to be used on CadesSignatureInfo page:
+			// Pass the following fields to be used on PadesSignatureInfo page:
 			// - The signature file will be stored on the folder "App_Data/". Its name will be passed by SignatureFile field.
 			// - The user's certificate
 			this.SignatureFile = Storage.StoreFile(signatureContent, ".pdf");
@@ -114,17 +115,7 @@ namespace WebForms {
 		 *	This method defines the signature policy that will be used on the signature.
 		 */
 		private IPadesPolicyMapper getSignaturePolicy() {
-
-			var policy = PadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
-
-#if DEBUG
-			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
-			// corresponds to the ICP-Brasil roots only), with our custom trust arbitrator which accepts test certificates
-			// (see Util.GetTrustArbitrator())
-			return new PadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
-#else
-			return policy;
-#endif
+			return PadesPoliciesForGeneration.GetPadesBasic(Util.GetTrustArbitrator());
 		}
 
 		/*

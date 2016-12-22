@@ -257,7 +257,6 @@
       <DependentUpon>CadesSignatureInfo.aspx</DependentUpon>
     </Compile>
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
-    <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Default.aspx.cs">

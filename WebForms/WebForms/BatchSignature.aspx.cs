@@ -245,17 +245,7 @@ namespace WebForms {
 		 *	This method defines the signature policy that will be used on the signature.
 		 */
 		private IPadesPolicyMapper getSignaturePolicy() {
-
-			var policy = PadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
-
-#if DEBUG
-			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
-			// corresponds to the ICP-Brasil roots only), with our custom trust arbitrator which accepts test certificates
-			// (see Util.GetTrustArbitrator())
-			return new PadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
-#else
-			return policy;
-#endif
+			return PadesPoliciesForGeneration.GetPadesBasic(Util.GetTrustArbitrator());
 		}
 
 		/*
