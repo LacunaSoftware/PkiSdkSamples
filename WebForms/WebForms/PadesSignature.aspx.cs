@@ -26,7 +26,7 @@ namespace WebForms {
 			try {
 
 				// Decode the user's certificate
-				var cert = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
+				var cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
 
 				// Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();
@@ -40,38 +40,8 @@ namespace WebForms {
 				// Set the signature policy
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature's visual representation options (this is optional). For more information, see
-				// http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
-				var visual = new PadesVisualRepresentation2() {
-
-					// Text of the visual representation
-					Text = new PadesVisualText() {
-
-						// Compose the message
-						CustomText = String.Format("Assinado digitalmente por {0}", cert.SubjectDisplayName),
-
-						// Specify that the signing time should also be rendered
-						IncludeSigningTime = true,
-
-						// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
-						HorizontalAlign = PadesTextHorizontalAlign.Left
-					},
-					// Background image of the visual representation
-					Image = new PadesVisualImage() {
-
-						// We'll use the image in Content/PdfStamp.png
-						Content = Storage.GetPdfStampContent(),
-
-						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-						Opacity = 70,
-
-						// Align the image to the right
-						HorizontalAlign = PadesHorizontalAlign.Right
-					},
-					// Set the position of the visual representation
-					Position = PadesVisualAutoPositioning.GetFootnote()
-				};
-				padesSigner.SetVisualRepresentation(visual);
+				// Set the signature's visual representation options (optional)
+				padesSigner.SetVisualRepresentation(getVisualRepresentation(cert));
 
 				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy, as well as the "transfer data",
@@ -85,17 +55,16 @@ namespace WebForms {
 				return;
 			}
 
-			// On the next step (SubmitSignatureButton_Click action), we'll need once again some information:
-			// - The "to-sign-hash" (digest of the "to-sign-bytes")
-			// - The "transfer data"
-			// - The OID of the digest algorithm to be used during the signature operation
-			// We'll set the hidden fields on this page, that'll be loaded again.
-			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
-			TransferDataField.Value = Convert.ToBase64String(transferData);
-			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
+			// The "transfer data" for PDF signatures can be as large as the original PDF itself. Therefore, we mustn't use a hidden field
+			// on the page to store it. Here we're using our storage mock (see file Classes\Storage.cs) to simulate storing the transfer data
+			// on a database and saving on a hidden field on the page only the ID that can be used later to retrieve it. Another option would
+			// be to store the transfer data on the Session dictionary.
+			TransferDataFileIdField.Value = Storage.StoreFile(transferData);
 
-			// We'll hide the signatureControlPanel, because it's unnecessary on the next steps of the signature.
-			signatureControlsPanel.Visible = false;
+			// Send to the javascript the "to sign hash" of the document (digest of the "to-sign-bytes") and the digest algorithm that must
+			// be used on the signature algorithm computation
+			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
+			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 		}
 
 		protected void SubmitSignatureButton_Click(object sender, EventArgs e) {
@@ -104,13 +73,19 @@ namespace WebForms {
 
 			try {
 
+				// Retrieve the "transfer data" stored on the initial step (see method startNextSignature())
+				var transferData = Storage.GetFile(TransferDataFileIdField.Value);
+
+				// We won't be needing the "transfer data" anymore, so we delete it
+				Storage.DeleteFile(TransferDataFileIdField.Value);
+
 				var padesSigner = new PadesSigner();
 
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "transfer data" recovered from the page
-				padesSigner.SetPreComputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(TransferDataField.Value));
+				// Set the signature computed on the client-side, along with the "transfer data"
+				padesSigner.SetPreComputedSignature(Convert.FromBase64String(SignatureField.Value), transferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
 				padesSigner.ComputeSignature();
@@ -121,8 +96,8 @@ namespace WebForms {
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
 				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
-				// Set hidden field to indicate in signature-forms.js that the signature failed here.
-				FormIsValidField.Value = Convert.ToString(false);
+				CertificateField.Value = "";
+				ToSignHashField.Value = "";
 				return;
 			}
 
@@ -130,7 +105,7 @@ namespace WebForms {
 			// - The signature file will be stored on the folder "App_Data/". Its name will be passed by SignatureFile field.
 			// - The user's certificate
 			this.SignatureFile = Storage.StoreFile(signatureContent, ".pdf");
-			this.Certificate = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
+			this.Certificate = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
 
 			Server.Transfer("PadesSignatureInfo.aspx");
 		}
@@ -150,6 +125,43 @@ namespace WebForms {
 #else
 			return policy;
 #endif
+		}
+
+		/*
+			This method defines the visual representation for each signature. For more information, see
+			http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
+		 */
+		private PadesVisualRepresentation2 getVisualRepresentation(PKCertificate cert) {
+
+			return new PadesVisualRepresentation2() {
+
+				// Text of the visual representation
+				Text = new PadesVisualText() {
+
+					// used to compose the message
+					CustomText = String.Format("Digitally signed by {0}", cert.SubjectName.CommonName),
+
+					// Specify that the signing time should also be rendered
+					IncludeSigningTime = true,
+
+					// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
+					HorizontalAlign = PadesTextHorizontalAlign.Left
+				},
+				// Background image of the visual representation
+				Image = new PadesVisualImage() {
+
+					// We'll use as background the image in Content/PdfStamp.png
+					Content = Storage.GetPdfStampContent(),
+
+					// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
+					Opacity = 70,
+
+					// Align the image to the right
+					HorizontalAlign = PadesHorizontalAlign.Right
+				},
+				// Set the position of the visual representation
+				Position = PadesVisualAutoPositioning.GetFootnote()
+			};
 		}
 	}
 }

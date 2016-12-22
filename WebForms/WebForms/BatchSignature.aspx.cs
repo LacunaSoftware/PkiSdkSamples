@@ -186,7 +186,7 @@ namespace WebForms {
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "transfer data" recovered from the database
+				// Set the signature computed on the client-side, along with the "transfer data"
 				padesSigner.SetPreComputedSignature(Convert.FromBase64String(SignatureField.Value), transferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
