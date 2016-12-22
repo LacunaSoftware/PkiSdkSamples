@@ -116,7 +116,7 @@ namespace WebForms {
 			try {
 
 				// Decode the user's certificate
-				var cert = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
+				var cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
 
 				// Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();

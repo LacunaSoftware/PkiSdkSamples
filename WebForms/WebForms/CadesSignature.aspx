@@ -4,83 +4,104 @@
 
 	<h2>CAdES Signature</h2>
 
-	<asp:ValidationSummary runat="server" CssClass="text-danger" />
-
-	<asp:Panel ID="signatureControlsPanel" runat="server">
-		<label>File to sign</label>
-		<p>You'll be signing <a href='/Content/SampleDocument.pdf'>this sample document</a>.</p>
-
-		<%-- Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see Script/signature-forms.js). --%>
-		<div class="form-group">
-			<label for="certificateSelect">Selecione um certificado</label>
-			<select id="certificateSelect" class="form-control"></select>
-		</div>
-
-		<%--
-			Action buttons. Notice that both buttons have a OnClientClick attribute, which calls the
-			client-side javascript functions "sign" and "refresh" below. Both functions return false,
-			which prevents the postback.
-		--%>
-		<asp:Button ID="SignButton" runat="server" class="btn btn-primary" Text="Assinar" OnClientClick="return sign();" />
-		<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Recarregar certificados" OnClientClick="return refresh();" />
-	</asp:Panel>
-
 	<%--
-		Hidden fields used to pass data from the "code behind" to the "signature form" javascript (see below) and vice-versa 
+		UpdatePanel used to refresh only this part of the page. This is used to send the selected certificate's encoding to the
+		code-behind and receiving back the parameters for the signature algorithm computation.
 	--%>
-	<asp:HiddenField runat="server" ID="CertThumbField" />
-	<asp:HiddenField runat="server" ID="CertContentField" />
-	<asp:HiddenField runat="server" ID="ToSignBytesField" />
-	<asp:HiddenField runat="server" ID="ToSignHashField" />
-	<asp:HiddenField runat="server" ID="DigestAlgorithmField" />
-	<asp:HiddenField runat="server" ID="SignatureField" />
-	<asp:HiddenField runat="server" ID="FormIsValidField" />
+	<asp:UpdatePanel runat="server">
+		<ContentTemplate>
+
+			<asp:ValidationSummary runat="server" CssClass="text-danger" />
+
+			<%--
+				Hidden fields used to pass data from the code-behind to the javascript and vice-versa 
+			--%>
+			<asp:HiddenField runat="server" ID="CertificateField" />
+			<asp:HiddenField runat="server" ID="ToSignHashField" />
+			<asp:HiddenField runat="server" ID="DigestAlgorithmField" />
+			<asp:HiddenField runat="server" ID="SignatureField" />
+
+			<%--
+				Hidden fields used by the code-behind to save state between signature steps. These could be alternatively stored on server-side session,
+				since we don't need their values on the javascript
+			--%>
+			<asp:HiddenField runat="server" ID="ToSignBytesField" />
+
+			<%--
+				Hidden button whose click event is fired by the "signature form" javascript upon acquiring the
+				selected certificate's encoding. Notice that we cannot use Visible="False" otherwise ASP.NET
+				will omit the button altogether from the rendered page, making it impossible to programatically
+				"click" it. Notice also that this button is inside the UpdatePanel, triggerring only a partial postback.
+			--%>
+			<asp:Button ID="SubmitCertificateButton" runat="server" OnClick="SubmitCertificateButton_Click" Style="display: none;" />
+
+		</ContentTemplate>
+	</asp:UpdatePanel>
+
+	<label>File to sign</label>
+	<p>You'll be signing <a href='/Content/SampleDocument.pdf'>this sample document</a>.</p>
+
+	<%-- Render a select (combo box) to list the user's certificates. For now it will be empty, we'll populate it later on (see Script/signature-forms.js). --%>
+	<div class="form-group">
+		<label for="certificateSelect">Selecione um certificado</label>
+		<select id="certificateSelect" class="form-control"></select>
+	</div>
 
 	<%--
-		Hidden buttons whose click event is fired by the "signature form" javascript upon completion of
-		each step in the signature process. Notice that we cannot use Visible="False" otherwise ASP.NET
+		Action buttons. Notice that both buttons have a OnClientClick attribute, which calls the
+		client-side javascript functions "sign" and "refresh" below. Both functions return false,
+		which prevents the postback.
+	--%>
+	<asp:Button ID="SignButton" runat="server" class="btn btn-primary" Text="Assinar" OnClientClick="return sign();" />
+	<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Recarregar certificados" OnClientClick="return refresh();" />
+
+	<%--
+		Hidden button whose click event is fired by the "signature form" javascript upon completion of the
+		signature of the "to sign hash". Notice that we cannot use Visible="False" otherwise ASP.NET
 		will omit the button altogether from the rendered page, making it impossible to programatically
-		"click" it.
+		"click" it. Notice also that this button is out of the UpdatePanel, triggering a complete postback.
 	--%>
-	<asp:Button ID="SubmitCertificateButton" runat="server" OnClick="SubmitCertificateButton_Click" Style="display: none;" />
 	<asp:Button ID="SubmitSignatureButton" runat="server" OnClick="SubmitSignatureButton_Click" Style="display: none;" />
 
-	<%-- TryAgain button, that'll be showed only if some error occured in "code-behind" actions. --%>
-	<asp:HyperLink ID="TryAgainButton" runat="server" href="CadesSignature" class="btn btn-default" Text="Try Again" style="display: none;" />
-
 	<script>
+
 		<%--
-			Once the page is loaded, we'll call the init() function on the signature-form.js file passing references to
-			our page's elements and hidden fields
+			The function below is called by ASP.NET's javascripts when the page is loaded and also when the UpdatePanel above changes.
+			We'll call the pageLoaded() function on the "batch signature form" javascript module passing references to our page's elements and
+			hidden fields
 		--%>
-		$(function () {
-			signatureForm.init({
+		function pageLoad() {
+
+			signatureForm.pageLoad({
+
 				<%-- References to the certificate combo box and the div surrounding the combo box and the signature buttons --%>
 				certificateSelect: $('#certificateSelect'),
+
 				<%-- Hidden buttons to transfer the execution back to the server-side code behind --%>
 				submitCertificateButton: $('#<%= SubmitCertificateButton.ClientID %>'),
 				submitSignatureButton: $('#<%= SubmitSignatureButton.ClientID %>'),
+
 				<%-- Hidden fields to pass data to and from the server-side code-behind --%>
-				certThumbField: $('#<%= CertThumbField.ClientID %>'),
-				certContentField: $('#<%= CertContentField.ClientID %>'),
+				certificateField: $('#<%= CertificateField.ClientID %>'),
 				toSignHashField: $('#<%= ToSignHashField.ClientID %>'),
 				digestAlgorithmField: $('#<%= DigestAlgorithmField.ClientID %>'),
 				signatureField: $('#<%= SignatureField.ClientID %>'),
-				formIsValid: $('#<%= FormIsValidField.ClientID %>'),
-				<%-- Reference to TryAgainButton for the case the complete action not works or the signature process is canceled --%>
-				tryAgainButton: $('#<%= TryAgainButton.ClientID %>')
+
 			});
-		});
-		<%-- Client-side function called when the user clicks the "Sign In" button --%>
+		}
+
+		<%-- Client-side function called when the user clicks the "Sign" button --%>
 		function sign() {
 			signatureForm.startSignature();
 			return false; // prevent postback
 		}
+
 		<%-- Client-side function called when the user clicks the "Refresh" button --%>
 		function refresh() {
 			signatureForm.refresh();
 			return false; // prevent postback
 		}
+
 	</script>
 
 </asp:Content>
