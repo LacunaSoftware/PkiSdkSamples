@@ -1,29 +1,45 @@
-﻿var batchSignatureForm = (function () {
+﻿// -------------------------------------------------------------------------------------------------
+// Javascript module "batch signature form", used by the form BatchSignature.aspx
+// -------------------------------------------------------------------------------------------------
+var batchSignatureForm = (function () {
 
 	var pki = null;
 	var formElements = {};
 	var docCount = -1;
+	var selectedCertThumbprint = null;
 
 	// -------------------------------------------------------------------------------------------------
-	// Function called once the page is loaded
+	// Function called once the page is loaded or once the update panel with the hidden fields used to
+	// pass data to and from the code-behind is updated
 	// -------------------------------------------------------------------------------------------------
 	function pageLoad(fe) {
 
+		// We save the references to the form elements everytime this function is called, since the elements
+		// change when the UpdatePanel is updated
 		formElements = fe;
 
+		// We inspect the value of the toSignHashField hidden field to determine on which state we are
 		var toSignHash = formElements.toSignHashField.val();
 		if (toSignHash) {
 			if (toSignHash === '(end)') {
+				// If the toSignHashField is filled with the value "(end)", it means that the last document in the
+				// batch was processed. We simply unblock the UI and return.
 				$.unblockUI();
 			} else {
+				// If the toSignHashField is filled with any other value (but is not empty), we are in the middle
+				// of signing the batch's documents. That means we have already initialized the Web PKI component.
+				// We skip right to the sign() function, which signs the current batch document
 				sign();
 			}
 			return;
 		}
+		// If the toSignHashField is empty, we are at the very beginning of the process, and we need to initialize
+		// the Web PKI component and list user's certificates
 
 		// Block the UI while we get things ready
-		$.blockUI({ message: 'Inicializando ...' });
+		$.blockUI({ message: 'Initializing ...' });
 
+		// Create an instance of the LacunaWebPKI "object"
 		pki = new LacunaWebPKI();
 
 		// Call the init() method on the LacunaWebPKI object, passing a callback for when
@@ -37,6 +53,10 @@
 		});
 	}
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called by a inline javascript on the BatchSignature.aspx file informing the number of
+	// documents in the batch
+	// -------------------------------------------------------------------------------------------------
 	function setDocumentCount(count) {
 		docCount = count;
 	};
@@ -71,7 +91,7 @@
 
 			// function that will be called to get the text that should be displayed for each option
 			selectOptionFormatter: function (cert) {
-				return cert.subjectName + ' (validade: ' + cert.validityEnd.toDateString() + ', emissor: ' + cert.issuerName + ')';
+				return cert.subjectName + ' (expires on ' + cert.validityEnd.toDateString() + ', issued by ' + cert.issuerName + ')';
 			}
 
 		}).success(function () {
@@ -87,32 +107,53 @@
 	function start() {
 
 		// Block the UI while we perform the signature
-		$.blockUI({ message: 'Assinando ...' });
+		$.blockUI({ message: 'Signing ...' });
 
 		// Get the thumbprint of the selected certificate
-		var selectedCertThumbprint = formElements.certificateSelect.val();
-		formElements.certThumbField.val(selectedCertThumbprint);
+		selectedCertThumbprint = formElements.certificateSelect.val();
 
 		// Call Web PKI to preauthorize the signatures, so that the user only sees one confirmation dialog
 		pki.preauthorizeSignatures({
+
 			certificateThumbprint: selectedCertThumbprint,
 			signatureCount: docCount // number of signatures to be authorized by the user
+
 		}).success(function () {
+
+			// Read the selected certificate's encoding
 			pki.readCertificate(selectedCertThumbprint).success(function (certEncoded) {
+
+				// Fill the hidden field "certContentField" with the certificate encoding
 				formElements.certContentField.val(certEncoded);
+
+				// Fire up the click event of the button "SubmitCertificateButton" on BatchSignature.aspx's code-behind (server-side)
 				formElements.submitCertificateButton.click();
+
 			});
 		});
 	}
 
+	// -------------------------------------------------------------------------------------------------
+	// Function that signs the current document's "to sign hash" using the selected certificate
+	// -------------------------------------------------------------------------------------------------
 	function sign() {
+
+		// Call Web PKI passing the selected certificate, the document's "to sign hash" and the digest algorithm to be used
+		// during the signature algorithm
 		pki.signHash({
-			thumbprint: formElements.certThumbField.val(),
+
+			thumbprint: selectedCertThumbprint,
 			hash: formElements.toSignHashField.val(),
 			digestAlgorithm: formElements.digestAlgorithmField.val()
+
 		}).success(function (signature) {
+
+			// Fill the hidden field "signatureField" with the result of the signature algorithm
 			formElements.signatureField.val(signature);
+
+			// Fire up the click event of the button "SubmitSignatureButton" on BatchSignature.aspx's code-behind (server-side)
 			formElements.submitSignatureButton.click();
+
 		});
 	}
 

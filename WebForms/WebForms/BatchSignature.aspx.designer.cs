@@ -13,15 +13,6 @@ namespace WebForms {
     public partial class BatchSignature {
         
         /// <summary>
-        /// DocumentIdsField control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField DocumentIdsField;
-        
-        /// <summary>
         /// DocumentsListView control.
         /// </summary>
         /// <remarks>
@@ -58,33 +49,6 @@ namespace WebForms {
         protected global::System.Web.UI.WebControls.Button RefreshButton;
         
         /// <summary>
-        /// DocumentIndexField control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField DocumentIndexField;
-        
-        /// <summary>
-        /// TransferDataFileId control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField TransferDataFileId;
-        
-        /// <summary>
-        /// CertThumbField control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField CertThumbField;
-        
-        /// <summary>
         /// CertContentField control.
         /// </summary>
         /// <remarks>
@@ -119,6 +83,33 @@ namespace WebForms {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField SignatureField;
+        
+        /// <summary>
+        /// DocumentIdsField control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField DocumentIdsField;
+        
+        /// <summary>
+        /// DocumentIndexField control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField DocumentIndexField;
+        
+        /// <summary>
+        /// TransferDataFileIdField control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField TransferDataFileIdField;
         
         /// <summary>
         /// SubmitCertificateButton control.

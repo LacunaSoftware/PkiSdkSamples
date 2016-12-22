@@ -1,5 +1,6 @@
 ﻿using Lacuna.Pki;
 using Lacuna.Pki.Pades;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +13,19 @@ namespace WebForms {
 
 	public partial class BatchSignature : System.Web.UI.Page {
 
+		private static Logger logger = LogManager.GetCurrentClassLogger();
+
+		// Class used to display each of the batch's documents on the page
 		class DocumentItem {
 			public int Id { get; set; }
 			public string Error { get; set; }
 			public string DownloadLink { get; set; }
 		}
 
+		/*
+			We store the IDs of the batch's documents in the hidden field "DocumentIdsField". Since we don't need this data
+			on the Javascript, we could alternatively store it on the Session dictionary
+		 */
 		private List<int> _documentIds;
 		protected List<int> DocumentIds {
 			get {
@@ -32,6 +40,10 @@ namespace WebForms {
 			}
 		}
 
+		/*
+			We store the index of the document currently being signed on the hidden field "DocumentIndexField". Since we don't need
+			this data on the Javascript, we could alternatively store it on the Session dictionary
+		 */
 		private int _documentIndex;
 		protected int DocumentIndex {
 			get {
@@ -48,31 +60,54 @@ namespace WebForms {
 		}
 
 		protected void Page_Load(object sender, EventArgs e) {
+
 			if (!IsPostBack) {
-				DocumentIds = Enumerable.Range(1, 10).ToList();
+				
+				// It is up to your application's business logic to determine which documents will compose the batch
+				DocumentIds = Enumerable.Range(1, 10).ToList(); // from 1 to 30
+
+				// Populate the DocumentsListView with the batch documents
 				DocumentsListView.DataSource = DocumentIds.ConvertAll(i => new DocumentItem() { Id = i });
 				DocumentsListView.DataBind();
 			}
 		}
 
+		// The button "SubmitCertificateButton" is programmatically clicked by the Javascript on batch-signature-form.js when the
+		// selected certificate's encoding has been retrieved
 		protected void SubmitCertificateButton_Click(object sender, EventArgs e) {
-			DocumentIndex = -1;
+			
+			// Hide the certificate select (combo box) and the signature buttons
 			SignatureControlsPanel.Visible = false;
+			
+			// Start the signature of the first document in the batch
+			DocumentIndex = -1;
 			startNextSignature();
 		}
 
+		// The button "SubmitSignatureButton" is programmatically clicked by the Javascript on batch-signature-form.js when the
+		// "to sign hash" of the current document has been signed with the certificate's private key
 		protected void SubmitSignatureButton_Click(object sender, EventArgs e) {
+
+			// Complete the signature
 			completeSignature();
+
+			// Start the next signature
+			startNextSignature();
 		}
 
 		private void startNextSignature() {
 
+			// Increment the index of the document currently being signed
 			DocumentIndex += 1;
+
+			// Check if we have reached the end of the batch, in which case we fill the hidden field "ToSignHashField" with value "(end)",
+			// which signals to the javascript on batch-signature-form.js that the process is completed and the page can be unblocked.
 			if (DocumentIndex == DocumentIds.Count) {
 				ToSignHashField.Value = "(end)";
 				return;
 			}
 
+			// Get the ID of the document currently being signed
 			var docId = DocumentIds[DocumentIndex];
 
 			byte[] toSignBytes, transferData;
@@ -86,7 +121,7 @@ namespace WebForms {
 				// Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();
 
-				// Set the PDF to sign, which in the case of this example is a fixed sample document
+				// Set the PDF to sign
 				padesSigner.SetPdfToSign(Storage.GetBatchDocContent(docId));
 
 				// Set the signer certificate
@@ -95,38 +130,8 @@ namespace WebForms {
 				// Set the signature policy
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature's visual representation options (this is optional). For more information, see
-				// http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
-				var visual = new PadesVisualRepresentation2() {
-
-					// Text of the visual representation
-					Text = new PadesVisualText() {
-
-						// used to compose the message
-						CustomText = String.Format("Assinado digitalmente por {0}", cert.SubjectDisplayName),
-
-						// Specify that the signing time should also be rendered
-						IncludeSigningTime = true,
-
-						// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
-						HorizontalAlign = PadesTextHorizontalAlign.Left
-					},
-					// Background image of the visual representation
-					Image = new PadesVisualImage() {
-
-						// We'll use as background the image in Content/PdfStamp.png
-						Content = Storage.GetPdfStampContent(),
-
-						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-						Opacity = 70,
-
-						// Align the image to the right
-						HorizontalAlign = PadesHorizontalAlign.Right
-					},
-					// Set the position of the visual representation
-					Position = PadesVisualAutoPositioning.GetFootnote()
-				};
-				padesSigner.SetVisualRepresentation(visual);
+				// Set the signature's visual representation options (optional)
+				padesSigner.SetVisualRepresentation(getVisualRepresentation(cert));
 
 				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy, as well as the "transfer data",
@@ -135,19 +140,30 @@ namespace WebForms {
 
 			} catch (ValidationException ex) {
 
+				// One or more validations failed. We log the error, update the page with a summary of what happened to this document and start the next signature
+				logger.Error(ex, "Validation error starting the signature of a batch document");
 				setValidationError(ex.ValidationResults);
 				startNextSignature();
 				return;
 
 			} catch (Exception ex) {
 
+				// An error has occurred. We log the error, update the page with a summary of what happened to this document and start the next signature
+				logger.Error(ex, "Error starting the signature of a batch document");
 				setError(ex.Message);
 				startNextSignature();
 				return;
 
 			}
 
-			TransferDataFileId.Value = Storage.StoreFile(transferData);
+			// The "transfer data" for PDF signatures can be as large as the original PDF itself. Therefore, we mustn't use a hidden field
+			// on the page to store it. Here we're using our storage mock (see file Classes\Storage.cs) to simulate storing the transfer data
+			// on a database and saving on a hidden field on the page only the ID that can be used later to retrieve it. Another option would
+			// be to store the transfer data on the Session dictionary.
+			TransferDataFileIdField.Value = Storage.StoreFile(transferData);
+
+			// Send to the javascript the "to sign hash" of the document (digest of the "to-sign-bytes") and the digest algorithm that must
+			// be used on the signature algorithm computation
 			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
 			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 		}
@@ -158,9 +174,13 @@ namespace WebForms {
 
 			try {
 
-				var transferData = Storage.GetFile(TransferDataFileId.Value);
-				Storage.DeleteFile(TransferDataFileId.Value);
+				// Retrieve the "transfer data" stored on the initial step (see method startNextSignature())
+				var transferData = Storage.GetFile(TransferDataFileIdField.Value);
+				
+				// We won't be needing the "transfer data" anymore, so we delete it
+				Storage.DeleteFile(TransferDataFileIdField.Value);
 
+				// Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();
 
 				// Set the signature policy, exactly like in the Start method
@@ -177,36 +197,39 @@ namespace WebForms {
 
 			} catch (ValidationException ex) {
 
+				// One or more validations failed. We log the error and update the page with a summary of what happened to this document
+				logger.Error(ex, "Validation error completing the signature of a batch document");
 				setValidationError(ex.ValidationResults);
-				startNextSignature();
 				return;
 
 			} catch (Exception ex) {
 
+				// An error has occurred. We log the error and update the page with a summary of what happened to this document
+				logger.Error(ex, "Error completing the signature of a batch document");
 				setError(ex.Message);
-				startNextSignature();
 				return;
 
 			}
 
-			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
-			// With this filename, it can show a link to download the signature file.
+			// Store the signed file
 			var file = Storage.StoreFile(signatureContent, ".pdf");
 
+			// Update the page with a link to the signed file
 			var docItem = DocumentsListView.Items[DocumentIndex];
 			docItem.DataItem = new DocumentItem() {
 				Id = DocumentIds[DocumentIndex],
 				DownloadLink = "Download?file=" + file
 			};
 			docItem.DataBind();
-
-			startNextSignature();
 		}
-
 
 		private void setValidationError(ValidationResults vr) {
 			var message = "One or more validations failed: " + string.Join("; ", vr.Errors.Select(e => getDisplayText(e)));
 			setError(message);
+		}
+
+		private string getDisplayText(ValidationItem vi) {
+			return string.IsNullOrEmpty(vi.Detail) ? vi.Message : string.Format("{0} ({1})", vi.Message, vi.Detail);
 		}
 
 		private void setError(string message) {
@@ -216,10 +239,6 @@ namespace WebForms {
 				Error = message
 			};
 			docItem.DataBind();
-		}
-
-		private string getDisplayText(ValidationItem vi) {
-			return string.IsNullOrEmpty(vi.Detail) ? vi.Message : string.Format("{0} ({1})", vi.Message, vi.Detail);
 		}
 
 		/**
@@ -237,6 +256,43 @@ namespace WebForms {
 #else
 			return policy;
 #endif
+		}
+
+		/*
+			This method defines the visual representation for each signature. For more information, see
+			http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
+		 */
+		private PadesVisualRepresentation2 getVisualRepresentation(PKCertificate cert) {
+
+			return new PadesVisualRepresentation2() {
+
+				// Text of the visual representation
+				Text = new PadesVisualText() {
+
+					// used to compose the message
+					CustomText = String.Format("Digitally signed by {0}", cert.SubjectName.CommonName),
+
+					// Specify that the signing time should also be rendered
+					IncludeSigningTime = true,
+
+					// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
+					HorizontalAlign = PadesTextHorizontalAlign.Left
+				},
+				// Background image of the visual representation
+				Image = new PadesVisualImage() {
+
+					// We'll use as background the image in Content/PdfStamp.png
+					Content = Storage.GetPdfStampContent(),
+
+					// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
+					Opacity = 70,
+
+					// Align the image to the right
+					HorizontalAlign = PadesHorizontalAlign.Right
+				},
+				// Set the position of the visual representation
+				Position = PadesVisualAutoPositioning.GetFootnote()
+			};
 		}
 	}
 }
