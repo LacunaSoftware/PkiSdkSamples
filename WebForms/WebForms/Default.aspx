@@ -19,7 +19,7 @@
 			<li><a runat="server" href="~/CadesSignature">Create a signature with a file already on server</a></li>
 			<%--<li><a href="/Upload?rc=CadesSignature">Create a signature with a file uploaded by user</a></li>
 			<li><a href="/Upload?rc=OpenCadesSignature">Open/validate an existing CAdES signature</a></li>--%>
-			<li><a runat="server" href="~/PdfMarksFromCades">Create PDF marks from a signature</a></li>
+			<li><a runat="server" href="~/PdfMarksFromCades">Create a PDF with marks from its CAdES signature</a></li>
 		</ul>
 		</li>
 		<li>XML signature
