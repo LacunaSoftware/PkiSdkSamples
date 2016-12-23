@@ -1,6 +1,10 @@
 ﻿'use strict';
 app.controller('xmlElementSignatureController', ['$scope', '$http', 'blockUI', 'util', function ($scope, $http, blockUI, util) {
 
+	$scope.certificates = [];
+	$scope.selectedCertificate = null;
+
+	// Create an instance of the LacunaWebPKI "object"
 	var pki = new LacunaWebPKI();
 
 	// -------------------------------------------------------------------------------------------------
@@ -8,12 +12,18 @@ app.controller('xmlElementSignatureController', ['$scope', '$http', 'blockUI', '
 	// -------------------------------------------------------------------------------------------------
 	var init = function () {
 
+		// Block the UI while we get things ready
 		blockUI.start();
 
+		// Call the init() method on the LacunaWebPKI object, passing a callback for when
+		// the component is ready to be used and another to be called when an error occurrs
+		// on any of the subsequent operations. For more information, see:
+		// https://webpki.lacunasoftware.com/#/Documentation#coding-the-first-lines
+		// http://webpki.lacunasoftware.com/Help/classes/LacunaWebPKI.html#method_init
 		pki.init({
 			ready: loadCertificates,
-			defaultError: onWebPkiError,
-			angularScope: $scope
+			defaultError: onWebPkiError, // generic error callback
+			angularScope: $scope // Pass Angularjs scope for WebPKI
 		});
 
 	};
