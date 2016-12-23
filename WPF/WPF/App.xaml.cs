@@ -19,15 +19,12 @@ namespace SampleWpfApp {
 
 			Lacuna.Pki.NLogConnector.NLogLogger.Configure();
 
-			try {
-
-				// -----------------------------------------------------------------------------------------------------------
-				// SET YOUR BINARY LICENSE BELOW
-				PkiConfig.LoadLicense(Convert.FromBase64String("PASTE YOUR BASE64-ENCODED BINARY LICENSE HERE"));
-				//                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-				// -----------------------------------------------------------------------------------------------------------
-
-			} catch { }
+			// -----------------------------------------------------------------------------------------------------------
+			// SET YOUR BINARY LICENSE BELOW AND UNCOMMENT THE LINE
+			//
+			//PkiConfig.LoadLicense(Convert.FromBase64String("PASTE YOUR BASE64-ENCODED BINARY LICENSE HERE"));
+			//                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+			// -----------------------------------------------------------------------------------------------------------
 
 			/*
 				Notice: as explained in http://pki.lacunasoftware.com/Help/html/3deeb7ad-961e-4890-ab7a-893b16667689.htm#Programmatically ,

@@ -31,7 +31,8 @@ To run the project:
 
 	```
 	// -----------------------------------------------------------------------------------------------------------
-	// SET YOUR BINARY LICENSE BELOW
+	// SET YOUR BINARY LICENSE BELOW AND UNCOMMENT THE LINE
+	//
 	PkiConfig.LoadLicense(Convert.FromBase64String("AhAAebt1gVE2NEe+N+nchF42UVwAQlJJU0EgU09DSU..."));
 	//                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	// -----------------------------------------------------------------------------------------------------------
