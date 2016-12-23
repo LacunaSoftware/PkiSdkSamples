@@ -1,7 +1,7 @@
-Lacuna PKI SDK sample desktop app in WPF (Windows Presentation Foundation)
-==========================================================================
+Lacuna PKI SDK sample desktop app in WPF 
+========================================
 
-This folder contains a sample desktop application in WPF that shows how to use the
+This folder contains a sample desktop application in WPF (Windows Presentation Foundation) that shows how to use the
 [Lacuna PKI SDK](https://www.lacunasoftware.com/en/products/pki_sdk).
 
 For other technologies, please visit the [repository root](https://github.com/LacunaSoftware/PkiSdkSamples).
@@ -22,16 +22,18 @@ To run the project:
 3. On the TXT file of your PKI SDK license (`LacunaPkiLicense.txt`), locate the **base64-encoded binary license**, e.g.:
 
 	Binary license content (Base64-encoded)
-	---------------------------------------
+	\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
 	AhAAebt1gVE2NEe+N+nchF42UVwAQlJJU0EgU09DSU...
 
 4. Paste the base64-encoded binary license on the file `WPF\WPF\App.xaml.cs`, e.g.:
 
-	// -----------------------------------------------------------------------------------------------------------
-	// SET YOUR BINARY LICENSE BELOW
-	PkiConfig.LoadLicense(Convert.FromBase64String("AhAAebt1gVE2NEe+N+nchF42UVwAQlJJU0EgU09DSU..."));
-	//                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	// -----------------------------------------------------------------------------------------------------------
+```
+// -----------------------------------------------------------------------------------------------------------
+// SET YOUR BINARY LICENSE BELOW
+PkiConfig.LoadLicense(Convert.FromBase64String("AhAAebt1gVE2NEe+N+nchF42UVwAQlJJU0EgU09DSU..."));
+//                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+// -----------------------------------------------------------------------------------------------------------
+```
 
 5. Run the solution. Make sure your system allows automatic Nuget package restore (if it doesn't, manually restore the packages).
 
