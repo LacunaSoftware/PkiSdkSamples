@@ -8,6 +8,7 @@ namespace WebApi.Models {
 		public byte[] ToSignHash { get; set; }
 		public byte[] ToSignBytes { get; set; }
 		public byte[] TransferData { get; set; }
+		public string TransferDataFileId { get; set; }
 		public string DigestAlgorithmOid { get; set; }
 	}
 }

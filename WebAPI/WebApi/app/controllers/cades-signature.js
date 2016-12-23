@@ -1,7 +1,7 @@
 ﻿'use strict';
 app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util', function ($scope, $http, blockUI, util) {
 	
-	$scope.certificate = [];
+	$scope.certificates = [];
 	$scope.selectedCertificate = null;
 
 	// Create an instance of the LacunaWebPKI "object"
@@ -108,13 +108,13 @@ app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// -------------------------------------------------------------------------------------------------
 	// Function called once the server replies with the "to-sign-bytes"
 	// -------------------------------------------------------------------------------------------------
-	var onSignatureStartCompleted = function (certificate, response) {
+	var onSignatureStartCompleted = function (certificate, startResponse) {
 		pki.signData({
 			thumbprint: $scope.selectedCertificate.thumbprint,
-			data: response.toSignBytes,
-			digestAlgorithm: response.digestAlgorithmOid
+			data: startResponse.toSignBytes,
+			digestAlgorithm: startResponse.digestAlgorithmOid
 		}).success(function (signature) {
-			onSignDataCompleted(response.toSignBytes, certificate, signature);
+			onSignDataCompleted(startResponse.toSignBytes, certificate, signature);
 		});
 	};
 
@@ -133,11 +133,11 @@ app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called once the server replies with the signature filename and 
 	// the certificate of who signed it.
 	// -------------------------------------------------------------------------------------------------
-	var onSignatureCompleteCompleted = function (response) {
+	var onSignatureCompleteCompleted = function (completeResponse) {
 		blockUI.stop();
 
 		util.showMessage('Signature completed successfully!', 'Click OK to see details').result.then(function () {
-			util.showSignatureResults(response.data);
+			util.showSignatureResults(completeResponse.data);
 		});
 	};
 
