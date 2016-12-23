@@ -68,7 +68,7 @@ namespace WebApi.Controllers {
 				return new ResponseMessageResult(Request.CreateResponse(HttpStatusCode.BadRequest, new ValidationErrorModel(ex.ValidationResults)));
 			}
 
-			// Create response with some informations that we'll use on complete action and on client-side.
+			// Create response with some informations that we'll use on Complete action and on client-side.
 			var response = new SignatureStartResponse() {
 				// The "transfer data" for Xml signatyures are not so big. Therefore, we can easily send it as one of
 				// response fields.
@@ -93,7 +93,7 @@ namespace WebApi.Controllers {
 				// Instantiate a XmlElementSigner class
 				var signer = new XmlElementSigner();
 
-				// Set the document to be signed and the policy, exactly like in the Start method
+				// Set the document to be signed and the policy, exactly like in the Start action
 				signer.SetXml(Storage.GetSampleNFeContent());
 				signer.SetPolicy(getSignaturePolicy());
 
