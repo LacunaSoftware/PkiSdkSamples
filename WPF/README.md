@@ -26,7 +26,9 @@ To run the project:
 	---------------------------------------
 	AhAAebt1gVE2NEe+N+nchF42UVwAQlJJU0EgU09DSU...
 	```
+
 4. Paste the base64-encoded binary license on the file `WPF\WPF\App.xaml.cs`, e.g.:
+
 	```
 	// -----------------------------------------------------------------------------------------------------------
 	// SET YOUR BINARY LICENSE BELOW
@@ -34,6 +36,7 @@ To run the project:
 	//                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	// -----------------------------------------------------------------------------------------------------------
 	```
+
 5. Run the solution. Make sure your system allows automatic Nuget package restore (if it doesn't, manually restore the packages).
 
 See Also
