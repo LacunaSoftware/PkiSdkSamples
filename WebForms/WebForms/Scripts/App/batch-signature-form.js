@@ -9,32 +9,42 @@ var batchSignatureForm = (function () {
 	var selectedCertThumbprint = null;
 
 	// -------------------------------------------------------------------------------------------------
+	// Function called by a inline javascript on the BatchSignature.aspx file informing the number of
+	// documents in the batch
+	// -------------------------------------------------------------------------------------------------
+	function setDocumentCount(count) {
+		docCount = count;
+	}
+
+	// -------------------------------------------------------------------------------------------------
 	// Function called once the page is loaded or once the update panel with the hidden fields used to
 	// pass data to and from the code-behind is updated
 	// -------------------------------------------------------------------------------------------------
 	function pageLoad(fe) {
 
-		// We save the references to the form elements everytime this function is called, since the elements
+		// We update our references to the form elements everytime this function is called, since the elements
 		// change when the UpdatePanel is updated
 		formElements = fe;
 
-		// We inspect the value of the toSignHashField hidden field to determine on which state we are
-		var toSignHash = formElements.toSignHashField.val();
-		if (toSignHash) {
-			if (toSignHash === '(end)') {
-				// If the toSignHashField is filled with the value "(end)", it means that the last document in the
-				// batch was processed. We simply unblock the UI and return.
-				$.unblockUI();
-			} else {
-				// If the toSignHashField is filled with any other value (but is not empty), we are in the middle
-				// of signing the batch's documents. That means we have already initialized the Web PKI component.
-				// We skip right to the sign() function, which signs the current batch document
-				sign();
-			}
-			return;
+		if (pki === null) {
+			// If the Web PKI component is not initialized that means this is the initial load of the page (not a refresh
+			// of the update panel). Therefore, we initialize the Web PKI component and list the user's certificates
+			initPki();
+		} else if (formElements.toSignHashField.val() !== '(end)') {
+			// If the Web PKI is already initialized, this is a refresh of the update panel. If the hidden field "toSignHash"
+			// was filled by the code-behind with any value except "(end)", we go ahead and sign the current document.
+			sign();
+		} else {
+			// If the hidden field "toSignHash" is filled with the value "(end)", it means that the last document in the
+			// batch was processed. We simply unblock the UI and return.
+			$.unblockUI();
 		}
-		// If the toSignHashField is empty, we are at the very beginning of the process, and we need to initialize
-		// the Web PKI component and list user's certificates
+	}
+
+	// -------------------------------------------------------------------------------------------------
+	// Function that initializes the Web PKI component, called on the first load of the page
+	// -------------------------------------------------------------------------------------------------
+	function initPki() {
 
 		// Block the UI while we get things ready
 		$.blockUI({ message: 'Initializing ...' });
@@ -52,14 +62,6 @@ var batchSignatureForm = (function () {
 			defaultError: onWebPkiError // generic error callback on Content/js/app/site.js
 		});
 	}
-
-	// -------------------------------------------------------------------------------------------------
-	// Function called by a inline javascript on the BatchSignature.aspx file informing the number of
-	// documents in the batch
-	// -------------------------------------------------------------------------------------------------
-	function setDocumentCount(count) {
-		docCount = count;
-	};
 
 	// -------------------------------------------------------------------------------------------------
 	// Function called when the user clicks the "Refresh" button
@@ -123,8 +125,8 @@ var batchSignatureForm = (function () {
 			// Read the selected certificate's encoding
 			pki.readCertificate(selectedCertThumbprint).success(function (certEncoded) {
 
-				// Fill the hidden field "certContentField" with the certificate encoding
-				formElements.certContentField.val(certEncoded);
+				// Fill the hidden field "certificateField" with the certificate encoding
+				formElements.certificateField.val(certEncoded);
 
 				// Fire up the click event of the button "SubmitCertificateButton" on BatchSignature.aspx's code-behind (server-side)
 				formElements.submitCertificateButton.click();

@@ -1,28 +1,50 @@
-﻿var signatureForm = (function () {
+﻿// -------------------------------------------------------------------------------------------------
+// Javascript module "signature form", used by the following forms:
+// - CadesSignature.aspx
+// - PadesSignature.aspx
+// - XmlElementSignature.aspx
+// -------------------------------------------------------------------------------------------------
+var signatureForm = (function () {
 
 	var pki = null;
 	var formElements = {};
-	var selectedCertThumbprint = null;
-	var isSigning = false;
+	var selectedCertThumbprint = null;	
 
 	// -------------------------------------------------------------------------------------------------
-	// Function called once the page is loaded
+	// Function called once the page is loaded or once the update panel with the hidden fields used to
+	// pass data to and from the code-behind is updated
 	// -------------------------------------------------------------------------------------------------
-	function init(fe) {
+	function pageLoad(fe) {
 
+		// We update our references to the form elements everytime this function is called, since the elements
+		// change when the UpdatePanel is updated
 		formElements = fe;
 
-		isSigning = (formElements.toSignHashField.val() !== null && formElements.toSignHashField.val() !== '');
-
-		isValid = !(formElements.formIsValid.val() == 'False');
-		if (!isValid) {
-			formElements.tryAgainButton.show();
-			return;
+		if (pki === null) {
+			// If the Web PKI component is not initialized that means this is the initial load of the page (not a refresh
+			// of the update panel). Therefore, we initialize the Web PKI component and list the user's certificates
+			initPki();
+		} else if (formElements.toSignHashField.val()) {
+			// If the Web PKI is already initialized, this is a refresh of the update panel. If the hidden field "toSignHash"
+			// was filled on the code-behind, we go ahead and sign it
+			sign();
+		} else {
+			// If the Web PKI is already initialized but the hidden field "toSignHash" is empty, this is a refresh of the
+			// update panel but the signature could not be initiated on the code-behind (probably because of a validation error).
+			// Therefore, we just unblock the UI (which is was previously blocked by the sign() function).
+			$.unblockUI();
 		}
+	}
+
+	// -------------------------------------------------------------------------------------------------
+	// Function that initializes the Web PKI component, called on the first load of the page
+	// -------------------------------------------------------------------------------------------------
+	function initPki() {
 
 		// Block the UI while we get things ready
-		$.blockUI({ message: isSigning ? 'Assinando ...' : 'Inicializando ...' });
+		$.blockUI({ message: 'Initializing ...' });
 
+		// Create an instance of the LacunaWebPKI "object"
 		pki = new LacunaWebPKI();
 
 		// Call the init() method on the LacunaWebPKI object, passing a callback for when
@@ -31,19 +53,11 @@
 		// https://webpki.lacunasoftware.com/#/Documentation#coding-the-first-lines
 		// http://webpki.lacunasoftware.com/Help/classes/LacunaWebPKI.html#method_init
 		pki.init({
-			ready: onPkiInitialized, 
+			ready: loadCertificates,
 			defaultError: onWebPkiError // generic error callback on Content/js/app/site.js
 		});
 	}
-
-	function onPkiInitialized() {
-		if (isSigning) {
-			sign();
-		} else {
-			loadCertificates(); // as soon as the component is ready we'll load the certificates
-		}
-	}
-
+	
 	// -------------------------------------------------------------------------------------------------
 	// Function called when the user clicks the "Refresh" button
 	// -------------------------------------------------------------------------------------------------
@@ -74,7 +88,7 @@
 
 			// function that will be called to get the text that should be displayed for each option
 			selectOptionFormatter: function (cert) {
-				return cert.subjectName + ' (validade: ' + cert.validityEnd.toDateString() + ', emissor: ' + cert.issuerName + ')';
+				return cert.subjectName + ' (expires on ' + cert.validityEnd.toDateString() + ', issued by ' + cert.issuerName + ')';
 			}
 
 		}).success(function () {
@@ -90,26 +104,41 @@
 	function startSignature() {
 
 		// Block the UI while we perform the signature
-		$.blockUI({ message: 'Assinando ...' });
+		$.blockUI({ message: 'Signing ...' });
 
 		// Get the thumbprint of the selected certificate
-		var selectedCertThumbprint = formElements.certificateSelect.val();
-		formElements.certThumbField.val(selectedCertThumbprint);
+		selectedCertThumbprint = formElements.certificateSelect.val();
 
+		// Read the selected certificate's encoding
 		pki.readCertificate(selectedCertThumbprint).success(function (certEncoded) {
-			formElements.certContentField.val(certEncoded);
+
+			// Fill the hidden field "certificateField" with the certificate encoding
+			formElements.certificateField.val(certEncoded);
+
+			// Fire up the click event of the button "SubmitCertificateButton" on the page's code-behind (server-side)
 			formElements.submitCertificateButton.click();
 		});
 	}
 
+	// -------------------------------------------------------------------------------------------------
+	// Function that signs "to sign hash" computed on the code-behind
+	// -------------------------------------------------------------------------------------------------
 	function sign() {
 
+		// Call Web PKI passing the selected certificate, the document's "to sign hash" and the digest algorithm to be used
+		// during the signature algorithm
 		pki.signHash({
-			thumbprint: formElements.certThumbField.val(),
+
+			thumbprint: selectedCertThumbprint,
 			hash: formElements.toSignHashField.val(),
 			digestAlgorithm: formElements.digestAlgorithmField.val()
+
 		}).success(function (signature) {
+
+			// Fill the hidden field "signatureField" with the result of the signature algorithm
 			formElements.signatureField.val(signature);
+
+			// Fire up the click event of the button "SubmitSignatureButton" on the code-behind (server-side)
 			formElements.submitSignatureButton.click();
 		});
 	}
@@ -127,12 +156,22 @@
 		// Show the message to the user. You might want to substitute the alert below with a more user-friendly UI
 		// component to show the error.
 		alert(message);
+	}
 
-		formElements.tryAgainButton.show();
+	// -------------------------------------------------------------------------------------------------
+	// Handling of errors in the UpdatePanel refresh
+	// -------------------------------------------------------------------------------------------------
+	if (Sys && Sys.WebForms && Sys.WebForms.PageRequestManager) {
+		Sys.WebForms.PageRequestManager.getInstance().add_endRequest(function (sender, args) {
+			if (args.get_error()) {
+				alert('An error has occurred on the server');
+				$.unblockUI();
+			}
+		});
 	}
 
 	return {
-		init: init,
+		pageLoad: pageLoad,
 		refresh: refresh,
 		startSignature: startSignature
 	};

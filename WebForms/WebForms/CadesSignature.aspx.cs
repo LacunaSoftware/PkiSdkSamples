@@ -24,14 +24,18 @@ namespace WebForms {
 			SignatureAlgorithm signatureAlg;
 
 			try {
+
+				// Decode the user's certificate
+				var cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
+
 				// Instantiate a CadesSigner class
 				var cadesSigner = new CadesSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample document
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
 
-				// Decode the user's certificate and set as the signer certificate
-				cadesSigner.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value)));
+				// Set the signer certificate
+				cadesSigner.SetSigningCertificate(cert);
 
 				// Set the signature policy
 				cadesSigner.SetPolicy(getSignaturePolicy());
@@ -55,25 +59,27 @@ namespace WebForms {
 			ToSignBytesField.Value = Convert.ToBase64String(toSignBytes);
 			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
 			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
-
-			// We'll hide the signatureControlPanel, because it's unnecessary on the next steps of the signature.
-			signatureControlsPanel.Visible = false;
 		}
 
 		protected void SubmitSignatureButton_Click(object sender, EventArgs e) {
 
+			PKCertificate cert;
 			byte[] signatureContent;
 
 			try {
 
+				// Decode the user's certificate
+				cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
+
+				// Instantiate a CadesSigner class
 				var cadesSigner = new CadesSigner();
 
 				// Set the document to be signed and the policy, exactly like in the previous action (SubmitCertificateButton_Click)
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
 				cadesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set signer's certificate
-				cadesSigner.SetSigningCertificate(PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value)));
+				// Set the signer certificate
+				cadesSigner.SetSigningCertificate(cert);
 
 				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the page
 				cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(ToSignBytesField.Value));
@@ -87,8 +93,8 @@ namespace WebForms {
 			} catch (ValidationException ex) {
 				// Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
 				ex.ValidationResults.Errors.ForEach(ve => ModelState.AddModelError("", ve.ToString()));
-				// Set hidden field to indicate in signature-forms.js that the signature failed here.
-				FormIsValidField.Value = Convert.ToString(false);
+				CertificateField.Value = "";
+				ToSignHashField.Value = "";
 				return;
 			}
 
@@ -96,7 +102,7 @@ namespace WebForms {
 			// - The signature file will be stored on the folder "App_Data/". Its name will be passed by SignatureFile field.
 			// - The user's certificate
 			this.SignatureFile = Storage.StoreFile(signatureContent, ".p7s");
-			this.Certificate = PKCertificate.Decode(Convert.FromBase64String(CertContentField.Value));
+			this.Certificate = cert;
 
 			Server.Transfer("CadesSignatureInfo.aspx");
 		}
