@@ -20,13 +20,12 @@ To run the project:
 2. Open the solution file `WPF\PkiSdkWpfSamples.sln` on Visual Studio
 
 3. On the TXT file of your PKI SDK license (`LacunaPkiLicense.txt`), locate the **base64-encoded binary license**, e.g.:
-
+```
 	Binary license content (Base64-encoded)
-	\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+	---------------------------------------
 	AhAAebt1gVE2NEe+N+nchF42UVwAQlJJU0EgU09DSU...
-
+```
 4. Paste the base64-encoded binary license on the file `WPF\WPF\App.xaml.cs`, e.g.:
-
 ```
 // -----------------------------------------------------------------------------------------------------------
 // SET YOUR BINARY LICENSE BELOW
@@ -34,7 +33,6 @@ PkiConfig.LoadLicense(Convert.FromBase64String("AhAAebt1gVE2NEe+N+nchF42UVwAQlJJ
 //                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 // -----------------------------------------------------------------------------------------------------------
 ```
-
 5. Run the solution. Make sure your system allows automatic Nuget package restore (if it doesn't, manually restore the packages).
 
 See Also
