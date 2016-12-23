@@ -38,14 +38,17 @@ namespace WebApi.Controllers {
 
 			try {
 
+				// Decode the user's certificate
+				var cert = PKCertificate.Decode(request.Certificate);
+
 				// Instantiate a CadesSigner class
 				var cadesSigner = new CadesSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample document
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
 
-				// Decode the user's certificate and set as the signer certificate
-				cadesSigner.SetSigningCertificate(PKCertificate.Decode(request.Certificate));
+				// Set the signer certificate
+				cadesSigner.SetSigningCertificate(cert);
 
 				// Set the signature policy
 				cadesSigner.SetPolicy(getSignaturePolicy());
@@ -62,14 +65,10 @@ namespace WebApi.Controllers {
 				return new ResponseMessageResult(Request.CreateResponse(HttpStatusCode.BadRequest, new ValidationErrorModel(ex.ValidationResults)));
 			}
 
-			// On the next step (Complete action), we'll need once again some information:
-			// - The content of the selected certificate used to validate the signature in complete action.
-			// - The thumbprint of the selected certificate
-			// - The "to-sign-bytes"
-			// - The "to-sign-hash" (digest of the "to-sign-bytes")
-			// - The OID of the digest algorithm to be used during the signature operation
-			// We'll store these values on TempData, which is a dictionary shared between actions.
+			// Create response with some informations that we'll use on Complete action and on client-side.
 			var response = new SignatureStartResponse() {
+				// Send to the javascript the "to sign hash" of the document and the digest algorithm that must
+				// be used on the signature algorithm computation
 				ToSignBytes = toSignBytes,
 				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid
 			};
@@ -84,19 +83,20 @@ namespace WebApi.Controllers {
 
 			try {
 
+				// Instantiate a CadesSigner class
 				var cadesSigner = new CadesSigner();
 
-				// Set the document to be signed and the policy, exactly like in the Start method
+				// Set the document to be signed and the policy, exactly like in the Start action
 				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
 				cadesSigner.SetPolicy(getSignaturePolicy());
 
 				// Set signer's certificate
 				cadesSigner.SetSigningCertificate(PKCertificate.Decode(request.Certificate));
 
-				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
+				// Set the signature computed on the client-side, along with the "to-sign-bytes" received from the request.
 				cadesSigner.SetPrecomputedSignature(request.Signature, request.ToSignBytes);
 
-				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
+				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature.
 				cadesSigner.ComputeSignature();
 
 				// Get the signature as an array of bytes
@@ -107,9 +107,10 @@ namespace WebApi.Controllers {
 				return new ResponseMessageResult(Request.CreateResponse(HttpStatusCode.BadRequest, new ValidationErrorModel(ex.ValidationResults)));
 			}
 
+			// Pass the following fields to be used on signature-results template:
+			// - The signature file will be stored on the folder "App_Data/". Its name will be passed by Filename field.
+			// - The user's certificate
 			var response = new SignatureCompleteResponse() {
-				// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
-				// With this filename, it can show a link to download the signature file.
 				Filename = Storage.StoreFile(signatureContent, ".p7s"),
 				Certificate = new CertificateModel(PKCertificate.Decode(request.Certificate))
 			};

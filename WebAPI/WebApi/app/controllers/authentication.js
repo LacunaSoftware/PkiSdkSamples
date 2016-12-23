@@ -4,12 +4,22 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 	$scope.certificates = [];
 	$scope.selectedCertificate = null;
 
+	// Create an instance of the LacunaWebPKI "object"
 	var pki = new LacunaWebPKI();
 
+	// -------------------------------------------------------------------------------------------------
+	// Function that initializes the Web PKI component
+	// -------------------------------------------------------------------------------------------------
 	var init = function () {
 
+		// Block the UI while we get things ready
 		blockUI.start();
 
+		// Call the init() method on the LacunaWebPKI object, passing a callback for when
+		// the component is ready to be used and another to be called when an error occurrs
+		// on any of the subsequent operations. For more information, see:
+		// https://webpki.lacunasoftware.com/#/Documentation#coding-the-first-lines
+		// http://webpki.lacunasoftware.com/Help/classes/LacunaWebPKI.html#method_init
 		pki.init({
 			ready: loadCertificates,
 			defaultError: onWebPkiError,
@@ -18,11 +28,18 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called when the user clicks the "Refresh" button
+	// -------------------------------------------------------------------------------------------------
 	$scope.refresh = function () {
 		blockUI.start();
 		loadCertificates();
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function that loads the certificates, either on startup or when the user
+	// clicks the "Refresh" button. At this point, the UI is already blocked.
+	// -------------------------------------------------------------------------------------------------
 	var loadCertificates = function () {
 
 		// Call the listCertificates() method to list the user's certificates. For more information see
@@ -60,6 +77,9 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 		return cert.subjectName + ' (expires on ' + cert.validityEnd.toDateString() + ', issued by ' + cert.issuerName + ')';
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called when the user clicks the "Sign In" button
+	// -------------------------------------------------------------------------------------------------
 	$scope.signIn = function () {
 		if ($scope.selectedCertificate == null) {
 			util.showMessage('Message', 'Please select a certificate');
@@ -69,9 +89,18 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 		$http.get('/Api/Authentication').then(onNonceAcquired, util.handleServerError);
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called once the server replies with the "nonce" data for the authentication
+	// -------------------------------------------------------------------------------------------------
 	var onNonceAcquired = function (response) {
 		var nonce = response.data;
+
+		// Call readCertificate() on the LacunaWebPKI object passing the selected certificate's thumbprint. This
+		// reads the certificate's encoding, which we'll need later on. For more information, see
+		// http://webpki.lacunasoftware.com/Help/classes/LacunaWebPKI.html#method_readCertificate
 		pki.readCertificate($scope.selectedCertificate.thumbprint).success(function (encodedCert) {
+
+			// Once the user's certificate encoding has been read, we sign the "nonce" data
 			pki.signData({
 				thumbprint: $scope.selectedCertificate.thumbprint,
 				data: nonce,
@@ -82,6 +111,9 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 		});
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called once the signature of the "nonce" data is completed
+	// -------------------------------------------------------------------------------------------------
 	var onNonceSigned = function (nonce, encodedCert, signature) {
 		$http.post('/Api/Authentication', {
 			certificate: encodedCert,
@@ -90,6 +122,10 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 		}).then(onAuthSuccess, util.handleServerError);
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called once the server replies with the certificate of who 
+	// is authenticating.
+	// -------------------------------------------------------------------------------------------------
 	var onAuthSuccess = function (response) {
 		blockUI.stop();
 		util.showMessage('Authentication successful!', 'Click OK to see the certificate details').result.then(function () {
@@ -97,6 +133,9 @@ app.controller('authenticationController', ['$scope', '$http', 'blockUI', 'util'
 		});
 	};
 
+	// -------------------------------------------------------------------------------------------------
+	// Function called if an error occurs on the Web PKI component
+	// -------------------------------------------------------------------------------------------------
 	var onWebPkiError = function (message, error, origin) {
 		// Unblock the UI
 		blockUI.stop();

@@ -7,24 +7,20 @@ namespace WebApi.Controllers {
 		// GET Download/File/{id}
 		[HttpGet]
 		public ActionResult File(string id) {
+
 			if (string.IsNullOrEmpty(id)) {
 				return HttpNotFound();
 			}
+
 			byte[] content;
 			string extension;
+
 			if (!Storage.TryGetFile(id, out content, out extension)) {
 				return HttpNotFound();
 			}
-			var filename = id + extension;
 
+			var filename = "download" + extension;
 			return File(content, MimeMapping.GetMimeMapping(filename), filename);
-		}
-
-		// GET Download/Sample
-		[HttpGet]
-		public ActionResult Sample() {
-			var fileContent = Storage.GetSampleDocContent();
-			return File(fileContent, "application/pdf", "Sample.pdf");
 		}
 	}
 }
