@@ -6,7 +6,7 @@ use one of the certificates in our test PKI.
 
 **NOTICE: The Lacuna Test PKI should never be trusted in a production environment**
 
-Download the file [TestCertificates.zip](TestCertificates.zip) to get the certificates. All files are PKCS #12 certificates with password **1234**. The following certificates are included:
+Download the file [TestCertificates.zip](TestCertificates.zip?raw=true) to get the certificates. All files are PKCS #12 certificates with password **1234**. The following certificates are included:
 
 * Alan Mathison Turing
     * Email: testturing@lacunasoftware.com
