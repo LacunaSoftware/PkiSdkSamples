@@ -13,58 +13,13 @@ namespace WebForms {
     public partial class XmlElementSignature {
         
         /// <summary>
-        /// signatureControlsPanel control.
+        /// CertificateField control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel signatureControlsPanel;
-        
-        /// <summary>
-        /// SignButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button SignButton;
-        
-        /// <summary>
-        /// RefreshButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button RefreshButton;
-        
-        /// <summary>
-        /// TransferDataField control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField TransferDataField;
-        
-        /// <summary>
-        /// CertThumbField control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField CertThumbField;
-        
-        /// <summary>
-        /// CertContentField control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HiddenField CertContentField;
+        protected global::System.Web.UI.WebControls.HiddenField CertificateField;
         
         /// <summary>
         /// ToSignHashField control.
@@ -94,6 +49,15 @@ namespace WebForms {
         protected global::System.Web.UI.WebControls.HiddenField SignatureField;
         
         /// <summary>
+        /// TransferDataField control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField TransferDataField;
+        
+        /// <summary>
         /// SubmitCertificateButton control.
         /// </summary>
         /// <remarks>
@@ -103,6 +67,24 @@ namespace WebForms {
         protected global::System.Web.UI.WebControls.Button SubmitCertificateButton;
         
         /// <summary>
+        /// SignButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button SignButton;
+        
+        /// <summary>
+        /// RefreshButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button RefreshButton;
+        
+        /// <summary>
         /// SubmitSignatureButton control.
         /// </summary>
         /// <remarks>
@@ -110,14 +92,5 @@ namespace WebForms {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button SubmitSignatureButton;
-        
-        /// <summary>
-        /// TryAgainButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.HyperLink TryAgainButton;
     }
 }
