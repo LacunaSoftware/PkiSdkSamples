@@ -45,6 +45,10 @@ namespace SampleWpfApp {
 			viewModel.ValidateCertificate();
 		}
 
+		private void SignatureValidationButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.ValidateSignature();
+		}
+
 		private void LoadLicenseButton_Click(object sender, RoutedEventArgs e) {
 			viewModel.LoadLicense();
 		}

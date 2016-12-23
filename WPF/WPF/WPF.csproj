@@ -90,6 +90,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SignatureValidationViewModel.cs" />
+    <Compile Include="SignatureValidationWindow.xaml.cs">
+      <DependentUpon>SignatureValidationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SignerItem.cs" />
     <Compile Include="TaskProgressDialog.xaml.cs">
       <DependentUpon>TaskProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -118,6 +123,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PdfSignatureWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignatureValidationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -19,6 +19,13 @@ namespace SampleWpfApp {
 	/// </summary>
 	public partial class ValidationResultsDialog : Window {
 
+		public ValidationResultsDialog(Window owner, string title, ValidationResults vr) {
+			InitializeComponent();
+			this.Owner = owner;
+			this.Title = title;
+			ValidationResultsTextBox.Text = vr.ToString();
+		}
+
 		public ValidationResultsDialog(string title, ValidationResults vr) {
 			InitializeComponent();
 			this.Title = title;

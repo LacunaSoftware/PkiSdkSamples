@@ -61,6 +61,12 @@ namespace SampleWpfApp {
 			}
 		}
 
+		public void ValidateSignature() {
+			if (checkLicenseLoaded()) {
+				new SignatureValidationWindow().Show();
+			}
+		}
+
 		public void LoadLicense() {
 
 			var openFileDialog = new OpenFileDialog() {
