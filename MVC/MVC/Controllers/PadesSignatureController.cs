@@ -15,7 +15,7 @@ namespace MVC.Controllers {
 		This method defines the signature policy that will be used on the signature.
 		*/
 		private IPadesPolicyMapper getSignaturePolicy() {
-			var policy = PadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
+			var policy = PadesPoliciesForGeneration.GetPadesBasic(TrustArbitrators.PkiBrazil);
 
 #if DEBUG
 			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
