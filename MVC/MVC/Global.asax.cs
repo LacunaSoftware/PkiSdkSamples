@@ -18,6 +18,14 @@ namespace MVC {
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 			Lacuna.Pki.NLogConnector.NLogLogger.Configure();
+
+			// --------------------------------------------------------------------------------------------------------------
+			// If you need to set a proxy for outgoing connections, uncomment the lines below and set the appropriate values
+			// --------------------------------------------------------------------------------------------------------------
+			System.Net.WebRequest.DefaultWebProxy = new System.Net.WebProxy("http://your.proxy.server:8080") {
+				BypassProxyOnLocal = true,
+				Credentials = new System.Net.NetworkCredential("user", "password") // or UseDefaultCredentials = true
+			};
 		}
 	}
 }
