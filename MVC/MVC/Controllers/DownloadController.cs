@@ -17,9 +17,6 @@ namespace MVC.Controllers {
 		// GET Download/File/{id}
 		[HttpGet]
 		public ActionResult File(string id) {
-			if (string.IsNullOrEmpty(id)) {
-				return HttpNotFound();
-			}
 			byte[] content;
 			string extension;
 			if (!Storage.TryGetFile(id, out content, out extension)) {

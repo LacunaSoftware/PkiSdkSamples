@@ -15,7 +15,7 @@
 	@Html.HiddenFor(m => m.DigestAlgorithmOid, new { id = "digestAlgorithm" })
 	@Html.HiddenFor(m => m.Signature, new { id = "signature" })
 
-	@Html.ActionLink("Try Again", "SignCod", null, new { id = "tryAgainButton", @class = "btn btn-default", style = "display: none;" })
+	@Html.ActionLink("Try Again", "SignCodeh", new { id = ViewContext.RouteData.Values["id"] }, new { id = "tryAgainButton", @class = "btn btn-default", style = "display: none;" })
 }
 
 @section Scripts {

@@ -177,10 +177,10 @@ namespace MVC.Controllers {
 		 * Renders the second signature page (for the CODEH element)
 		 */
 		public ActionResult SignCodeh(string id) {
-			var model = new SignatureStartModel() {
-				File = id
-			};
-			return View(model);
+			if (string.IsNullOrEmpty(id)) {
+				return RedirectToAction("Index");
+			}
+			return View();
 		}
 
 		/**

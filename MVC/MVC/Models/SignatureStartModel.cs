@@ -6,8 +6,6 @@ using System.Web;
 namespace MVC.Models {
 	public class SignatureStartModel {
 
-		public string File { get; set; }
-
 		public byte[] CertThumb { get; set; }
 		public string CertThumbBase64 {
 			get {

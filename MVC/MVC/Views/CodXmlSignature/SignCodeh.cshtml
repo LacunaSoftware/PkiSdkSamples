@@ -4,7 +4,7 @@
 }
 
 <h2>COD XML signature (CODEH element)</h2>
-<p>You are signing the <b>CODEH</b> element of <a href='/Download/File/@Model.File'>this XML envelope</a>.</p>
+<p>You are signing the <b>CODEH</b> element of <a href='/Download/File/@(ViewContext.RouteData.Values["id"])'>this XML envelope</a>.</p>
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "signForm", role = "form" })) {
 	@Html.ValidationSummary("", new { @class = "text-danger" })

@@ -26,12 +26,15 @@ namespace MVC.Classes {
 
 		// Função que simula a recuperação de um arquivo previamente armazenado
 		public static bool TryGetFile(string fileId, out byte[] content, out string extension) {
+			content = null;
+			extension = null;
+			if (string.IsNullOrEmpty(fileId)) {
+				return false;
+			}
 			var filename = fileId.Replace('_', '.');
 			var path = HttpContext.Current.Server.MapPath("~/App_Data/" + filename);
 			var fileInfo = new FileInfo(path);
 			if (!fileInfo.Exists) {
-				content = null;
-				extension = null;
 				return false;
 			}
 			extension = fileInfo.Extension;

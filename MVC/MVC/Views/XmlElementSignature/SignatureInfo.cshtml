@@ -1,10 +1,12 @@
 ﻿@model MVC.Models.SignatureInfoModel
 @{
-	ViewBag.Title = "Xml Element Signature";
+	ViewBag.Title = "XML element signature";
 }
 
-<h2>XML Signature</h2>
+<h2>XML element signature</h2>
 
-<p>File signed successfully! <a href="/Download/File/@Model.File">Click here to download the signed file</a></p>
-
-
+<p>File signed successfully!</p>
+<p>
+	<a href="/Download/File/@Model.File" class="btn btn-default">Download signed file</a>
+	<a href="/ValidateSignature/Xml/@Model.File" class="btn btn-default">Validate signature</a>
+</p>
