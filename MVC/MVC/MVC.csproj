@@ -235,6 +235,7 @@
     <Content Include="Views\CodXmlSignature\SignCodeh.cshtml" />
     <Content Include="Views\CodXmlSignature\SignCodehComplete.cshtml" />
     <Content Include="Views\ValidateSignature\Xml.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
