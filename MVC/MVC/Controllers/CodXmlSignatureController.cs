@@ -23,7 +23,18 @@ namespace MVC.Controllers {
 		 * This method defines the signature policy that will be used on the signatures.
 		 */
  		private XmlPolicySpec getSignaturePolicy() {
-			var policy = XmlPolicySpec.GetXmlDSigBasic(Util.GetTrustArbitrator(), DigestAlgorithm.SHA1);
+			
+			// The trust arbitrator determines which root certificates shall be trusted during certificate and signature validation. See Util.GetTrustArbitrator().
+			var trustArbitrator = Util.GetTrustArbitrator();
+
+			// The digest algorithm to be used on the signatures. The SHA-1 algorithm is no longer considered secure since February 2017 and is being
+			// deprecated in favour of SHA-256. However, using SHA-256 may break implementations, for instance of the receiving parties. Check current
+			// legislation or with the receiving parties if SHA-256 may be used.
+			var digestAlg = DigestAlgorithm.SHA1; // or, preferably, DigestAlgorithm.SHA256
+
+			// Get the "basic" XmlDSig signature policy with the trust arbitrator and digest algorithm chosen above
+			var policy = XmlPolicySpec.GetXmlDSigBasic(trustArbitrator, digestAlg);
+			
 			// Optionally customize policy. The customizations below are a suggestion based on existing signed COD XML documents.
 			policy.Generation.XmlTransformations.Clear();
 			policy.Generation.XmlTransformations.Add(XmlTransformation.EnvelopedSignature);
@@ -31,6 +42,7 @@ namespace MVC.Controllers {
 			policy.Generation.IncludeKeyValue = true;
 			policy.Generation.X509DataCertificates = InclusionLevel.SigningCertificateOnly;
 			policy.Generation.X509DataFields = X509DataFields.X509SubjectName;
+
 			return policy;
 		}
 
@@ -52,7 +64,7 @@ namespace MVC.Controllers {
 		 * 
 		 * This action is called once the user's certificate encoding has been read, and contains the
 		 * logic to prepare the COD element to be signed, yielding the byte array that needs to be 
-		 * actually signed with the user's private key (the "to-sign-hash-bytes").
+		 * actually signed with the user's private key (the "to-sign-hash").
 		 */
 		[HttpPost]
 		public ActionResult SignCod(SignatureStartModel model) {
@@ -76,7 +88,7 @@ namespace MVC.Controllers {
 				// Set the signature policy
 				signer.SetPolicy(getSignaturePolicy());
 
-				// Generate the "to-sign-hash-bytes". This method also yields the signature algorithm that must
+				// Generate the "to-sign-hash". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
 				toSignHash = signer.GenerateToSignHash(out signatureAlg, out transferData);
 
@@ -92,7 +104,6 @@ namespace MVC.Controllers {
 			// - The "to-sign-hash"
 			// - The OID of the digest algorithm to be used during the signature operation
 			// - The "transfer data"
-			// We'll store this value on TempData, that will store in dictionary shared between actions.
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertThumb = model.CertThumb,
 				ToSignHash = toSignHash,
@@ -112,7 +123,7 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult SignCodComplete() {
 
-			// Recover data from StartCodSignature action
+			// Recover data from SignCod action
 			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
 			if (model == null) {
 				return RedirectToAction("Index");
@@ -144,7 +155,7 @@ namespace MVC.Controllers {
 
 				// It is not necessary to set the signing certificate nor the element ID to be signed, both are contained in the "transfer data"
 
-				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
+				// Call ComputeSignature(), which validates the signature of the "to-sign-hash" and finishes the signature process
 				signer.ComputeSignature();
 
 				// Get the signed XML as an array of bytes
@@ -219,7 +230,7 @@ namespace MVC.Controllers {
 				// Set the signature policy
 				signer.SetPolicy(getSignaturePolicy());
 
-				// Generate the "to-sign-hash-bytes". This method also yields the signature algorithm that must
+				// Generate the "to-sign-hash". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
 				toSignHash = signer.GenerateToSignHash(out signatureAlg, out transferData);
 
@@ -230,12 +241,11 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// On the next step (SignCodComplete action), we'll need once again some information:
+			// On the next step (SignCodehComplete action), we'll need once again some information:
 			// - The thumpprint of the selected certificate
 			// - The "to-sign-hash"
 			// - The OID of the digest algorithm to be used during the signature operation
 			// - The "transfer data"
-			// We'll store this value on TempData, that will store in dictionary shared between actions.
 			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertThumb = model.CertThumb,
 				ToSignHash = toSignHash,
@@ -255,7 +265,7 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult SignCodehComplete(string id) {
 
-			// Recover data from StartCodSignature action
+			// Recover data from SignCodeh action
 			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
 			if (model == null) {
 				return RedirectToAction("Index");
@@ -294,7 +304,7 @@ namespace MVC.Controllers {
 
 				// It is not necessary to set the signing certificate nor the element ID to be signed, both are contained in the "transfer data"
 
-				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
+				// Call ComputeSignature(), which validates the signature of the "to-sign-hash" and finishes the signature process
 				signer.ComputeSignature();
 
 				// Get the signed XML as an array of bytes
