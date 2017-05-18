@@ -18,7 +18,7 @@
 		// Block the UI while we get things ready
 		$.blockUI({ message: 'Signing ...' });
 
-		pki = new LacunaWebPKI();
+		pki = new LacunaWebPKI(_webPkiLicense);
 
 		// Call the init() method on the LacunaWebPKI object, passing a callback for when
 		// the component is ready to be used and another to be called when an error occurrs

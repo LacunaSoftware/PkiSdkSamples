@@ -67,6 +67,9 @@
 	@Scripts.Render("~/bundles/bootstrap")
 	@Scripts.Render("~/bundles/lib")
 	@Scripts.Render("~/bundles/app")
+	<script>
+		var _webPkiLicense = '@System.Configuration.ConfigurationManager.AppSettings["WebPkiLicense"]';
+	</script>
 	@RenderSection("scripts", required: false)
 
 </body>
