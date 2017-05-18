@@ -5,6 +5,9 @@ using System.Web;
 
 namespace MVC.Models {
 	public class SignatureStartModel {
+
+		public string File { get; set; }
+
 		public byte[] CertThumb { get; set; }
 		public string CertThumbBase64 {
 			get {
@@ -14,6 +17,7 @@ namespace MVC.Models {
 				CertThumb = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 		public byte[] CertContent { get; set; }
 		public string CertContentBase64 {
 			get {
@@ -23,5 +27,6 @@ namespace MVC.Models {
 				CertContent = !string.IsNullOrEmpty(value) ? Convert.FromBase64String(value) : null;
 			}
 		}
+
 	}
 }

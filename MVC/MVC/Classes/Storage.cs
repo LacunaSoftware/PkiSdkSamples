@@ -50,5 +50,9 @@ namespace MVC.Classes {
 		public static byte[] GetPdfStampContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "PdfStamp.png"));
 		}
+
+		public static byte[] GetSampleCodEnvelope() {
+			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleCodEnvelope.xml"));
+		}
 	}
 }

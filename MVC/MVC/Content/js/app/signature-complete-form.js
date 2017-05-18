@@ -16,7 +16,7 @@
 		}
 
 		// Block the UI while we get things ready
-		$.blockUI({ message: 'Assinando ...' });
+		$.blockUI({ message: 'Signing ...' });
 
 		pki = new LacunaWebPKI();
 

@@ -42,5 +42,12 @@ namespace MVC.Controllers {
 			var fileContent = Storage.GetSampleNFeContent();
 			return File(fileContent, "text/xml", "SampleNFe.xml");
 		}
+
+		// GET Download/SampleCodEnvelope
+		[HttpGet]
+		public ActionResult SampleCodEnvelope() {
+			var fileContent = Storage.GetSampleCodEnvelope();
+			return File(fileContent, "text/xml", "SampleCodEnvelope.xml");
+		}
 	}
 }

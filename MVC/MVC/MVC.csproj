@@ -138,6 +138,7 @@
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Util.cs" />
+    <Compile Include="Controllers\CodXmlSignatureController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\CadesSignatureController.cs" />
     <Compile Include="Controllers\PadesSignatureController.cs" />
@@ -156,6 +157,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\SampleCodEnvelope.xml" />
     <Content Include="Content\css\bootstrap-theme.css" />
     <Content Include="Content\css\bootstrap-theme.min.css" />
     <Content Include="Content\css\bootstrap.css" />
@@ -212,18 +214,25 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\XmlElementSignature\SignatureInfo.cshtml" />
     <Content Include="Views\PadesSignature\Index.cshtml" />
     <Content Include="Views\PadesSignature\Complete.cshtml" />
     <Content Include="Views\PadesSignature\SignatureInfo.cshtml" />
     <Content Include="Content\SampleDocument.pdf" />
-    <Content Include="Views\XmlElementSignature\Index.cshtml" />
-    <Content Include="Views\XmlElementSignature\Complete.cshtml" />
+    <Content Include="Views\CodXmlSignature\Index.cshtml" />
     <Content Include="Views\Authentication\Index.cshtml" />
     <Content Include="Views\Authentication\AuthenticationInfo.cshtml" />
     <Content Include="Views\CadesSignature\Complete.cshtml" />
     <Content Include="Views\CadesSignature\SignatureInfo.cshtml" />
     <Content Include="Views\CadesSignature\Index.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodResult.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCod.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodComplete.cshtml" />
+    <Content Include="Views\XmlElementSignature\Index.cshtml" />
+    <Content Include="Views\XmlElementSignature\Complete.cshtml" />
+    <Content Include="Views\XmlElementSignature\SignatureInfo.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodehResult.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodeh.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodehComplete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
