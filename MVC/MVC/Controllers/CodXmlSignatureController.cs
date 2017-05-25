@@ -168,9 +168,9 @@ namespace MVC.Controllers {
 			}
 
 			// Store the signature file on the folder "App_Data/" and redirect to the SignCodResult action with the filename.
-			var file = Storage.StoreFile(signatureContent, ".xml");
+			var filename = Storage.StoreFile(signatureContent, ".xml");
 			return RedirectToAction("SignCodResult", new SignatureInfoModel() {
-				File = file
+				Filename = filename
 			});
 		}
 
@@ -317,9 +317,9 @@ namespace MVC.Controllers {
 			}
 
 			// Store the signature file on the folder "App_Data/" and redirect to the SignCodehResult action with the filename.
-			var file = Storage.StoreFile(signatureContent, ".xml");
+			var filename = Storage.StoreFile(signatureContent, ".xml");
 			return RedirectToAction("SignCodehResult", new SignatureInfoModel() {
-				File = file
+				Filename = filename
 			});
 		}
 

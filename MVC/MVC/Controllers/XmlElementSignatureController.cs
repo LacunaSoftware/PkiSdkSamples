@@ -41,8 +41,8 @@ namespace MVC.Controllers {
 		 * POST: XmlElementSignature
 		 * 
 		 * This action is called once the user's certificate encoding has been read, and contains the
-		 * logic to prepare the byte array that needs to be actually signed with the user's private key
-		 * (the "to-sign-hash-bytes").
+		 * logic to prepare the hash that needs to be actually signed with the user's private key
+		 * (the "to-sign-hash").
 		 */
 		[HttpPost]
 		public ActionResult Index(SignatureStartModel model) {
@@ -51,7 +51,7 @@ namespace MVC.Controllers {
 			SignatureAlgorithm signatureAlg;
 
 			try {
-				// Instantiate a CadesSigner class
+				// Instantiate a XmlElementSigner class
 				var signer = new XmlElementSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample document
@@ -66,7 +66,7 @@ namespace MVC.Controllers {
 				// Set the signature policy
 				signer.SetPolicy(getSignaturePolicy());
 
-				// Generate the "to-sign-hash-bytes". This method also yields the signature algorithm that must
+				// Generate the "to-sign-hash". This method also yields the signature algorithm that must
 				// be used on the client-side, based on the signature policy.
 				toSignHash = signer.GenerateToSignHash(out signatureAlg, out transferData);
 
@@ -77,17 +77,20 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// On the next step (Complete action), we'll need once again some information:
-			// - The thumpprint of the selected certificate
-			// - The "to-sign-bytes"
-			// - The OID of the digest algorithm to be used during the signature operation
-			// - The "transfer data"
-			// We'll store this value on TempData, that will store in dictionary shared between actions.
-			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
-				CertThumb = model.CertThumb,
-				ToSignHash = toSignHash,
-				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid,
-				TransferData = transferData
+            // On the next step (Complete action), we'll need once again some information:
+            // - The content of the selected certificate only used to render the user's certificate information 
+            //  after the signature is completed. It is no longer needed for the signature process.
+            // - The thumpprint of the selected certificate.
+            // - The "transfer data" used to validate the signature in complete action.
+            // - The "to-sign-hash" to be signed. (see signature-complete-form.js)
+            // - The OID of the digest algorithm to be used during the signature operation.
+            // We'll store this value on TempData, that will store in dictionary shared between actions.
+            TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
+                CertContent = model.CertContent,
+                CertThumb = model.CertThumb,
+                TransferData = transferData,
+                ToSignHash = toSignHash,
+				DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid
 			};
 
 			return RedirectToAction("Complete");
@@ -97,7 +100,7 @@ namespace MVC.Controllers {
 		[HttpGet]
 		public ActionResult Complete() {
 
-			// Recovery data from Start() action, if returns null, it'll be redirected to Index 
+			// Recovery data from Index action, if returns null, it'll be redirected to Index 
 			// action again.
 			var model = TempData["SignatureCompleteModel"] as SignatureCompleteModel;
 			if (model == null) {
@@ -110,7 +113,7 @@ namespace MVC.Controllers {
 		/**
 		 * POST: XmlElementSignature/Complete
 		 * 
-		 * This action is called once the "to-sign-bytes" are signed using the user's certificate. After signature,
+		 * This action is called once the "to-sign-hash" are signed using the user's certificate. After signature,
 		 * it'll be redirect to SignatureInfo action to show the signature file.
 		 */
 		[HttpPost]
@@ -119,13 +122,15 @@ namespace MVC.Controllers {
 			byte[] signatureContent;
 
 			try {
+
+                // Instantiate a XmlElementSigner class
 				var signer = new XmlElementSigner();
 
 				// Set the document to be signed and the policy, exactly like in the Start method
 				signer.SetXml(Storage.GetSampleNFeContent());
 				signer.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the database
+				// Set the signature computed on the client-side, along with the "transfer data" (rendered in a hidden field, see the view)
 				signer.SetPrecomputedSignature(model.Signature, model.TransferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
@@ -140,18 +145,33 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
-			// With this filename, it can show a link to download the signature file.
-			var file = Storage.StoreFile(signatureContent, ".xml");
-			return RedirectToAction("SignatureInfo", new SignatureInfoModel() {
-				File = file
-			});
+            // On the next step (SignatureInfo action), we'll render the following information:]
+            // - The filename to be available to download in next action.
+            // - The signer certificate information to be rendered.
+            // We'll store these values on TempData, which is a dictionary shared between actions.
+            TempData["SignatureInfoModel"] = new SignatureInfoModel() {
+
+                // Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
+                // With this filename, it can show a link to download the signature file.
+                Filename = Storage.StoreFile(signatureContent, ".xml"),
+                UserCert = PKCertificate.Decode(model.CertContent)
+            };
+
+            return RedirectToAction("SignatureInfo");
 		}
 
 		// GET: XmlElementSignature/SignatureInfo
 		[HttpGet]
-		public ActionResult SignatureInfo(SignatureInfoModel model) {
-			return View(model);
+		public ActionResult SignatureInfo() {
+
+            // Recovery data from Conplete action, if returns null, it'll be redirected to Index 
+            // action again.
+            var model = TempData["SignatureInfoModel"] as SignatureInfoModel;
+            if (model == null) {
+                return RedirectToAction("Index");
+            }
+
+            return View(model);
 		}
 	}
 }
