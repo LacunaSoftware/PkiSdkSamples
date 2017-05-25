@@ -75,14 +75,14 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// On the next step (Complete action), we'll need once again some information:
-			// - The content of the selected certificate used to validate the signature in complete action.
-			// - The thumbprint of the selected certificate.
-			// - The "to-sign-bytes" used in the signature pre-computation in complete action.
-			// - The "to-sign-hash" (digest of the "to-sign-bytes") to be signed. (see signature-complete-form.js)
-			// - The OID of the digest algorithm to be used during the signature operation.
-			// We'll store these values on TempData, which is a dictionary shared between actions.
-			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
+            // On the next step (Complete action), we'll need once again some information:
+            // - The content of the selected certificate used to validate the signature in complete action.
+            // - The thumbprint of the selected certificate.
+            // - The "to-sign-bytes" used to validate the signature in complete action.
+            // - The "to-sign-hash" (digest of the "to-sign-bytes") to be signed. (see signature-complete-form.js)
+            // - The OID of the digest algorithm to be used during the signature operation.
+            // We'll store these values on TempData, which is a dictionary shared between actions.
+            TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
 				CertContent = model.CertContent,
 				CertThumb = model.CertThumb,
 				ToSignBytes = toSignBytes,
@@ -146,7 +146,7 @@ namespace MVC.Controllers {
 
             // On the next step (SignatureInfo action), we'll render the following information:]
             // - The filename to be available to download in next action.
-            // - The signer certificate information to be rendered.
+            // - The signer's certificate information to be rendered.
             // We'll store these values on TempData, which is a dictionary shared between actions.
             TempData["SignatureInfoModel"] = new SignatureInfoModel() {
 

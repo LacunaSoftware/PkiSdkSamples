@@ -176,7 +176,7 @@ namespace MVC.Controllers {
 
             // On the next step (SignatureInfo action), we'll render the following information:]
             // - The filename to be available to download in next action.
-            // - The signer certificate information to be rendered.
+            // - The signer's certificate information to be rendered.
             // We'll store these values on TempData, which is a dictionary shared between actions.
             TempData["SignatureInfoModel"] = new SignatureInfoModel() {
 
