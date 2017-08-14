@@ -1,0 +1,48 @@
+﻿@model MVC.Models.BatchSignatureModel
+@{
+    ViewBag.Title = "Batch Signature";
+}
+
+<h2>Batch Signature</h2>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "signForm", role = "form" })) {
+    <div id="messagesPanel"></div>
+
+    <div class="form-group">
+        <label>File to sign</label>
+        <p>
+            You'll be signing the following files:
+            @* UL element to hold the batch's documents (we'll render these programatically, see javascript below) *@
+            <ul id="docList" />
+        </p>
+    </div>
+
+    <div class="form-group">
+        <label for="certificateSelect">Choose a certificate</label>
+        <select id="certificateSelect" class="form-control"></select>
+    </div>
+
+    @*
+        Action buttons. Notice that the "Sign File" button is NOT a submit button. When the user clicks the button,
+        we must first use the Web PKI component to perform the client-side computation necessary and only when
+        that computation is finished we'll submit the form programmatically (see javascript below).
+    *@
+    <button id="signButton" type="button" class="btn btn-primary">Sign Batch</button>
+    <button id="refreshButton" type="button" class="btn btn-default">Refresh Certificates</button>
+}
+
+@section Scripts {
+    <script>
+		$(document).ready(function () {
+			batchSignatureForm.init({
+				form: $('#signForm'),
+				certificateSelect: $('#certificateSelect'),
+				signButton: $('#signButton'),
+				refreshButton: $('#refreshButton'),
+				messagesPanel: $('#messagesPanel'),
+                docList: $('#docList'),
+                batchDocIds: [ @string.Join("," , Model.DocumentIds) ]
+			})
+		});
+    </script>
+}
