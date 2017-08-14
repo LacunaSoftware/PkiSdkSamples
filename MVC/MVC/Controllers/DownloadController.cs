@@ -36,8 +36,15 @@ namespace MVC.Controllers {
 			return File(fileContent, "application/pdf", "Sample.pdf");
 		}
 
-		// GET Download/SampleNFe
-		[HttpGet]
+        // GET Download/Doc/{id}
+        [HttpGet]
+        public ActionResult Doc(int id) {
+            var fileContent = Storage.GetBatchDocContent(id);
+            return File(fileContent, "application/pdf", string.Format("Doc{0:D2}.pdf", id));
+        }
+
+        // GET Download/SampleNFe
+        [HttpGet]
 		public ActionResult SampleNFe() {
 			var fileContent = Storage.GetSampleNFeContent();
 			return File(fileContent, "text/xml", "SampleNFe.xml");

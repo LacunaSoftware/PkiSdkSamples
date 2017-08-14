@@ -46,8 +46,11 @@ namespace MVC.Classes {
 		public static byte[] GetSampleDocContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleDocument.pdf"));
 		}
+        public static byte[] GetBatchDocContent(int id) {
+            return File.ReadAllBytes(Path.Combine(ContentPath, string.Format("{0:D2}.pdf", ((id - 1) % 10) + 1)));
+        }
 
-		public static byte[] GetPdfStampContent() {
+        public static byte[] GetPdfStampContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "PdfStamp.png"));
 		}
 	}
