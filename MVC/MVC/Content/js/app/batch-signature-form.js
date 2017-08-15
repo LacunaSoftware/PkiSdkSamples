@@ -240,6 +240,8 @@
                 done(step);
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                // Print on console the error message
+                console.log('Document ' + step.docId, jqXHR.responseJSON);
                 // Render error
                 renderFail(step, errorThrown || textStatus);
                 // Call the "done" callback with no argument, signalling the document should not go to the next queue
@@ -301,6 +303,8 @@
                 done(step);
             },
             error: function (jqXHR, textStatus, errorThrown) {
+                // Print on console the error message
+                console.log('Document ' + step.docId, jqXHR.responseJSON);
                 // Render error
                 renderFail(step, errorThrown || textStatus);
                 // Call the "done" callback with no argument, signalling the document should not go to the next queue
