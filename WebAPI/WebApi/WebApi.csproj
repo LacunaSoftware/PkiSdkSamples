@@ -175,7 +175,6 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
-    <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
@@ -183,6 +182,7 @@
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PadesSignatureController.cs" />
+    <Compile Include="Controllers\XmlElementSignatureController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
