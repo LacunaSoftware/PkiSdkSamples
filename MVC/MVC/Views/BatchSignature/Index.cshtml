@@ -23,9 +23,9 @@
     </div>
 
     @*
-        Action buttons. Notice that the "Sign File" button is NOT a submit button. When the user clicks the button,
-        we must first use the Web PKI component to perform the client-side computation necessary and only when
-        that computation is finished we'll submit the form programmatically (see javascript below).
+        Action buttons. Notice that the "Sign Batch" button is NOT a submit button. When the user clicks the button,
+        the process of signing the batch is started, the screen is blocked. Only after all documents has been already
+        processed, the screen is unblocked.
     *@
     <button id="signButton" type="button" class="btn btn-primary">Sign Batch</button>
     <button id="refreshButton" type="button" class="btn btn-default">Refresh Certificates</button>

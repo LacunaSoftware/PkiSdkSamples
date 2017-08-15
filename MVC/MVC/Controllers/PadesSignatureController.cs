@@ -111,7 +111,6 @@ namespace MVC.Controllers {
 			// On the next step (Complete action), we'll need once again some information:
 			// - The content of the selected certificate used to validate the signature in complete action.
 			// - The thumbprint of the selected certificate
-			// - The "to-sign-bytes"
 			// - The "to-sign-hash" (digest of the "to-sign-bytes")
 			// - The OID of the digest algorithm to be used during the signature operation
 			// We'll store these values on TempData, which is a dictionary shared between actions.
@@ -143,7 +142,7 @@ namespace MVC.Controllers {
 		/**
 		* POST: CadesSignature/Complete
 		* 
-		* This action is called once the "to-sign-bytes" are signed using the user's certificate. After signature,
+		* This action is called once the "to-sign-hash" are signed using the user's certificate. After signature,
 		* it'll be redirect to SignatureInfo action to show the signature file.
 		*/
 		[HttpPost]
@@ -157,7 +156,7 @@ namespace MVC.Controllers {
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
 
-				// Set the signature computed on the client-side, along with the "transfer data" recovered from the database
+				// Set the signature computed on the client-side, along with the "transfer data" recovered from TempData
 				padesSigner.SetPreComputedSignature(model.Signature, model.TransferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
