@@ -86,7 +86,7 @@ namespace MVC.Controllers {
 						Content = Storage.GetPdfStampContent(),
 
 						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-						Opacity = 80,
+						Opacity = 50,
 
 						// Align the image to the right
 						HorizontalAlign = PadesHorizontalAlign.Right
