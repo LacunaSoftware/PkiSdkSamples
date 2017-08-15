@@ -1,10 +1,10 @@
 ﻿@model MVC.Models.SignatureStartModel
 @{
-	ViewBag.Title = "XML element signature";
+	ViewBag.Title = "COD XML signature";
 }
 
-<h2>XML element signature</h2>
-<p>You are signing the <i>infNFe</i> node of <a href='/Download/SampleNFe'>this sample XML</a>.</p>
+<h2>COD XML signature (CODEH element)</h2>
+<p>You are signing the <b>CODEH</b> element of <a href='/Download/File/@(ViewContext.RouteData.Values["id"])'>this XML envelope</a>.</p>
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "signForm", role = "form" })) {
 	@Html.ValidationSummary("", new { @class = "text-danger" })
@@ -18,7 +18,7 @@
 		<select id="certificateSelect" class="form-control"></select>
 	</div>
 
-	<button id="signButton" type="button" class="btn btn-primary">Sign File</button>
+	<button id="signButton" type="button" class="btn btn-primary">Sign CODEH element</button>
 	<button id="refreshButton" type="button" class="btn btn-default">Refresh Certificates</button>
 }
 

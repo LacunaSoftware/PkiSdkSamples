@@ -15,9 +15,9 @@
 		formElements.refreshButton.click(refresh);
 
 		// Block the UI while we get things ready
-		$.blockUI({ message: 'Inicializando ...' });
+		$.blockUI({ message: 'Initializing ...' });
 
-		pki = new LacunaWebPKI();
+		pki = new LacunaWebPKI(_webPkiLicense);
 
 		// Call the init() method on the LacunaWebPKI object, passing a callback for when
 		// the component is ready to be used and another to be called when an error occurrs
@@ -77,7 +77,7 @@
 	// -------------------------------------------------------------------------------------------------
 	function startSignature() {
 		// Block the UI while we perform the signature
-		$.blockUI({ message: 'Assinando ...' });
+		$.blockUI({ message: 'Signing ...' });
 
 		// Get the value attribute of the option selected on the dropdown. Since we placed the "thumbprint"
 		// property on the value attribute of each item (see function loadCertificates above), we're actually

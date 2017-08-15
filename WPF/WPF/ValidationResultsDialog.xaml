@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SampleWpfApp"
         mc:Ignorable="d"
-        Title="ValidationResultsDialog" Height="524" Width="736">
+        Title="ValidationResultsDialog" Height="524" Width="736" WindowStartupLocation="CenterOwner">
 	<Grid>
 		<Label x:Name="label" Content="Validation results:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
 		<TextBox x:Name="ValidationResultsTextBox" Margin="10,41,10,39" Text="TextBox" AcceptsReturn="True" IsReadOnly="True" FontFamily="Consolas" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>

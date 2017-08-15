@@ -36,17 +36,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Lacuna.Pki, Version=1.13.5.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.13.5\lib\net45\Lacuna.Pki.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Lacuna.Pki, Version=1.16.9.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.Pki.dll</HintPath>
     </Reference>
     <Reference Include="Lacuna.Pki.NLogConnector, Version=1.2.0.0, Culture=neutral, PublicKeyToken=3a226365014df7ef, processorArchitecture=MSIL">
       <HintPath>..\packages\Lacuna.Pki.NLogConnector.1.2.0\lib\net45\Lacuna.Pki.NLogConnector.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.T8, Version=1.0.2.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.13.5\lib\net45\Lacuna.T8.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Lacuna.T8, Version=1.0.4.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.T8.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.4.0\lib\net45\NLog.dll</HintPath>
@@ -90,6 +88,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SignatureValidationViewModel.cs" />
+    <Compile Include="SignatureValidationWindow.xaml.cs">
+      <DependentUpon>SignatureValidationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SignerItem.cs" />
     <Compile Include="TaskProgressDialog.xaml.cs">
       <DependentUpon>TaskProgressDialog.xaml</DependentUpon>
     </Compile>
@@ -118,6 +121,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="PdfSignatureWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SignatureValidationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

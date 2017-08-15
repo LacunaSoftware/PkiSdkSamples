@@ -15,7 +15,7 @@ namespace MVC.Controllers {
 		This method defines the signature policy that will be used on the signature.
 		*/
 		private IPadesPolicyMapper getSignaturePolicy() {
-			var policy = PadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
+			var policy = PadesPoliciesForGeneration.GetPadesBasic(TrustArbitrators.PkiBrazil);
 
 #if DEBUG
 			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
@@ -37,8 +37,8 @@ namespace MVC.Controllers {
 		* POST: PadesSignature
 		* 
 		* This action is called once the user's certificate encoding has been read, and contains the 
-		* logic to prepare the byte array that needs to be actuallu signed with the user's private key
-		* (the "to-sign-byte").
+		* logic to prepare the hash that needs to be actually signed with the user's private key
+		* (the "to-sign-hash").
 		*/
 		[HttpPost]
 		public ActionResult Index(SignatureStartModel model) {
@@ -108,14 +108,16 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// On the next step (Complete action), we'll need once again some information:
-			// - The content of the selected certificate used to validate the signature in complete action.
-			// - The thumbprint of the selected certificate
-			// - The "to-sign-hash" (digest of the "to-sign-bytes")
-			// - The OID of the digest algorithm to be used during the signature operation
-			// We'll store these values on TempData, which is a dictionary shared between actions.
-			TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
-				CertContent = model.CertContent,
+            // On the next step (Complete action), we'll need once again some information:
+            // - The content of the selected certificate only used to render the user's certificate information 
+            //  after the signature is completed. It is no longer needed for the signature process.
+            // - The thumbprint of the selected certificate.
+            // - The "transfer data" used to validate the signature in complete action.
+            // - The "to-sign-hash" (digest of the "to-sign-bytes") to be signed. (see signature-complete-form.js)
+            // - The OID of the digest algorithm to be used during the signature operation.
+            // We'll store these values on TempData, which is a dictionary shared between actions.
+            TempData["SignatureCompleteModel"] = new SignatureCompleteModel() {
+                CertContent = model.CertContent,
 				CertThumb = model.CertThumb,
 				TransferData = transferData,
 				ToSignHash = signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes),
@@ -151,12 +153,13 @@ namespace MVC.Controllers {
 
 			try {
 
+                // Instantiate a PadesSigner class
 				var padesSigner = new PadesSigner();
 
 				// Set the signature policy, exactly like in the Start method
 				padesSigner.SetPolicy(getSignaturePolicy());
-
-				// Set the signature computed on the client-side, along with the "transfer data" recovered from TempData
+                
+				// Set the signature computed on the client-side, along with the "transfer data" (rendered in a hidden field, see the view)
 				padesSigner.SetPreComputedSignature(model.Signature, model.TransferData);
 
 				// Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
@@ -171,15 +174,15 @@ namespace MVC.Controllers {
 				return View();
 			}
 
-			// On the next step (Complete action), we'll need once again some information:
-			// - The content of the selected certificate used to validate the signature in complete action.
-			// - The filename to be available to download in next action.
-			// We'll store these values on TempData, which is a dictionary shared between actions.
-			TempData["SignatureInfoModel"] = new SignatureInfoModel() {
+            // On the next step (SignatureInfo action), we'll render the following information:]
+            // - The filename to be available to download in next action.
+            // - The signer's certificate information to be rendered.
+            // We'll store these values on TempData, which is a dictionary shared between actions.
+            TempData["SignatureInfoModel"] = new SignatureInfoModel() {
 
 				// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
 				// With this filename, it can show a link to download the signature file.
-				File = Storage.StoreFile(signatureContent, ".pdf"),
+				Filename = Storage.StoreFile(signatureContent, ".pdf"),
 				UserCert = PKCertificate.Decode(model.CertContent)
 			};
 
