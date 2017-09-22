@@ -204,7 +204,7 @@
                       XXXXXXX  ->  (startSignature)  ->             XX  ->  (performSignature)  ->            XXX  ->  (completeSignature)
                 -------------         2 threads          -------------          2 threads           -------------           2 threads
          */
-        startQueue.process(startSignature, { threads: 2, output: performQueue });
+        startQueue.process(startSignature, { threads: 1, output: performQueue });
         performQueue.process(performSignature, { threads: 2, output: completeQueue });
         completeQueue.process(completeSignature, { threads: 2, completed: onBatchCompleted }); // onBatchCompleted is a callback for when the last queue is completely processed
 

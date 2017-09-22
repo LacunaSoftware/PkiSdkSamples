@@ -7,10 +7,16 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.SessionState;
 
 namespace MVC {
 
 	public class MvcApplication : System.Web.HttpApplication {
+
+        public override void Init() {
+            this.PostAuthenticateRequest += MvcApplication_PostAuthenticateRequest;
+            base.Init();
+        }
 
 		protected void Application_Start() {
 
@@ -30,5 +36,9 @@ namespace MVC {
 			//	Credentials = new System.Net.NetworkCredential("user", "password") // or UseDefaultCredentials = true
 			//};
 		}
-	}
+
+        private void MvcApplication_PostAuthenticateRequest(object sender, EventArgs e) {
+            HttpContext.Current.SetSessionStateBehavior(SessionStateBehavior.Required);
+        }
+    }
 }

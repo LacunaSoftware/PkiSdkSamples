@@ -1,6 +1,6 @@
-﻿@using Lacuna.Pki
+﻿@using MVC.Models
 @using Lacuna.Pki.Pades
-@model PadesSignature
+@model CheckModel
 @{
     ViewBag.Title = "Check PDF signatures";
     var validationPolicy = PadesPolicySpec.PkiBrazil.GetAdrBasicaV10();
@@ -8,13 +8,13 @@
 
 <h2>Open/validate signatures on an existing PDF file</h2>
 
-<h3>The file contains @Model.Signers.Count signatures:</h3>
+<h3>The file contains @Model.Signature.Signers.Count signatures:</h3>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    @for (var i = 0; i < Model.Signers.Count; i++) {
+    @for (var i = 0; i < Model.Signature.Signers.Count; i++) {
 
-        var signature = Model.Signers[i];
-        var vr = Model.ValidateSignature(signature, validationPolicy);
+        var signature = Model.Signature.Signers[i];
+        var vr = Model.Signature.ValidateSignature(signature, validationPolicy);
         var collapseId = string.Format("signer_{0}_collapse", i);
         var headingId = string.Format("signer_{0}_heading", i);
 
@@ -32,7 +32,7 @@
             </div>
             <div id="@collapseId" class="panel-collapse collapse" role="tabpanel" aria-labelledby="@headingId">
                 <div class="panel-body">
-                    <p>Signing time: @signature.Signer.SigningTime</p>
+                    <p>Signing time: @signature.SigningTime</p>
                     <p>Message digest: @signature.Signer.DigestAlgorithm.Name @BitConverter.ToString(signature.Signer.MessageDigest)</p>
                     @if (signature.Signer.SignaturePolicy != null) {
                         <p>Signature policy: @signature.Signer.SignaturePolicy.Oid</p>
@@ -65,3 +65,8 @@
         </div>
     }
 </div>
+
+<h3>Actions:</h3>
+<ul>
+    <li><a href='Download/File/@Model.FileId'>Download signed file</a></li>
+</ul>

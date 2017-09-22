@@ -76,7 +76,8 @@ namespace MVC.Api {
                 pdfMarker.AddMark(pdfMark);
 
                 // Write marks on PDF before the signature
-                var pdfWithMarks = pdfMarker.WriteMarks(StorageMock.GetBatchDocContent(request.Id));
+                var pdfContent = StorageMock.GetBatchDocContent(request.Id);
+                var pdfWithMarks = pdfMarker.WriteMarks(pdfContent);
 
                 // Instantiate a PadesSigner class
                 var padesSigner = new PadesSigner();
@@ -157,7 +158,8 @@ namespace MVC.Api {
                 fileId = StorageMock.StoreFile(signatureContent, ".pdf");
 
                 // Register fileId using the verificaiton code
-                //StorageMock.SetVerificationCode(fileId, request.VerificationCode);
+                var code = Util.ParseVerificationCode(request.VerificationCode);
+                StorageMock.SetVerificationCode(fileId, code);
 
             } catch (ValidationException ex) {
                 // Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.

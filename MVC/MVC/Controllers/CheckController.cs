@@ -1,5 +1,6 @@
 ﻿using Lacuna.Pki.Pades;
 using MVC.Classes;
+using MVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace MVC.Controllers {
         public ActionResult Index(string code) {
 
             // We stored the unformatted version of the verification code (without hyphens) but used the formatted 
-            // version (with hyphens) on the printer-friendly PDF. Now, we remove the hyphens before looking it up.
+            // version (with hyphens) on the PDF. Now, we remove the hyphens before looking it up.
             var verificationCode = Util.ParseVerificationCode(code);
 
             // Get document associated with verification code
@@ -35,7 +36,11 @@ namespace MVC.Controllers {
 
             // Open signature with PKI SDK
             var signature = PadesSignature.Open(fileContent);
-            return View(signature);
+
+            return View(new CheckModel() {
+                Signature = signature,
+                FileId = fileId
+            });
         }
     }
 }
