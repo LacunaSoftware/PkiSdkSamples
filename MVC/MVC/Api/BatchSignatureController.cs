@@ -45,7 +45,7 @@ namespace MVC.Api {
                 // Decode the user's certificate
                 var cert = PKCertificate.Decode(request.CertContent);
 
-                // Generate formatted verification code
+                // Generate verification code and format it
                 var code = Util.GenerateVerificationCode();
                 formattedCode = Util.FormatVerificationCode(code);
 
@@ -72,7 +72,7 @@ namespace MVC.Api {
                 });
                 pdfMark.Elements.Add(markText);
 
-                // Add pdf mark to marker
+                // Add pdf mark to PdfMaker
                 pdfMarker.AddMark(pdfMark);
 
                 // Write marks on PDF before the signature
@@ -157,7 +157,8 @@ namespace MVC.Api {
                 // Store file
                 fileId = StorageMock.StoreFile(signatureContent, ".pdf");
 
-                // Register fileId using the verificaiton code
+                // Register fileId using a unformatted version of the verification code (without hyphens). However we used the 
+                // formatted version (with hyphens) on the PDF. Now, we remove the hyphens before storing it.
                 var code = Util.ParseVerificationCode(request.VerificationCode);
                 StorageMock.SetVerificationCode(fileId, code);
 

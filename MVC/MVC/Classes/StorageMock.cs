@@ -67,16 +67,6 @@ namespace MVC.Classes {
 		}
 
         /// <summary>
-		/// Returns the verification code associated with the given document, or null if no verification code has been associated with it
-		/// </summary>
-		public static string GetVerificationCode(string fileId) {
-            // >>>>> NOTICE <<<<<
-            // This should be implemented on your application as a SELECT on your "document table" by the
-            // ID of the document, returning the value of the verification code column
-            return HttpContext.Current.Session[string.Format("Files/{0}/Code", fileId)] as string;
-        }
-
-        /// <summary>
         /// Registers the verification code for a given document.
         /// </summary>
         public static void SetVerificationCode(string fileId, string code) {
