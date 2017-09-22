@@ -55,7 +55,7 @@ namespace MVC.Controllers {
 				var cadesSigner = new CadesSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample document
-				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
+				cadesSigner.SetDataToSign(StorageMock.GetSampleDocContent());
 
 				// Decode the user's certificate and set as the signer certificate
 				cadesSigner.SetSigningCertificate(PKCertificate.Decode(model.CertContent));
@@ -123,7 +123,7 @@ namespace MVC.Controllers {
 				var cadesSigner = new CadesSigner();
 
 				// Set the document to be signed and the policy, exactly like in the Start method
-				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
+				cadesSigner.SetDataToSign(StorageMock.GetSampleDocContent());
 				cadesSigner.SetPolicy(getSignaturePolicy());
 
 				// Set signer's certificate
@@ -152,7 +152,7 @@ namespace MVC.Controllers {
 
 				// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
 				// With this filename, it can show a link to download the signature file.
-				Filename = Storage.StoreFile(signatureContent, ".p7s"),
+				Filename = StorageMock.StoreFile(signatureContent, ".p7s"),
 				UserCert = PKCertificate.Decode(model.CertContent)
 			};
 			

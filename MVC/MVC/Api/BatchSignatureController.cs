@@ -1,5 +1,6 @@
 ﻿using Lacuna.Pki;
 using Lacuna.Pki.Pades;
+using Lacuna.Pki.Pdf;
 using MVC.Api.Models;
 using MVC.Classes;
 using System;
@@ -37,56 +38,57 @@ namespace MVC.Api {
 
             byte[] toSignBytes, transferData;
             SignatureAlgorithm signatureAlg;
+            string formattedCode;
 
             try {
 
                 // Decode the user's certificate
                 var cert = PKCertificate.Decode(request.CertContent);
 
+                // Generate formatted verification code
+                var code = Util.GenerateVerificationCode();
+                formattedCode = Util.FormatVerificationCode(code);
+
+                // Instantiate PdfMarker class
+                var pdfMarker = new PdfMarker();
+
+                // Create pdf mark
+                var pdfMark = new PdfMark() {
+                    MeasurementUnits = PadesMeasurementUnits.Centimeters,
+                    Container = new PadesVisualRectangle() {
+                        Height = 0.7,
+                        Bottom = 1.75,
+                        Left = 0.6,
+                        Right = 3.5
+                    }
+                };
+
+                // Add text element to pdf mark
+                var markText = new PdfMarkText() {
+                    Opacity = 75
+                };
+                markText.Texts.Add(new PdfTextSection() {
+                    Text = $"Este documento foi assinado digitalmente por { cert.SubjectDisplayName }.\r\nPara verificar a validade das assinaturas acesse a Minha Central de Verificação em http://localhost:49537/ e informe o código { formattedCode }",
+                });
+                pdfMark.Elements.Add(markText);
+
+                // Add pdf mark to marker
+                pdfMarker.AddMark(pdfMark);
+
+                // Write marks on PDF before the signature
+                var pdfWithMarks = pdfMarker.WriteMarks(StorageMock.GetBatchDocContent(request.Id));
+
                 // Instantiate a PadesSigner class
                 var padesSigner = new PadesSigner();
 
                 // Set the PDF to sign, which in the case of this example is one of the batch documents
-                padesSigner.SetPdfToSign(Storage.GetBatchDocContent(request.Id));
+                padesSigner.SetPdfToSign(pdfWithMarks);
 
                 // Set the signer certificate
                 padesSigner.SetSigningCertificate(cert);
 
                 // Set the signature policy
                 padesSigner.SetPolicy(getSignaturePolicy());
-
-                // Set the signature's visual representation options (this is optional). For more information, see
-                // http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
-                var visual = new PadesVisualRepresentation2() {
-
-                    // Text of the visual representation
-                    Text = new PadesVisualText() {
-
-                        // Compose the message
-                        CustomText = String.Format("Assinado digitalmente por {0}", cert.SubjectDisplayName),
-
-                        // Specify that the signing time should also be rendered
-                        IncludeSigningTime = true,
-
-                        // Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
-                        HorizontalAlign = PadesTextHorizontalAlign.Left
-                    },
-                    // Background image of the visual representation
-                    Image = new PadesVisualImage() {
-
-                        // We'll use as background the image in Content/PdfStamp.png
-                        Content = Storage.GetPdfStampContent(),
-
-                        // Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-                        Opacity = 50,
-
-                        // Align the image to the right
-                        HorizontalAlign = PadesHorizontalAlign.Right
-                    },
-                    // Set the position of the visual representation
-                    Position = PadesVisualAutoPositioning.GetFootnote()
-                };
-                padesSigner.SetVisualRepresentation(visual);
 
                 // Generate the "to-sign-bytes". This method also yields the signature algorithm that must
                 // be used on the client-side, based on the signature policy, as well as the "transfer data",
@@ -107,9 +109,10 @@ namespace MVC.Api {
             // used during the signature operation. this information is need in the signature computation with
             // Web PKI component. (see batch-signature-form.js)
             return Ok(new BatchSignatureStartResponse() {
-                TransferDataFileId = Storage.StoreFile(transferData, ".bin"),
+                TransferDataFileId = StorageMock.StoreFile(transferData, ".bin"),
                 ToSignHash = signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes),
-                DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid
+                DigestAlgorithmOid = signatureAlg.DigestAlgorithm.Oid,
+                VerificationCode = formattedCode
             });
         }
 
@@ -123,13 +126,14 @@ namespace MVC.Api {
         public IHttpActionResult Complete(BatchSignatureCompleteRequest request) {
 
             byte[] signatureContent;
+            string fileId;
 
             try {
 
                 // Recover the "transfer data" content stored in a temporary file
                 string extension;
                 byte[] transferDataContent;
-                if (!Storage.TryGetFile(request.TransferDataFileId, out transferDataContent, out extension)) {
+                if (!StorageMock.TryGetFile(request.TransferDataFileId, out transferDataContent, out extension)) {
                     return NotFound();
                 }
 
@@ -149,6 +153,12 @@ namespace MVC.Api {
                 // Get the signed PDF as an array of bytes
                 signatureContent = padesSigner.GetPadesSignature();
 
+                // Store file
+                fileId = StorageMock.StoreFile(signatureContent, ".pdf");
+
+                // Register fileId using the verificaiton code
+                //StorageMock.SetVerificationCode(fileId, request.VerificationCode);
+
             } catch (ValidationException ex) {
                 // Some of the operations above may throw a ValidationException, for instance if the certificate is revoked.
                 var message = Request.CreateErrorResponse(HttpStatusCode.InternalServerError, ex.ValidationResults.ToString());
@@ -156,7 +166,7 @@ namespace MVC.Api {
             }
 
             return Ok(new BatchSignatureCompleteResponse() {
-                SignedFileId = Storage.StoreFile(signatureContent, ".pdf")
+                SignedFileId = fileId
             });
         }
     }

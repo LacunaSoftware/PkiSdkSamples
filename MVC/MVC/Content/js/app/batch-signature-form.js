@@ -65,8 +65,8 @@
     var pki = new LacunaWebPKI();
 
     // -------------------------------------------------------------------------------------------------
-	// Function called once the page is loaded
-	// -------------------------------------------------------------------------------------------------
+    // Function called once the page is loaded
+    // -------------------------------------------------------------------------------------------------
     function init(fe) {
 
         formElements = fe;
@@ -144,8 +144,8 @@
     }
 
     // -------------------------------------------------------------------------------------------------
-	// Function called when the user clicks the "Sign Batch" button
-	// -------------------------------------------------------------------------------------------------
+    // Function called when the user clicks the "Sign Batch" button
+    // -------------------------------------------------------------------------------------------------
     function sign() {
 
         // Block the UI while we perform the signature
@@ -166,7 +166,7 @@
             }).success(startBatch); // callback to be called if the user authorizes the signatures
         });
 
-        
+
     }
 
     // -------------------------------------------------------------------------------------------------
@@ -213,14 +213,14 @@
     }
 
     // -------------------------------------------------------------------------------------------------
-	// Function that performs the first step described above for each document, which is the call to the
-	// action Api/BatchSignature/Start in order to start the signature and get the informations need for
+    // Function that performs the first step described above for each document, which is the call to the
+    // action Api/BatchSignature/Start in order to start the signature and get the informations need for
     // the signature computation and for the signature completion.
-	//
-	// This function is called by the Queue.process function, taking documents from the "start" queue.
-	// Once we're done, we'll call the "done" callback passing the document, and the Queue.process
-	// function will place the document on the "perform" queue to await processing.
-	// -------------------------------------------------------------------------------------------------
+    //
+    // This function is called by the Queue.process function, taking documents from the "start" queue.
+    // Once we're done, we'll call the "done" callback passing the document, and the Queue.process
+    // function will place the document on the "perform" queue to await processing.
+    // -------------------------------------------------------------------------------------------------
     function startSignature(step, done) {
         // Call the server asynchronously to start the signature
         $.ajax({
@@ -236,6 +236,7 @@
                 step.transferDataFileId = response.transferDataFileId;
                 step.toSignHash = response.toSignHashBase64;
                 step.digestAlgorithmOid = response.digestAlgorithmOid;
+                step.verificationCode = response.verificationCode;
                 // Call the "done" callback signalling we're done with the document
                 done(step);
             },
@@ -251,14 +252,14 @@
     }
 
     // -------------------------------------------------------------------------------------------------
-	// Function that performs the second step described above for each document, which is the call to
+    // Function that performs the second step described above for each document, which is the call to
     // Web PKI's signHash function using the "to-sign-hash" and the digest algorithm acquired on the 
     // first step.
-	//
-	// This function is called by the Queue.process function, taking documents from the "perform" queue.
-	// Once we're done, we'll call the "done" callback passing the document, and the Queue.process
-	// function will place the document on the "complete" queue to await processing.
-	// -------------------------------------------------------------------------------------------------
+    //
+    // This function is called by the Queue.process function, taking documents from the "perform" queue.
+    // Once we're done, we'll call the "done" callback passing the document, and the Queue.process
+    // function will place the document on the "complete" queue to await processing.
+    // -------------------------------------------------------------------------------------------------
     function performSignature(step, done) {
         // Call signHash() on the Web PKI component passing the "to-sign-hash", the digest algorithm and the certificate selected by the user.
         pki.signHash({
@@ -278,13 +279,13 @@
     }
 
     // -------------------------------------------------------------------------------------------------
-	// Function that performs the third step described above for each document, which is the call to the
-	// action Api/BatchSignature/Complete in order to complete the signature.
-	//
-	// This function is called by the Queue.process function, taking documents from the "complete" queue.
-	// Once we're done, we'll call the "done" callback passing the document. Once all documents are
-	// processed, the Queue.process will call the "onBatchCompleted" function.
-	// -------------------------------------------------------------------------------------------------
+    // Function that performs the third step described above for each document, which is the call to the
+    // action Api/BatchSignature/Complete in order to complete the signature.
+    //
+    // This function is called by the Queue.process function, taking documents from the "complete" queue.
+    // Once we're done, we'll call the "done" callback passing the document. Once all documents are
+    // processed, the Queue.process will call the "onBatchCompleted" function.
+    // -------------------------------------------------------------------------------------------------
     function completeSignature(step, done) {
         // Call the server asynchronously to notify that the signature has been performed
         $.ajax({
@@ -292,7 +293,8 @@
             method: 'POST',
             data: {
                 signatureBase64: step.signature,
-                transferDataFileId: step.transferDataFileId
+                transferDataFileId: step.transferDataFileId,
+                verificationCode: step.verificationCode
             },
             dataType: 'json',
             success: function (response) {
@@ -331,14 +333,22 @@
     function renderSuccess(step) {
         var docLi = $('#docList li').eq(step.index);
         docLi.append(
-            document.createTextNode(' ')
+            $('<br />')
         ).append(
             $('<span />').addClass('glyphicon glyphicon-arrow-right')
-            ).append(
-            document.createTextNode(' ')
-            ).append(
+        ).append(
+            document.createTextNode(' Download signed file: ')
+        ).append(
             $('<a />').text(step.signedFileId.replace('_', '.')).attr('href', '/Download/File/' + step.signedFileId)
-            );
+        ).append(
+            $('<br />')
+        ).append(
+            $('<span />').addClass('glyphicon glyphicon-arrow-right')
+        ).append(
+            document.createTextNode(' Check signature with: ')
+        ).append(
+            $('<a />').text(step.verificationCode).attr('href', '/Check?code=' + step.verificationCode)
+        );
     }
 
     // -------------------------------------------------------------------------------------------------

@@ -19,5 +19,6 @@ namespace MVC.Api.Models {
         }
 
         public string DigestAlgorithmOid { get; set; }
+        public string VerificationCode { get; set; }
     }
 }

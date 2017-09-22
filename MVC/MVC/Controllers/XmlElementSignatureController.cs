@@ -55,7 +55,7 @@ namespace MVC.Controllers {
 				var signer = new XmlElementSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample document
-				signer.SetXml(Storage.GetSampleNFeContent());
+				signer.SetXml(StorageMock.GetSampleNFeContent());
 
 				// static Id from node <infNFe> from SampleNFe.xml document
 				signer.SetToSignElementId("NFe35141214314050000662550010001084271182362300");
@@ -127,7 +127,7 @@ namespace MVC.Controllers {
 				var signer = new XmlElementSigner();
 
 				// Set the document to be signed and the policy, exactly like in the Start method
-				signer.SetXml(Storage.GetSampleNFeContent());
+				signer.SetXml(StorageMock.GetSampleNFeContent());
 				signer.SetPolicy(getSignaturePolicy());
 
 				// Set the signature computed on the client-side, along with the "transfer data" (rendered in a hidden field, see the view)
@@ -153,7 +153,7 @@ namespace MVC.Controllers {
 
                 // Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
                 // With this filename, it can show a link to download the signature file.
-                Filename = Storage.StoreFile(signatureContent, ".xml"),
+                Filename = StorageMock.StoreFile(signatureContent, ".xml"),
                 UserCert = PKCertificate.Decode(model.CertContent)
             };
 

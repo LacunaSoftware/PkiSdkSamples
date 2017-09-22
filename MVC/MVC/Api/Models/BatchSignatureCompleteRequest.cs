@@ -16,5 +16,6 @@ namespace MVC.Api.Models {
         }
 
         public string TransferDataFileId { get; set; }
+        public string VerificationCode { get; set; }
     }
 }

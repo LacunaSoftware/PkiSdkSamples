@@ -15,7 +15,7 @@ namespace MVC.Controllers {
 
 			byte[] content;
 			string extension;
-			if (!Storage.TryGetFile(id, out content, out extension)) {
+			if (!StorageMock.TryGetFile(id, out content, out extension)) {
 				return HttpNotFound();
 			}
 

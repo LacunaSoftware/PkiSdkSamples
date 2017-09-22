@@ -55,7 +55,7 @@ namespace MVC.Controllers {
 				var padesSigner = new PadesSigner();
 
 				// Set the PDF to sign, which in the case of this example is a fixed sample document
-				padesSigner.SetPdfToSign(Storage.GetSampleDocContent());
+				padesSigner.SetPdfToSign(StorageMock.GetSampleDocContent());
 
 				// Set the signer certificate
 				padesSigner.SetSigningCertificate(cert);
@@ -83,7 +83,7 @@ namespace MVC.Controllers {
 					Image = new PadesVisualImage() {
 
 						// We'll use as background the image in Content/PdfStamp.png
-						Content = Storage.GetPdfStampContent(),
+						Content = StorageMock.GetPdfStampContent(),
 
 						// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
 						Opacity = 50,
@@ -182,7 +182,7 @@ namespace MVC.Controllers {
 
 				// Store the signature file on the folder "App_Data/" and redirects to the SignatureInfo action with the filename.
 				// With this filename, it can show a link to download the signature file.
-				Filename = Storage.StoreFile(signatureContent, ".pdf"),
+				Filename = StorageMock.StoreFile(signatureContent, ".pdf"),
 				UserCert = PKCertificate.Decode(model.CertContent)
 			};
 

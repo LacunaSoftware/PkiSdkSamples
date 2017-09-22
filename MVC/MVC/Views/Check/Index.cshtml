@@ -1,0 +1,67 @@
+﻿@using Lacuna.Pki
+@using Lacuna.Pki.Pades
+@model PadesSignature
+@{
+    ViewBag.Title = "Check PDF signatures";
+    var validationPolicy = PadesPolicySpec.PkiBrazil.GetAdrBasicaV10();
+}
+
+<h2>Open/validate signatures on an existing PDF file</h2>
+
+<h3>The file contains @Model.Signers.Count signatures:</h3>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    @for (var i = 0; i < Model.Signers.Count; i++) {
+
+        var signature = Model.Signers[i];
+        var vr = Model.ValidateSignature(signature, validationPolicy);
+        var collapseId = string.Format("signer_{0}_collapse", i);
+        var headingId = string.Format("signer_{0}_heading", i);
+
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="@headingId">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#@collapseId" aria-expanded="true" aria-controls="@collapseId">
+                        @signature.Signer.SigningCertificate.SubjectName.CommonName
+                        -
+                        <span style="color: @(vr.IsValid ? "green" : "red"); font-weight: bold;">
+                            @(vr.IsValid ? "valid" : "invalid")
+                        </span>
+                    </a>
+                </h4>
+            </div>
+            <div id="@collapseId" class="panel-collapse collapse" role="tabpanel" aria-labelledby="@headingId">
+                <div class="panel-body">
+                    <p>Signing time: @signature.Signer.SigningTime</p>
+                    <p>Message digest: @signature.Signer.DigestAlgorithm.Name @BitConverter.ToString(signature.Signer.MessageDigest)</p>
+                    @if (signature.Signer.SignaturePolicy != null) {
+                        <p>Signature policy: @signature.Signer.SignaturePolicy.Oid</p>
+                    }
+                    <p>
+                        Signer information:
+                        <ul>
+                            <li>Subject: @signature.Signer.SigningCertificate.SubjectName.CommonName</li>
+                            <li>Email: @signature.Signer.SigningCertificate.EmailAddress</li>
+                            <li>
+                                ICP-Brasil fields
+                                <ul>
+                                    <li>Tipo de certificado: @signature.Signer.SigningCertificate.PkiBrazil.CertificateType</li>
+                                    <li>CPF: @signature.Signer.SigningCertificate.PkiBrazil.CPF</li>
+                                    <li>Responsavel: @signature.Signer.SigningCertificate.PkiBrazil.Responsavel</li>
+                                    <li>Empresa: @signature.Signer.SigningCertificate.PkiBrazil.CompanyName</li>
+                                    <li>CNPJ: @signature.Signer.SigningCertificate.PkiBrazil.Cnpj</li>
+                                    <li>RG: @signature.Signer.SigningCertificate.PkiBrazil.RGNumero @signature.Signer.SigningCertificate.PkiBrazil.RGEmissor @signature.Signer.SigningCertificate.PkiBrazil.RGEmissorUF</li>
+                                    <li>OAB: @signature.Signer.SigningCertificate.PkiBrazil.OabNumero @signature.Signer.SigningCertificate.PkiBrazil.OabUF</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </p>
+                    <p>
+                        Validation results:<br />
+                        <textarea style="width: 100%" rows="20">@vr.ToString()</textarea>
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+</div>

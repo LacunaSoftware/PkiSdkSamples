@@ -19,7 +19,7 @@ namespace MVC.Controllers {
 		public ActionResult File(string id) {
 			byte[] content;
 			string extension;
-			if (!Storage.TryGetFile(id, out content, out extension)) {
+			if (!StorageMock.TryGetFile(id, out content, out extension)) {
 				return HttpNotFound();
 			}
 			var filename = id + extension;
@@ -29,28 +29,28 @@ namespace MVC.Controllers {
 		// GET Download/Sample
 		[HttpGet]
 		public ActionResult Sample() {
-			var fileContent = Storage.GetSampleDocContent();
+			var fileContent = StorageMock.GetSampleDocContent();
 			return File(fileContent, "application/pdf", "Sample.pdf");
 		}
 
         // GET Download/Doc/{id}
         [HttpGet]
         public ActionResult Doc(int id) {
-            var fileContent = Storage.GetBatchDocContent(id);
+            var fileContent = StorageMock.GetBatchDocContent(id);
             return File(fileContent, "application/pdf", string.Format("Doc{0:D2}.pdf", id));
         }
 
         // GET Download/SampleNFe
         [HttpGet]
 		public ActionResult SampleNFe() {
-			var fileContent = Storage.GetSampleNFeContent();
+			var fileContent = StorageMock.GetSampleNFeContent();
 			return File(fileContent, "text/xml", "SampleNFe.xml");
 		}
 
 		// GET Download/SampleCodEnvelope
 		[HttpGet]
 		public ActionResult SampleCodEnvelope() {
-			var fileContent = Storage.GetSampleCodEnvelope();
+			var fileContent = StorageMock.GetSampleCodEnvelope();
 			return File(fileContent, "text/xml", "SampleCodEnvelope.xml");
 		}
 	}

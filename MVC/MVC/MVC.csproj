@@ -48,15 +48,15 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.Pki, Version=1.16.9.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.Pki.dll</HintPath>
+    <Reference Include="Lacuna.Pki, Version=1.19.4.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.19.4\lib\net45\Lacuna.Pki.dll</HintPath>
     </Reference>
     <Reference Include="Lacuna.Pki.NLogConnector, Version=1.2.0.0, Culture=neutral, PublicKeyToken=3a226365014df7ef, processorArchitecture=MSIL">
       <HintPath>..\packages\Lacuna.Pki.NLogConnector.1.2.0\lib\net45\Lacuna.Pki.NLogConnector.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Lacuna.T8, Version=1.0.4.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.T8.dll</HintPath>
+      <HintPath>..\packages\Lacuna.Pki.1.19.4\lib\net45\Lacuna.T8.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -147,6 +147,7 @@
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Util.cs" />
+    <Compile Include="Controllers\CheckController.cs" />
     <Compile Include="Controllers\CodXmlSignatureController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\BatchSignatureController.cs" />
@@ -161,7 +162,7 @@
     <Compile Include="Api\Models\BatchSignatureStartRequest.cs" />
     <Compile Include="Api\Models\BatchSignatureStartResponse.cs" />
     <Compile Include="Models\SignatureInfoModel.cs" />
-    <Compile Include="Classes\Storage.cs" />
+    <Compile Include="Classes\StorageMock.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\XmlElementSignatureController.cs" />
@@ -285,6 +286,7 @@
     <Content Include="Views\CodXmlSignature\SignCodehComplete.cshtml" />
     <Content Include="Views\ValidateSignature\Xml.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <Content Include="Views\Check\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

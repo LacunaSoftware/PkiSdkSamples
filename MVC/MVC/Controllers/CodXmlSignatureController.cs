@@ -77,7 +77,7 @@ namespace MVC.Controllers {
 				var signer = new XmlElementSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample "COD envelope"
-				signer.SetXml(Storage.GetSampleCodEnvelope());
+				signer.SetXml(StorageMock.GetSampleCodEnvelope());
 
 				// Set the ID of the COD element
 				signer.SetToSignElementId("COD");
@@ -147,7 +147,7 @@ namespace MVC.Controllers {
 				var signer = new XmlElementSigner();
 
 				// Set the document to be signed and the policy, exactly like in the SignCod method
-				signer.SetXml(Storage.GetSampleCodEnvelope());
+				signer.SetXml(StorageMock.GetSampleCodEnvelope());
 				signer.SetPolicy(getSignaturePolicy());
 
 				// Set the signature computed on the client-side, along with the "transfer data"
@@ -168,7 +168,7 @@ namespace MVC.Controllers {
 			}
 
 			// Store the signature file on the folder "App_Data/" and redirect to the SignCodResult action with the filename.
-			var filename = Storage.StoreFile(signatureContent, ".xml");
+			var filename = StorageMock.StoreFile(signatureContent, ".xml");
 			return RedirectToAction("SignCodResult", new SignatureInfoModel() {
 				Filename = filename
 			});
@@ -207,7 +207,7 @@ namespace MVC.Controllers {
 			// Recover XML envelope with signed COD element from "storage" based on its ID
 			byte[] content;
 			string extension;
-			if (!Storage.TryGetFile(id, out content, out extension)) {
+			if (!StorageMock.TryGetFile(id, out content, out extension)) {
 				return HttpNotFound();
 			}
 
@@ -286,7 +286,7 @@ namespace MVC.Controllers {
 			// Recover XML envelope with signed COD element from "storage" based on its ID
 			byte[] content;
 			string extension;
-			if (!Storage.TryGetFile(id, out content, out extension)) {
+			if (!StorageMock.TryGetFile(id, out content, out extension)) {
 				return HttpNotFound();
 			}
 
@@ -317,7 +317,7 @@ namespace MVC.Controllers {
 			}
 
 			// Store the signature file on the folder "App_Data/" and redirect to the SignCodehResult action with the filename.
-			var filename = Storage.StoreFile(signatureContent, ".xml");
+			var filename = StorageMock.StoreFile(signatureContent, ".xml");
 			return RedirectToAction("SignCodehResult", new SignatureInfoModel() {
 				Filename = filename
 			});
