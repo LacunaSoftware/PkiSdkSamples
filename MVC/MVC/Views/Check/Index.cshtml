@@ -3,18 +3,17 @@
 @model CheckModel
 @{
     ViewBag.Title = "Check PDF signatures";
-    var validationPolicy = PadesPolicySpec.PkiBrazil.GetAdrBasicaV10();
 }
 
 <h2>Open/validate signatures on an existing PDF file</h2>
 
-<h3>The file contains @Model.Signature.Signers.Count signatures:</h3>
+<h3>The file contains @Model.Signers.Count signatures:</h3>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-    @for (var i = 0; i < Model.Signature.Signers.Count; i++) {
+    @for (var i = 0; i < Model.Signers.Count; i++) {
 
-        var signature = Model.Signature.Signers[i];
-        var vr = Model.Signature.ValidateSignature(signature, validationPolicy);
+        var signature = Model.Signers[i].Signer;
+        var vr = Model.Signers[i].ValidationResults;
         var collapseId = string.Format("signer_{0}_collapse", i);
         var headingId = string.Format("signer_{0}_heading", i);
 

@@ -37,8 +37,19 @@ namespace MVC.Controllers {
             // Open signature with PKI SDK
             var signature = PadesSignature.Open(fileContent);
 
+            // Validate signatures
+            var validationPolicy = PadesPolicySpec.GetBasic();
+            var signers = new List<PadesSignatureModel>();
+            foreach (var signer in signature.Signers) {
+                signers.Add(new PadesSignatureModel() {
+                    Signer = signer,
+                    ValidationResults = signature.ValidateSignature(signer, validationPolicy)
+                });
+            }
+
+            // Render validation page
             return View(new CheckModel() {
-                Signature = signature,
+                Signers = signers,
                 FileId = fileId
             });
         }

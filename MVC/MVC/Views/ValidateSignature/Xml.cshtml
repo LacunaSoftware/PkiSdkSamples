@@ -1,9 +1,7 @@
-﻿@using Lacuna.Pki
-@using Lacuna.Pki.Xml
-@model List<XmlSignature>
+﻿@using MVC.Models
+@model List<XmlSignatureModel>
 @{
    ViewBag.Title = "Open XML signatures";
-   var validationPolicy = XmlPolicySpec.GetXmlDSigBasic(MVC.Classes.Util.GetTrustArbitrator());
 }
 
 <h2>Open/validate signatures on an existing XML file</h2>
@@ -14,10 +12,10 @@
 
 	@for (var i = 0; i < Model.Count; i++) {
 
-		var signature = Model[i];
-		var vr = signature.Validate(validationPolicy);
-		var collapseId = string.Format("signer_{0}_collapse", i);
-		var headingId = string.Format("signer_{0}_heading", i);
+        var signature = Model[i].Signature;
+        var vr = Model[i].ValidationResults;
+        var collapseId = string.Format("signer_{0}_collapse", i);
+        var headingId = string.Format("signer_{0}_heading", i);
 
 		<div class="panel panel-default">
 			<div class="panel-heading" role="tab" id="@headingId">

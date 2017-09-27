@@ -1,5 +1,6 @@
 ﻿using Lacuna.Pki.Xml;
 using MVC.Classes;
+using MVC.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,19 @@ namespace MVC.Controllers {
 			}
 
 			var xmlSignatureLocator = new XmlSignatureLocator(content);
-			var model = xmlSignatureLocator.GetSignatures();
+            var signatures = xmlSignatureLocator.GetSignatures();
+
+            // Validate signatures
+            var validationPolicy = XmlPolicySpec.GetXmlDSigBasic(Util.GetTrustArbitrator());
+            var model = new List<XmlSignatureModel>();
+            foreach (var signature in signatures) {
+                model.Add(new XmlSignatureModel() {
+                    Signature = signature,
+                    ValidationResults = signature.Validate(validationPolicy)
+                });
+            }
+
+            // Render validation page
 			return View(model);
 		}
 	}

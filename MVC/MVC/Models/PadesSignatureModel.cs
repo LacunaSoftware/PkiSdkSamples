@@ -6,9 +6,8 @@ using System.Linq;
 using System.Web;
 
 namespace MVC.Models {
-    public class CheckModel {
-
-        public List<PadesSignatureModel> Signers { get; set; }
-        public string FileId { get; set; }
+    public class PadesSignatureModel {
+        public PadesSignerInfo Signer { get; set; }
+        public ValidationResults ValidationResults { get; set; }
     }
 }
