@@ -179,6 +179,7 @@
     <Compile Include="Controllers\CadesSignatureController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OpenXmlSignatureController.cs" />
     <Compile Include="Controllers\PadesSignatureController.cs" />
     <Compile Include="Controllers\XmlElementSignatureController.cs" />
     <Compile Include="Global.asax.cs">
@@ -186,6 +187,8 @@
     </Compile>
     <Compile Include="Models\AuthenticationPostResponse.cs" />
     <Compile Include="Models\AuthenticationPostRequest.cs" />
+    <Compile Include="Models\OpenXmlSignatureRequest.cs" />
+    <Compile Include="Models\OpenXmlSignatureResponse.cs" />
     <Compile Include="Models\SignatureCompleteRequest.cs" />
     <Compile Include="Models\SignatureCompleteResponse.cs" />
     <Compile Include="Models\SignatureStartRequest.cs" />
@@ -197,6 +200,7 @@
   <ItemGroup>
     <Content Include="app\app.js" />
     <Content Include="app\controllers\authentication.js" />
+    <Content Include="app\controllers\open-xml-signature.js" />
     <Content Include="app\controllers\signature-results-dialog.js" />
     <Content Include="app\controllers\validation-results-dialog.js" />
     <Content Include="app\controllers\certificate-dialog.js" />
@@ -204,11 +208,14 @@
     <Content Include="app\controllers\cades-signature.js" />
     <Content Include="app\controllers\pades-signature.js" />
     <Content Include="app\controllers\home.js" />
+    <Content Include="app\controllers\xml-signature-info-dialog.js" />
     <Content Include="app\views\authentication.html" />
     <Content Include="app\views\dialogs\signature-results.html" />
     <Content Include="app\views\dialogs\validation-results.html" />
     <Content Include="app\views\dialogs\message.html" />
     <Content Include="app\views\dialogs\certificate.html" />
+    <Content Include="app\views\dialogs\xml-signature-info.html" />
+    <Content Include="app\views\open-xml-signature.html" />
     <Content Include="app\views\xml-element-signature.html" />
     <Content Include="app\views\pades-signature.html" />
     <Content Include="app\views\cades-signature.html" />

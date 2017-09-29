@@ -5,7 +5,7 @@ app.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider.when('/', {
 		templateUrl: 'app/views/home.html',
 		controller: 'homeController'
-	});
+    });
 
 	$routeProvider.when('/authentication', {
 		templateUrl: 'app/views/authentication.html',
@@ -25,7 +25,12 @@ app.config(['$routeProvider', function ($routeProvider) {
 	$routeProvider.when('/xml-element-signature', {
 		templateUrl: 'app/views/xml-element-signature.html',
 		controller: 'xmlElementSignatureController'
-	});
+    });
+
+    $routeProvider.when('/open-xml-signature', {
+        templateUrl: 'app/views/open-xml-signature.html',
+        controller: 'openXmlSignatureController'
+    });
 
 	$routeProvider.otherwise({ redirectTo: "/" });
 }]);
@@ -79,7 +84,20 @@ app.factory('util', ['$uibModal', 'blockUI', function ($modal, blockUI) {
 				model: function () { return vr; }
 			}
 		});
-	};
+    };
+
+    var showXmlSignatureInfo = function (model) {
+        return $modal.open({
+            templateUrl: 'app/views/dialogs/xml-signature-info.html',
+            controller: 'xmlSignatureInfoDialogController',
+            size: 'lg',
+            resolve: {
+                model: function () {
+                    return model;
+                }
+            }
+        });
+    };
 
 	var handleServerError = function (response) {
 		blockUI.stop();
