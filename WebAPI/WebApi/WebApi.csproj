@@ -208,13 +208,11 @@
     <Content Include="app\controllers\cades-signature.js" />
     <Content Include="app\controllers\pades-signature.js" />
     <Content Include="app\controllers\home.js" />
-    <Content Include="app\controllers\xml-signature-info-dialog.js" />
     <Content Include="app\views\authentication.html" />
     <Content Include="app\views\dialogs\signature-results.html" />
     <Content Include="app\views\dialogs\validation-results.html" />
     <Content Include="app\views\dialogs\message.html" />
     <Content Include="app\views\dialogs\certificate.html" />
-    <Content Include="app\views\dialogs\xml-signature-info.html" />
     <Content Include="app\views\open-xml-signature.html" />
     <Content Include="app\views\xml-element-signature.html" />
     <Content Include="app\views\pades-signature.html" />

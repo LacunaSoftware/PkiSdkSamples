@@ -1,4 +1,6 @@
 ﻿using Lacuna.Pki.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,25 +18,32 @@ namespace WebApi.Models {
     }
 
     public class XmlSignatureModel {
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public XmlSignedEntityTypes SignedEntityType { get; set; }
+
         public CertificateModel SigningCertificate { get; set; }
         public XmlElementModel SignedElement { get; set; }
-        public XmlSignedEntityTypes SignedEntityType { get; set; }
         public DateTimeOffset? SigningTime { get; set; }
         public string SignaturePolicyId { get; set; }
-        public ValidationErrorModel ValidationResults { get; set; }
+        public ValidationErrorModel ValidationModel { get; set; }
 
         public XmlSignatureModel(XmlSignature signature) {
-            SigningCertificate = new CertificateModel(signature.SigningCertificate);
-            SignedElement = new XmlElementModel(signature.SignedElement);
+
+            var validationPolicy = XmlPolicySpec.GetXmlDSigBasic(Util.GetTrustArbitrator());
+            ValidationModel = new ValidationErrorModel(signature.Validate(validationPolicy));
             SignedEntityType = signature.SignedEntityType;
             SigningTime = signature.SigningTime;
 
-            if (signature.PolicyIdentifier.SigPolicyId != null) {
+            if (signature.SigningCertificate != null) {
+                SigningCertificate = new CertificateModel(signature.SigningCertificate);
+            }
+            if (signature.SignedElement != null) {
+                SignedElement = new XmlElementModel(signature.SignedElement);
+            }
+            if (signature.PolicyIdentifier != null) {
                 SignaturePolicyId = signature.PolicyIdentifier.SigPolicyId;
             }
-
-            var validationPolicy = XmlPolicySpec.GetXmlDSigBasic(Util.GetTrustArbitrator());
-            ValidationResults = new ValidationErrorModel(signature.Validate(validationPolicy));
         }
     }
 
@@ -43,8 +52,11 @@ namespace WebApi.Models {
         public string LocalName { get; set; }
 
         public XmlElementModel(XmlElement element) {
-            NamespaceURI = element.NamespaceURI;
             LocalName = element.LocalName;
+
+            if (!string.IsNullOrEmpty(element.NamespaceURI)) {
+                NamespaceURI = element.NamespaceURI;
+            }
         }
     }
 }

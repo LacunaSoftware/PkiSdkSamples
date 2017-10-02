@@ -86,19 +86,6 @@ app.factory('util', ['$uibModal', 'blockUI', function ($modal, blockUI) {
 		});
     };
 
-    var showXmlSignatureInfo = function (model) {
-        return $modal.open({
-            templateUrl: 'app/views/dialogs/xml-signature-info.html',
-            controller: 'xmlSignatureInfoDialogController',
-            size: 'lg',
-            resolve: {
-                model: function () {
-                    return model;
-                }
-            }
-        });
-    };
-
 	var handleServerError = function (response) {
 		blockUI.stop();
 		if (response.status === 400 && response.data.validationResults) {

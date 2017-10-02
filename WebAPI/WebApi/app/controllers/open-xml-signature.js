@@ -1,18 +1,15 @@
 ﻿'use strict';
 app.controller('openXmlSignatureController', ['$scope', '$http', 'util', function ($scope, $http, util) {
 
-    $scope.signatures = null;
     $scope.fileContent = null;
+    $scope.signatures = null;
 
     // -------------------------------------------------------------------------------------------------
 	// Function that renders the upload page
 	// -------------------------------------------------------------------------------------------------
     var init = function () {
-
         // Set event handler for file selection
         $('#upload-input').change(onFileSelected);
-        
-        //$http.post('Api/OpenXmlSignature/' + userfile).then(onSignatureOpened, util.handleServerError);
     };
 
     // -------------------------------------------------------------------------------------------------
@@ -33,6 +30,10 @@ app.controller('openXmlSignatureController', ['$scope', '$http', 'util', functio
         reader.readAsDataURL(file);
     };
 
+    // -------------------------------------------------------------------------------------------------
+    // Function called once the "Upload" button is clicked. This function will call the API to open
+    // and validate the signatures on an existing XML file
+    // -------------------------------------------------------------------------------------------------
     $scope.submit = function () {
 
         if ($scope.fileContent === null) {
@@ -42,14 +43,25 @@ app.controller('openXmlSignatureController', ['$scope', '$http', 'util', functio
 
         $http.post('Api/OpenXmlSignature', {
             fileContent: $scope.fileContent
-        }).then(onSignatureOpened, util.handleServerError);
+        }).then(function (response) {
+            $scope.signatures = response.data.signatures;
+        }, util.handleServerError);
     };
 
     // -------------------------------------------------------------------------------------------------
-	// Function called once the server replies with the "signatures"
-	// -------------------------------------------------------------------------------------------------
-    var onSignatureOpened = function (signatures) {
-        $scope.signatures = signatures;
+    // Function called once the "View certificate" button is clicked. This function will show the 
+    // certificate infomations of the selected signature in a modal
+    // -------------------------------------------------------------------------------------------------
+    $scope.showValidationResults = function (vr) {
+        util.showValidationResults(vr);
+    };
+
+    // -------------------------------------------------------------------------------------------------
+    // Function called once the "View validation results" button is clicked. This function will show 
+    // the validation results of the selected signature in a modal
+    // -------------------------------------------------------------------------------------------------
+    $scope.showCertificate = function (cert) {
+        util.showCertificate(cert);
     };
     
     init();

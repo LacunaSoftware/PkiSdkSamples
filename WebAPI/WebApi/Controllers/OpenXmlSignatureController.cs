@@ -11,6 +11,7 @@ using WebApi.Models;
 namespace WebApi.Controllers {
     public class OpenXmlSignatureController : ApiController {
 
+
         [HttpPost]
         public IHttpActionResult Post(OpenXmlSignatureRequest request) {
 
@@ -19,9 +20,9 @@ namespace WebApi.Controllers {
             }
 
             var xmlSignatureLocator = new XmlSignatureLocator(request.FileContent);
-            var model = xmlSignatureLocator.GetSignatures();
+            var signatures = xmlSignatureLocator.GetSignatures();
 
-            return Ok(new OpenXmlSignatureResponse(model));
+            return Ok(new OpenXmlSignatureResponse(signatures));
         }
 
     }

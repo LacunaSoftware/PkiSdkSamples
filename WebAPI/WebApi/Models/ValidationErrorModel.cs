@@ -20,6 +20,14 @@ namespace WebApi.Models {
 		public List<ValidationItemModel> PassedChecks { get; set; }
 		public List<ValidationItemModel> Errors { get; set; }
 		public List<ValidationItemModel> Warnings { get; set; }
+        public bool IsValid {
+            get {
+                if (Errors != null) {
+                    return Errors.Count < 1;
+                }
+                return true;
+            }
+        }
 
 		public ValidationResultsModel(ValidationResults vr) {
 			PassedChecks = vr.PassedChecks.ConvertAll(i => new ValidationItemModel(i));

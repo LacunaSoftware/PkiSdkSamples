@@ -64,8 +64,13 @@ app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 			angular.forEach(certificates, function (c) {
 				if (c.thumbprint === originalSelected) {
 					$scope.selectedCertificate = c;
-				}
-			});
+                }
+            });
+
+            // If no certificate was previous selected, choose the first on the certificate list
+            if (!$scope.selectedCertificate) {
+                $scope.selectedCertificate = certificates[0];
+            }
 
 			// once the certificates have been listed, unblock the UI
 			blockUI.stop();
