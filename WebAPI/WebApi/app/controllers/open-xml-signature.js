@@ -1,8 +1,10 @@
 ﻿'use strict';
 app.controller('openXmlSignatureController', ['$scope', '$http', 'util', function ($scope, $http, util) {
 
-    $scope.fileContent = null;
-    $scope.signatures = null;
+    $scope.signatures = [];
+
+    // Global variable to store uploaded file content
+    var fileContent = null;
 
     // -------------------------------------------------------------------------------------------------
 	// Function that renders the upload page
@@ -16,33 +18,41 @@ app.controller('openXmlSignatureController', ['$scope', '$http', 'util', functio
     // Function called once the file is selected
     // -------------------------------------------------------------------------------------------------
     function onFileSelected() {
+
+        // Clear parameters when a new file is selected
+        $scope.$apply(function () {
+            fileContent = null;
+            $scope.signatures = [];
+        });
+
         if (this.files.length === 0) {
             return;
         }
+
         var file = this.files[0];
         var reader = new FileReader();
         reader.onload = function (event) {
             var content = event.target.result.split(',')[1];
             $scope.$apply(function () {
-                $scope.fileContent = content;
+                fileContent = content;
             });
         };
         reader.readAsDataURL(file);
     };
 
     // -------------------------------------------------------------------------------------------------
-    // Function called once the "Upload" button is clicked. This function will call the API to open
+    // Function called once the "Upload" button is clicked. This function will call the server to open
     // and validate the signatures on an existing XML file
     // -------------------------------------------------------------------------------------------------
     $scope.submit = function () {
 
-        if ($scope.fileContent === null) {
+        if (fileContent === null) {
             util.showMessage('Message', 'Please select a file');
             return;
         }
 
         $http.post('Api/OpenXmlSignature', {
-            fileContent: $scope.fileContent
+            fileContent: fileContent
         }).then(function (response) {
             $scope.signatures = response.data.signatures;
         }, util.handleServerError);

@@ -15,7 +15,7 @@ namespace WebApi.Controllers {
         [HttpPost]
         public IHttpActionResult Post(OpenXmlSignatureRequest request) {
 
-            if (request.FileContent == null || request.FileContent.Length == 0) {
+            if (request.FileContent == null || request.FileContent.Length < 1) {
                 return NotFound();
             }
 
