@@ -1,4 +1,5 @@
-﻿using Lacuna.Pki.Xml;
+﻿using Lacuna.Pki;
+using Lacuna.Pki.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -12,8 +13,8 @@ namespace WebApi.Models {
     public class OpenXmlSignatureResponse {
         public List<XmlSignatureModel> Signatures { get; set; }
 
-        public OpenXmlSignatureResponse(List<XmlSignature> signatures) {
-            Signatures = signatures.Select(s => new XmlSignatureModel(s)).ToList();
+        public OpenXmlSignatureResponse(List<XmlSignature> signatures, Dictionary<XmlSignature, ValidationResults> validationResults) {
+            Signatures = signatures.Select(s => new XmlSignatureModel(s, validationResults[s])).ToList();
         }
     }
 
@@ -28,10 +29,9 @@ namespace WebApi.Models {
         public string SignaturePolicyId { get; set; }
         public ValidationErrorModel ValidationModel { get; set; }
 
-        public XmlSignatureModel(XmlSignature signature) {
+        public XmlSignatureModel(XmlSignature signature, ValidationResults validationResults) {
 
-            var validationPolicy = XmlPolicySpec.GetXmlDSigBasic(Util.GetTrustArbitrator());
-            ValidationModel = new ValidationErrorModel(signature.Validate(validationPolicy));
+            ValidationModel = new ValidationErrorModel(validationResults);
             SignedEntityType = signature.SignedEntityType;
             SigningTime = signature.SigningTime;
 
