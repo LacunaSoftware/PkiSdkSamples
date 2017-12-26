@@ -67,6 +67,12 @@ namespace SampleWpfApp {
 			}
 		}
 
+		public void IssueAttributeCert() {
+			if (checkLicenseLoaded()) {
+				new IssueAttributeCertWindow().Show();
+			}
+		}
+
 		public void LoadLicense() {
 
 			var openFileDialog = new OpenFileDialog() {

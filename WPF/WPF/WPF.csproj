@@ -80,8 +80,14 @@
     <Compile Include="CertificateValidationWindow.xaml.cs">
       <DependentUpon>CertificateValidationWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CieStudentIdentity.cs" />
+    <Compile Include="CieStudentData.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="IssueAttributeCertViewModel.cs" />
+    <Compile Include="IssueAttributeCertWindow.xaml.cs">
+      <DependentUpon>IssueAttributeCertWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -97,6 +103,7 @@
       <DependentUpon>TaskProgressDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="TrustAnyRootArbitrator.cs" />
+    <Compile Include="Util.cs" />
     <Compile Include="ValidationResultsDialog.xaml.cs">
       <DependentUpon>ValidationResultsDialog.xaml</DependentUpon>
     </Compile>
@@ -105,6 +112,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="CertificateValidationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="IssueAttributeCertWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
