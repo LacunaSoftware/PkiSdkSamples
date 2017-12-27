@@ -97,7 +97,9 @@ namespace SampleWpfApp {
 
 				if (Batch) {
 
-					var folderDialog = new System.Windows.Forms.FolderBrowserDialog();
+					var folderDialog = new System.Windows.Forms.FolderBrowserDialog() {
+						Description = "Choose the folder on which to save the issued certificates:"
+					};
 					if (folderDialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) {
 						return;
 					}
