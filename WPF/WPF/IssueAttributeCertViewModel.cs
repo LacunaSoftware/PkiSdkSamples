@@ -108,7 +108,7 @@ namespace SampleWpfApp {
 					// Run batch in background
 					var issuedCount = TaskProgressDialog.Run(d => issueBatchAsync(folderPath, d), this.owner);
 
-					MessageBox.Show(string.Format("Certificates saved on {0}\n\nCertificates issued: {1}\nElapsed time: {2:F1} s ({3:F1}/min)", folderPath, issuedCount, sw.Elapsed.TotalSeconds, BatchSize / sw.Elapsed.TotalMinutes), "Batch completed");
+					MessageBox.Show(string.Format("Certificates saved on {0}\n\nCertificates issued: {1}\nElapsed time: {2:F1} s ({3:F1}/min)", folderPath, issuedCount, sw.Elapsed.TotalSeconds, issuedCount / sw.Elapsed.TotalMinutes), "Batch completed");
 
 				} else {
 
@@ -184,7 +184,7 @@ namespace SampleWpfApp {
 			 * Na composição dos nomes, aplicam-se as restrições de nome conforme definido no
 			 * item Restrição de nomes.
 			 */
-			var normalizedName = Name.Trim().RemoveDiacritics().RemovePunctuation();
+			var normalizedName = name.Trim().RemoveDiacritics().RemovePunctuation();
 			var holderName = string.Format("C=BR, O=ICP-Brasil, OU={0}, CN={1}", IssuerName, normalizedName);
 
 			// Expiration (we're using midnight from March 31st to April 1st of next year)
