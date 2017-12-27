@@ -80,18 +80,5 @@ namespace SampleWpfApp {
 
 			return true;
 		}
-
-		public static byte[] EncodeAsn1PrintableString(string s) {
-			var encodedString = Encoding.ASCII.GetBytes(s);
-			if (encodedString.Length > 127) {
-				throw new NotSupportedException();
-			}
-			using (var buffer = new MemoryStream()) {
-				buffer.WriteByte(0x13); // PrintableString tag
-				buffer.WriteByte((byte)encodedString.Length);
-				buffer.Write(encodedString, 0, encodedString.Length);
-				return buffer.ToArray();
-			}
-		}
 	}
 }

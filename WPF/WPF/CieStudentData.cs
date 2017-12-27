@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lacuna.Pki.Asn1;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,8 @@ namespace SampleWpfApp {
 	 * da instituição de ensino; nas 15 (quinze) posições subsequentes, o grau de
 	 * escolaridade; nas 30 (trinta) posições subsequentes, o nome do curso, nas 20 (vinte)
 	 * posições subsequentes, o município da instituição e nas 2 (duas) posições
-	 * subsequentes, a UF domunicípio.	 */
+	 * subsequentes, a UF domunicípio.
+	 */
 	class CieStudentData {
 
 		public const string Oid = "2.16.76.1.10.2";
@@ -57,7 +59,7 @@ namespace SampleWpfApp {
 
 			// Encode string as PrintableString
 
-			return Util.EncodeAsn1PrintableString(content.ToString());
+			return Asn1Util.DerEncodePrintableString(content.ToString());
 		}
 
 		private static string normalizeText(string s, int maxLen) {

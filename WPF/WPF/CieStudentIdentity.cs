@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lacuna.Pki.Asn1;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,8 @@ namespace SampleWpfApp {
 	 * o Cadastro de Pessoa Física (CPF) do titular; nas 15 (quinze) posições subsequentes,
 	 * o número da matrícula do estudante; nas 15 (quinze) posições subsequentes, o 
 	 * número do Registro Geral - RG do titular do atributo; nas 10 (dez) posições
-	 * subsequentes, as siglas do órgão expedidor do RG e respectiva UF.	 */
+	 * subsequentes, as siglas do órgão expedidor do RG e respectiva UF.
+	 */
 	class CieStudentIdentity {
 
 		public const string Oid = "2.16.76.1.10.1";
@@ -64,7 +66,7 @@ namespace SampleWpfApp {
 
 			// Encode string as PrintableString
 
-			return Util.EncodeAsn1PrintableString(content.ToString());
+			return Asn1Util.DerEncodePrintableString(content.ToString());
 		}
 
 		private static string normalizeNumber(string s, int maxLen) {
