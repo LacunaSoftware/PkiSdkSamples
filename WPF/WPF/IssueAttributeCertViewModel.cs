@@ -81,7 +81,7 @@ namespace SampleWpfApp {
 
 			try {
 
-				/*
+				/**
 				 * HolderName
 				 * 
 				 * http://www.une.org.br/site/wp-content/uploads/2017/01/Padra%CC%83o-Nacional-2017.pdf
@@ -94,8 +94,8 @@ namespace SampleWpfApp {
 				 *   C = BR
 				 *   O = ICP-Brasil
 				 *   OU = nome fantasia ou sigla da Entidade Emissora de Atributo (EEA)
-				 *   CN = nome do titular do atributo			 *   			 * Na composição dos nomes, aplicam-se as restrições de nome conforme definido no
-				 * item Restrição de nomes.			 */
+				 *   CN = nome do titular do atributo				 *   				 * Na composição dos nomes, aplicam-se as restrições de nome conforme definido no
+				 * item Restrição de nomes.				 */
 				var normalizedName = Name.Trim().RemoveDiacritics().RemovePunctuation();
 				var holderName = string.Format("C=BR, O=ICP-Brasil, OU={0}, CN={1}", IssuerName, normalizedName);
 
