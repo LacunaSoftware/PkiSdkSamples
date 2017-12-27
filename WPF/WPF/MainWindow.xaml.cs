@@ -56,5 +56,9 @@ namespace SampleWpfApp {
 		private void IssueAttributeCertButton_Click(object sender, RoutedEventArgs e) {
 			viewModel.IssueAttributeCert();
 		}
+
+		private void ValidateAttributeCertButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.ValidateAttributeCert();
+		}
 	}
 }

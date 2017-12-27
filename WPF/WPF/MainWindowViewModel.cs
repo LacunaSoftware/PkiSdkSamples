@@ -1,8 +1,11 @@
-﻿using Lacuna.Pki.Util;
+﻿using Lacuna.Pki;
+using Lacuna.Pki.Stores;
+using Lacuna.Pki.Util;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -73,11 +76,65 @@ namespace SampleWpfApp {
 			}
 		}
 
+		public void ValidateAttributeCert() {
+
+			if (!checkLicenseLoaded()) {
+				return;
+			}
+
+			try {
+
+				var certFileDialog = new OpenFileDialog() {
+					DefaultExt = ".ac",
+					Filter = "X.509 attribute certificate (.ac)|*.ac"
+				};
+				if (certFileDialog.ShowDialog() != true) {
+					return;
+				}
+
+				// Read and decode the attribute certificate
+				var certContent = File.ReadAllBytes(certFileDialog.FileName);
+				var cert = AttributeCertificate.Decode(certContent);
+
+				// If the certificate is issued without a link to its issuer (AIA extension), the validation will fail because the issuer will not be found. In this
+				// case, have to provide the issuer certificate when decoding the attribute certificate.
+				if (cert.IssuerNotFound) {
+
+					MessageBox.Show("Could not find the issuer of the certificate. This usually happens with certificates that do not have a valid Authority Information Access (AIA) extension.\n\nTo continue, you will need to provide the .cer file of the issuer.", "Issuer not found");
+					var issuerFileDialog = new OpenFileDialog() {
+						DefaultExt = ".cer",
+						Filter = "X.509 certificate|*.cer;*.crt"
+					};
+					if (issuerFileDialog.ShowDialog() != true) {
+						return;
+					}
+					
+					// Read and decode the issuer certificate
+					var issuerContent = File.ReadAllBytes(issuerFileDialog.FileName);
+					var issuerCert = PKCertificate.Decode(issuerContent);
+
+					// Re-open the attribute certificate providing the issuer certificate
+					cert = AttributeCertificate.Decode(certContent, new MemoryCertificateStore(new[] { issuerCert }));
+				}
+
+				// Validate the certificate
+				var vr = cert.Validate(App.GetTrustArbitrator());
+
+				// Show the validation results
+				new ValidationResultsDialog("Attribute certificate validation results", vr).ShowDialog();
+
+			} catch (Exception ex) {
+
+				MessageBox.Show(ex.ToString(), "An error has occurred");
+
+			}
+		}
+
 		public void LoadLicense() {
 
 			var openFileDialog = new OpenFileDialog() {
 				DefaultExt = ".config",
-				Filter = "License file (.conifg)|*.config"
+				Filter = "License file (.config)|*.config"
 			};
 
 			if (openFileDialog.ShowDialog() == true) {
