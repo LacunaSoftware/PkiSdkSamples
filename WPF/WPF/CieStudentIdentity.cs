@@ -69,6 +69,40 @@ namespace SampleWpfApp {
 			return Asn1Util.DerEncodePrintableString(content.ToString());
 		}
 
+		public static CieStudentIdentity Decode(Lacuna.Pki.X509Attributes attributes) {
+			return Decode(attributes.Get(Oid).EncodedValues[0]);
+		}
+
+		public static CieStudentIdentity Decode(byte[] encodedAttribute) {
+			try {
+				// decodifica o atributo como string
+				var content = Asn1Util.DecodePrintableString(encodedAttribute);
+				var cieId = new CieStudentIdentity();
+
+				// nas primeiras 8 (oito) posições, a data de nascimento do titular, no formato ddmmaaaa;
+				cieId.DataNascimento = DateTime.ParseExact(content.Substring(0, 8), "ddMMyyyy", null);
+
+				// nas 11 (onze) posições subsequentes, o Cadastro de Pessoa Física (CPF) do titular;
+				cieId.Cpf = content.Substring(8, 11);
+
+				// nas 15 (quinze) posições subsequentes, o número da matrícula do estudante;
+				cieId.Matricula = content.Substring(19, 15);
+
+				// nas 15(quinze) posições subsequentes, o número do Registro Geral-RG do titular do atributo;
+				// nas 10(dez) posições subsequentes, as siglas do órgão expedidor do RG e respectiva UF.
+				cieId.RG = content.Substring(34, 15);
+				if (cieId.RG != "000000000000000") {
+					cieId.RGEmissor = content.Substring(49, content.Length - 49 - 2).Trim();
+					cieId.RGEmissorUF = content.Substring(content.Length - 2, 2);
+				}
+
+				return cieId;
+
+			} catch (Exception ex) {
+				throw new FormatException("Error while decoding CIE student identity fields. Invalid format.", ex);
+			}
+		}
+
 		private static string normalizeNumber(string s, int maxLen) {
 
 			s = Regex.Replace((s ?? "").Trim().RemoveDiacritics().RemovePunctuation(), "[^0-9]", "");
