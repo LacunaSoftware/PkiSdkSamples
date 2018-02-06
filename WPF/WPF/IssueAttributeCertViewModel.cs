@@ -234,6 +234,11 @@ namespace SampleWpfApp {
 			// Issue
 			var cert = certGen.Generate();
 
+
+			// CIE Attributes decode example
+			//var cieStudentIdentityDecoded = CieStudentIdentity.Decode(cert.Attributes);
+			//var cieStudentDataDecoded = CieStudentData.Decode(cert.Attributes);
+
 			// Return encoded cert
 			return cert.EncodedValue;
 		}
