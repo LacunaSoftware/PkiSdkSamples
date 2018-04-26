@@ -90,7 +90,7 @@ namespace SampleWpfApp {
 
 				// nas 15(quinze) posições subsequentes, o número do Registro Geral-RG do titular do atributo;
 				// nas 10(dez) posições subsequentes, as siglas do órgão expedidor do RG e respectiva UF.
-				cieId.RG = content.Substring(34, 15).TrimStart('0'); ;
+				cieId.RG = content.Substring(34, 15).TrimStart('0');
 				if (!string.IsNullOrEmpty(cieId.RG)) {
 					cieId.RGEmissor = content.Substring(49, content.Length - 49 - 2).Trim();
 					cieId.RGEmissorUF = content.Substring(content.Length - 2, 2);
