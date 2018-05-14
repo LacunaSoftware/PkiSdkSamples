@@ -117,6 +117,16 @@ namespace SampleWpfApp {
 					cert = AttributeCertificate.Decode(certContent, new MemoryCertificateStore(new[] { issuerCert }));
 				}
 
+                CieStudentIdentity cieStudentIdentity = null;
+                if (cert.Attributes.GetOids().Contains(CieStudentIdentity.Oid)) {
+                    cieStudentIdentity = CieStudentIdentity.Decode(cert.Attributes);
+                }
+
+                CieStudentData cieStudentData = null;
+                if (cert.Attributes.GetOids().Contains(CieStudentData.Oid)) {
+                    cieStudentData = CieStudentData.Decode(cert.Attributes);
+                }
+
 				// Validate the certificate
 				var vr = cert.Validate(App.GetTrustArbitrator());
 
