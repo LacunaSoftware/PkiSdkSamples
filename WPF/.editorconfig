@@ -1,0 +1,169 @@
+# editorconfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Default settings:
+# Use tabs
+# A newline ending every file
+[*]
+indent_style = tab
+insert_final_newline = true
+# Disabling end_of_line configuration since we're using git line ending normalization
+#end_of_line = crlf
+
+# C# files
+[*.cs]
+
+# Indentation (VS defaults, imported from https://github.com/dotnet/corefx/blob/master/.editorconfig)
+csharp_indent_block_contents = true
+csharp_indent_braces = false
+csharp_indent_case_contents = true
+csharp_indent_switch_labels = true
+
+# New lines (Lacuna coding style)
+csharp_new_line_before_open_brace = none
+csharp_new_line_before_else = false
+csharp_new_line_before_catch = false
+csharp_new_line_before_finally = false
+csharp_new_line_before_members_in_object_initializers = true
+csharp_new_line_before_members_in_anonymous_types = true
+csharp_new_line_between_query_expression_clauses = true
+
+# Spacing (VS defaults, imported from https://github.com/dotnet/corefx/blob/master/.editorconfig)
+csharp_space_after_cast = false
+csharp_space_after_colon_in_inheritance_clause = true
+csharp_space_after_comma = true
+csharp_space_after_dot = false
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_after_semicolon_in_for_statement = true
+csharp_space_around_binary_operators = before_and_after
+csharp_space_around_declaration_statements = do_not_ignore
+csharp_space_before_colon_in_inheritance_clause = true
+csharp_space_before_comma = false
+csharp_space_before_dot = false
+csharp_space_before_open_square_brackets = false
+csharp_space_before_semicolon_in_for_statement = false
+csharp_space_between_empty_square_brackets = false
+csharp_space_between_method_call_empty_parameter_list_parentheses = false
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_call_parameter_list_parentheses = false
+csharp_space_between_method_declaration_empty_parameter_list_parentheses = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_between_method_declaration_parameter_list_parentheses = false
+csharp_space_between_parentheses = false
+csharp_space_between_square_brackets = false
+
+# Wrapping (Lacuna coding style)
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = false
+
+# var
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_var_for_built_in_types = true:suggestion
+
+# Naming conventions
+# ==================
+
+# Definition of symbols
+# ---------------------
+
+# Definition of naming symbols "private_members"
+dotnet_naming_symbols.private_members.applicable_kinds           = property, method, field, event, delegate
+dotnet_naming_symbols.private_members.applicable_accessibilities = private
+
+# Definition of naming symbols "non_private_members"
+dotnet_naming_symbols.non_private_members.applicable_kinds           = property, method, field, event, delegate
+dotnet_naming_symbols.non_private_members.applicable_accessibilities = public, internal, protected, protected_internal
+
+# Definition of naming symbols "const_fields"
+dotnet_naming_symbols.const_fields.applicable_kinds   = field
+dotnet_naming_symbols.const_fields.required_modifiers = const
+
+# Definition of naming symbols "private_static_readonly_fields"
+dotnet_naming_symbols.private_static_readonly_fields.applicable_kinds           = field
+dotnet_naming_symbols.private_static_readonly_fields.required_modifiers         = static, readonly
+dotnet_naming_symbols.private_static_readonly_fields.applicable_accessibilities = private
+
+# Definition of naming symbols "classes"
+dotnet_naming_symbols.classes.applicable_kinds = class
+
+# Definition of naming symbols "interfaces"
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+
+# Definition of naming symbols "async_private_methods"
+dotnet_naming_symbols.async_private_methods.applicable_kinds           = method
+dotnet_naming_symbols.async_private_methods.applicable_accessibilities = private
+dotnet_naming_symbols.async_private_methods.required_modifiers         = async
+
+# Definition of naming symbols "async_non_private_methods"
+dotnet_naming_symbols.async_non_private_methods.applicable_kinds           = method
+dotnet_naming_symbols.async_non_private_methods.applicable_accessibilities = public, internal, protected, protected_internal
+dotnet_naming_symbols.async_non_private_methods.required_modifiers         = async
+
+# Definition of styles
+# ---------------------
+
+# Definition of style "camel_case_style"
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+# Definition of style "pascal_case_style"
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# Definition of style "interface_style"
+dotnet_naming_style.interface_style.capitalization = pascal_case
+dotnet_naming_style.interface_style.required_prefix = I
+
+# Definition of style "async_private_method_style"
+dotnet_naming_style.async_private_method_style.capitalization  = camel_case
+dotnet_naming_style.async_private_method_style.required_suffix = Async
+
+# Definition of style "async_non_private_method_style"
+dotnet_naming_style.async_non_private_method_style.capitalization  = pascal_case
+dotnet_naming_style.async_non_private_method_style.required_suffix = Async
+
+# Naming rules
+# ------------
+
+# Classes must be pascal case
+dotnet_naming_rule.classes_must_be_pascal_case.severity = warning
+dotnet_naming_rule.classes_must_be_pascal_case.symbols  = classes
+dotnet_naming_rule.classes_must_be_pascal_case.style    = pascal_case_style
+
+# Interfaces must be pascal case and begin with an "I"
+dotnet_naming_rule.interfaces_must_be_pascal_case_and_have_prefix.severity = warning
+dotnet_naming_rule.interfaces_must_be_pascal_case_and_have_prefix.symbols  = interfaces
+dotnet_naming_rule.interfaces_must_be_pascal_case_and_have_prefix.style    = interface_style
+
+# Const fields must be pascal case
+dotnet_naming_rule.const_fields_must_be_pascal_case.severity = warning
+dotnet_naming_rule.const_fields_must_be_pascal_case.symbols  = const_fields
+dotnet_naming_rule.const_fields_must_be_pascal_case.style    = pascal_case_style
+
+# Dummy rule to exclude private static readonly fields from the rule "private_members_must_be_camel_case",
+# since we want to allow both pascal case (for "const-like" fields) and camel case (for other cases)
+dotnet_naming_rule.ignore_private_static_readonly_fields.severity = none
+dotnet_naming_rule.ignore_private_static_readonly_fields.symbols  = private_static_readonly_fields
+dotnet_naming_rule.ignore_private_static_readonly_fields.style    = camel_case_style
+
+# Async private methods must be camel case and end in "Async"
+dotnet_naming_rule.async_private_methods_must_be_camel_case_and_have_suffix.severity = warning
+dotnet_naming_rule.async_private_methods_must_be_camel_case_and_have_suffix.symbols  = async_private_methods
+dotnet_naming_rule.async_private_methods_must_be_camel_case_and_have_suffix.style    = async_private_method_style
+
+# Async non-private methods must be pascal case and end in "Async"
+dotnet_naming_rule.async_non_private_methods_must_be_pascal_case_and_have_suffix.severity = warning
+dotnet_naming_rule.async_non_private_methods_must_be_pascal_case_and_have_suffix.symbols  = async_non_private_methods
+dotnet_naming_rule.async_non_private_methods_must_be_pascal_case_and_have_suffix.style    = async_non_private_method_style
+
+# Non-private members must be pascal case
+dotnet_naming_rule.non_private_members_must_be_pascal_case.severity = warning
+dotnet_naming_rule.non_private_members_must_be_pascal_case.symbols  = non_private_members
+dotnet_naming_rule.non_private_members_must_be_pascal_case.style    = pascal_case_style
+# NOTE: this rule is a sort of "catch all" rule and therefore must appear after any rules with more specific symbol scopes
+
+# Private members must be camel case
+dotnet_naming_rule.private_members_must_be_camel_case.severity = warning
+dotnet_naming_rule.private_members_must_be_camel_case.symbols  = private_members
+dotnet_naming_rule.private_members_must_be_camel_case.style    = camel_case_style
+# NOTE: this rule is a sort of "catch all" rule and therefore must appear after any rules with more specific symbol scopes
