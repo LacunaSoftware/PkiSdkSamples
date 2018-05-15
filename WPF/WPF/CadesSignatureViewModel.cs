@@ -35,6 +35,19 @@ namespace SampleWpfApp {
 			}
 		}
 
+		private bool encapsulateContent = true;
+		public bool EncapsulateContent {
+			get {
+				return encapsulateContent;
+			}
+			set {
+				if (value != encapsulateContent) {
+					encapsulateContent = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
 		private string filePathValue;
 		public string FilePath {
 			get {
@@ -167,6 +180,7 @@ namespace SampleWpfApp {
 
 				signer.SetSigningCertificate(SelectedCertificate.CertificateWithKey);
 				signer.SetPolicy(CadesPoliciesForGeneration.GetCadesBasic(App.GetTrustArbitrator()));
+				signer.SetEncapsulatedContent(this.EncapsulateContent);
 				signer.ComputeSignature();
 				var signature = signer.GetSignature();
 
