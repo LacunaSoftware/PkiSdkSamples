@@ -60,5 +60,9 @@ namespace SampleWpfApp {
 		private void ValidateAttributeCertButton_Click(object sender, RoutedEventArgs e) {
 			viewModel.ValidateAttributeCert();
 		}
+
+		private void MergeCadesSignaturesButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.MergeCadesSignatures();
+		}
 	}
 }

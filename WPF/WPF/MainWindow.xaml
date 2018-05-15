@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SampleWpfApp"
         mc:Ignorable="d"
-        Title="Lacuna PKI Sample WPF Application" Height="462.093" Width="550" ResizeMode="NoResize" Loaded="Window_Loaded">
+        Title="Lacuna PKI Sample WPF Application" Height="485.093" Width="550" ResizeMode="NoResize" Loaded="Window_Loaded">
 	<Window.DataContext>
 		<local:MainWindowViewModel/>
 	</Window.DataContext>
@@ -42,6 +42,7 @@
 		<Button x:Name="SignatureValidationButton" Content="Validate a signature" Margin="20,218,0,0" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Width="236" Height="16" VerticalAlignment="Top" Click="SignatureValidationButton_Click"/>
 		<Button x:Name="IssueAttributeCertButton" Content="Issue an attribute certificate" Margin="20,239,0,0" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Width="236" Height="16" VerticalAlignment="Top" Click="IssueAttributeCertButton_Click"/>
 		<Button x:Name="ValidateAttributeCertButton" Content="Validate an attribute certificate" Margin="20,260,0,0" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Width="236" Height="16" VerticalAlignment="Top" Click="ValidateAttributeCertButton_Click" />
+		<Button x:Name="MergeCadesSignaturesButton" Content="Merge CAdES signatures" Margin="20,281,0,0" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Width="236" Height="16" VerticalAlignment="Top" Click="MergeCadesSignaturesButton_Click" />
 		<Grid Height="110" Margin="10,0,10,10" VerticalAlignment="Bottom" Background="#FFFFF0A7" Visibility="{Binding LicenseLoaded, Converter={StaticResource VisibleWhenFalseConverter}}">
 			<TextBlock x:Name="textBlock" Margin="10,10,10,0" TextWrapping="Wrap" Text="Notice: the PKI SDK license has not been set programatically. You should set it (see file App.xaml.cs). For now, you can load the license file manually by clicking the button below." VerticalAlignment="Top"/>
 			<Button x:Name="LoadLicenseButton" Content="Load license" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="100" Height="24" Click="LoadLicenseButton_Click"/>

@@ -93,6 +93,10 @@
     </Compile>
     <Compile Include="LacunaHolderPhotoAttribute.cs" />
     <Compile Include="MainWindowViewModel.cs" />
+    <Compile Include="MergeCadesSignaturesViewModel.cs" />
+    <Compile Include="MergeCadesSignaturesWindow.xaml.cs">
+      <DependentUpon>MergeCadesSignaturesWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -135,6 +139,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MergeCadesSignaturesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PdfSignatureWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -139,6 +139,15 @@ namespace SampleWpfApp {
 		private void validateCadesSignature(string filePath) {
 			var policy = CadesPoliciesForValidation.GetCadesBasic(App.GetTrustArbitrator());
 			var cadesSignature = CadesSignature.Open(filePath);
+			if (!cadesSignature.HasEncapsulatedContent) {
+				MessageBox.Show("This CAdES signature does not have an encapsulated content (\"detached signature\"). Please provide the data file to continue with the validation.", "Data file needed");
+				var dataFileDialog = new OpenFileDialog() {
+				};
+				if (dataFileDialog.ShowDialog() != true) {
+					return;
+				}
+				cadesSignature.SetExternalData(File.ReadAllBytes(dataFileDialog.FileName));
+			}
 			Signers.Clear();
 			foreach (var signer in cadesSignature.Signers) {
 				var vr = cadesSignature.ValidateSignature(signer, policy);

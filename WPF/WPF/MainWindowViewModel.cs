@@ -140,6 +140,12 @@ namespace SampleWpfApp {
 			}
 		}
 
+		public void MergeCadesSignatures() {
+			if (checkLicenseLoaded()) {
+				new MergeCadesSignaturesWindow().Show();
+			}
+		}
+
 		public void LoadLicense() {
 
 			var openFileDialog = new OpenFileDialog() {
