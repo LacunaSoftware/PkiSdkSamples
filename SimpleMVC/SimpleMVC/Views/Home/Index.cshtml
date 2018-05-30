@@ -1,0 +1,198 @@
+﻿@{
+	Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Sign Demo</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://get.webpkiplugin.com/Scripts/LacunaWebPKI/lacuna-web-pki-2.9.0.js" type="text/javascript" integrity="sha256-6HGuOyRqUi6AOCQHdC6/AG2Cty7d8+gtwtFXzr1oUfg=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.js" type="text/javascript" crossorigin="anonymous"></script>
+</head>
+<body>
+	<div>
+		<button type="button" onclick="openModal();">Launch modal</button>
+	</div>
+	<div>
+		<div id="messageResult" class="hidden" role="alert">Signature OK</div>
+		<div class="row hidden" id="signedDownloadDiv">
+			<a id="signedDownloadLink" href='/Download/File/SampleDocument.pdf'>Download Signed Document</a>
+		</div>
+	</div>
+
+	<div class="modal fade" tabindex="-1" role="dialog" id="signModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title" id="modal-title">Sign File</h4>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						<label>File to sign</label>
+						<p>You'll be signing <a href='/Download/Sample/SampleDocument.pdf'>this sample document</a>.</p>
+					</div>
+					<div class="form-group">
+						<label for="certificateSelect">Choose a certificate</label>
+						<select id="certificateSelect" class="form-control"></select>
+					</div>
+					<button id="refreshButton" type="button" class="btn btn-default" onclick="refresh();">Refresh Certificates</button>
+					<button type="button" class="btn btn-primary" onclick="startSignature()">Sign</button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					<button type="button" id="modal-close" class="btn btn-primary" data-dismiss="modal" disabled="disabled">Close</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<script type="text/javascript">
+	var modal = $('#signModal');
+	function openModal() {
+		$('#signModal').modal("toggle");
+		startSign();
+	}
+
+	$('#signModal .modal-footer button').on('click', function(event) {
+		var $button = $(event.target); // The clicked button
+		$(this).closest('.modal').one('hidden.bs.modal', function () {
+			SignatureOk();
+		});
+	});
+
+	var webPkiLicense = '';
+	var pki = new LacunaWebPKI(webPkiLicense);
+	function startSign() {
+		pki.init({
+			ready: loadCertificates, // as soon as the component is ready we'll load the certificates
+			defaultError: onWebPkiError // generic error callback on Content/js/app/site.js
+		});
+	}
+
+	function refresh() {
+		// Block the UI while we load the certificates
+		$.blockUI();
+		// Invoke the loading of the certificates
+		loadCertificates();
+	}
+
+	function SignatureOk() {
+		$("#messageResult").removeClass("hidden").addClass("alert alert-success");
+		$("#signedDownloadLink").removeClass("hidden");
+	}
+
+	function loadCertificates() {
+		pki.listCertificates({
+			selectId: 'certificateSelect',
+			selectOptionFormatter: function (cert) {
+				return cert.subjectName + ' (expires on ' + cert.validityEnd.toDateString() + ', issued by ' + cert.issuerName + ')';
+			}
+		}).success(function () {
+			showMessage("Selecione um certificado");
+			$.unblockUI();
+		});
+	}
+	function startSignature() {
+		// Block the UI while we perform the signature
+		showMessage("Signing...");
+
+		// Get the value attribute of the option selected on the dropdown. Since we placed the "thumbprint"
+		// property on the value attribute of each item (see function loadCertificates above), we're actually
+		// retrieving the thumbprint of the selected certificate.
+		var selectedCertThumbprint = $('#certificateSelect').val();
+		pki.readCertificate(selectedCertThumbprint).success(function (certEncoded) {
+			var data = {
+				'CertContent': certEncoded,
+				'CertThumb': selectedCertThumbprint
+			};
+			$.ajax({
+				type: "POST",
+				url: 'api/sign/SignatureStart',
+				data: JSON.stringify(data),
+				contentType: "application/json; charset=utf-8",
+				dataType: "json",
+				success: function (response) {
+					onSignatureStartCompleted(certEncoded, response, selectedCertThumbprint);
+				},
+				failure: function (response) {
+					alert(response.responseText);
+				},
+				error: function (response) {
+					alert(response.responseText);
+				}
+			});
+		});
+	}
+
+	function onSignatureStartCompleted(certificate, startResponse, certThumbprint) {
+		showMessage("Accessing the certificate");
+		pki.signData({
+			thumbprint: certThumbprint,
+			data: startResponse.ToSignBytes,
+			digestAlgorithm: startResponse.DigestAlgorithmOid
+		}).success(function (signature) {
+			onSignDataCompleted(startResponse, certificate, signature);
+		});
+	};
+
+	function onSignDataCompleted(startResponse, cert, sign) {
+		showMessage("Finalizing...");
+		var data = {
+			certificate: cert,
+			signature: sign,
+			toSignBytes: startResponse.ToSignBytes,
+			transferDataFileId: startResponse.TransferDataFileId
+		};
+		$.ajax({
+			type: "POST",
+			url: 'api/sign/SignatureComplete',
+			data: JSON.stringify(data),
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			success: function (response) {
+				onSignatureCompleteCompleted(response);
+			},
+			failure: function (response) {
+				handleServerError(response);
+			}
+		}).then(onSignatureCompleteCompleted, handleServerError);
+	}
+
+	function onSignatureCompleteCompleted(completeResponse) {
+		$('#modal-close').prop('disabled', false);
+		$("#signedDownloadLink").attr("href", "/Download/File/" + completeResponse.Filename);
+		showMessage('Signature completed successfully!');
+	}
+
+
+	function onWebPkiError(message, error, origin) {
+		if (console) {
+			console.log('An error has occurred on the signature browser component: ' + message, error);
+		}
+		alert(message);
+	}
+
+	function handleServerError(response) {
+		if (response.status === 400 && response.data.validationResults) {
+			showMessage('Validation failed!', 'One or more validations failed. Click OK to see more details.').result.then(function () {
+				showValidationResults(response.data.validationResults);
+			});
+		} else {
+			showMessage('An error has occurred', response.data.message || 'HTTP error ' + response.status);
+		}
+	}
+
+	function showMessage(title, message) {
+		if (message) {
+			modal.find('.modal-title').text(title + " " + message);
+		} else {
+			modal.find('.modal-title').text(title);
+		}
+	};
+</script>
+
+</body>
+</html>
