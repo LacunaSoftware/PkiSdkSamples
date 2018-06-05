@@ -165,11 +165,14 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\SignMVCController.cs" />
     <Compile Include="Controllers\SignController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\CertificateModel.cs" />
+    <Compile Include="Models\SignatureCompleteModel.cs" />
+    <Compile Include="Models\SignatureStartMVCModel.cs" />
     <Compile Include="Models\SignatureStartResponse.cs" />
     <Compile Include="Models\SignatureStartModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

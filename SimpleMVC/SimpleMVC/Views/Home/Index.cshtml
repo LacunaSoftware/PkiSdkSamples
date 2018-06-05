@@ -105,15 +105,13 @@
 		var selectedCertThumbprint = $('#certificateSelect').val();
 		pki.readCertificate(selectedCertThumbprint).success(function (certEncoded) {
 			var data = {
-				'CertContent': certEncoded,
-				'CertThumb': selectedCertThumbprint
+				'CertContentBase64': certEncoded,
+				'CertThumbBase64': selectedCertThumbprint
 			};
 			$.ajax({
 				type: "POST",
-				url: 'api/sign/SignatureStart',
-				data: JSON.stringify(data),
-				contentType: "application/json; charset=utf-8",
-				dataType: "json",
+				url: '/SignMVC/SignatureStart',
+				data: data,
 				success: function (response) {
 					onSignatureStartCompleted(certEncoded, response, selectedCertThumbprint);
 				},
@@ -141,17 +139,14 @@
 	function onSignDataCompleted(startResponse, cert, sign) {
 		showMessage("Finalizing...");
 		var data = {
-			certificate: cert,
-			signature: sign,
-			toSignBytes: startResponse.ToSignBytes,
-			transferDataFileId: startResponse.TransferDataFileId
+			CertContentBase64: cert,
+			SignatureBase64: sign,
+			TransferDataFileId: startResponse.TransferDataFileId
 		};
 		$.ajax({
 			type: "POST",
-			url: 'api/sign/SignatureComplete',
-			data: JSON.stringify(data),
-			contentType: "application/json; charset=utf-8",
-			dataType: "json",
+			url: '/SignMVC/SignatureComplete',
+			data: data,
 			success: function (response) {
 				onSignatureCompleteCompleted(response);
 			},
