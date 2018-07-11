@@ -26,12 +26,15 @@ namespace MVC.Classes {
 
 		// Função que simula a recuperação de um arquivo previamente armazenado
 		public static bool TryGetFile(string fileId, out byte[] content, out string extension) {
+			content = null;
+			extension = null;
+			if (string.IsNullOrEmpty(fileId)) {
+				return false;
+			}
 			var filename = fileId.Replace('_', '.');
 			var path = HttpContext.Current.Server.MapPath("~/App_Data/" + filename);
 			var fileInfo = new FileInfo(path);
 			if (!fileInfo.Exists) {
-				content = null;
-				extension = null;
 				return false;
 			}
 			extension = fileInfo.Extension;
@@ -46,9 +49,16 @@ namespace MVC.Classes {
 		public static byte[] GetSampleDocContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleDocument.pdf"));
 		}
+        public static byte[] GetBatchDocContent(int id) {
+            return File.ReadAllBytes(Path.Combine(ContentPath, string.Format("{0:D2}.pdf", ((id - 1) % 30) + 1)));
+        }
 
-		public static byte[] GetPdfStampContent() {
+        public static byte[] GetPdfStampContent() {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "PdfStamp.png"));
+		}
+
+		public static byte[] GetSampleCodEnvelope() {
+			return File.ReadAllBytes(Path.Combine(ContentPath, "SampleCodEnvelope.xml"));
 		}
 	}
 }

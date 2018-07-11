@@ -48,17 +48,15 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.Pki, Version=1.13.5.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.13.5\lib\net45\Lacuna.Pki.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Lacuna.Pki, Version=1.16.9.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.Pki.dll</HintPath>
     </Reference>
     <Reference Include="Lacuna.Pki.NLogConnector, Version=1.2.0.0, Culture=neutral, PublicKeyToken=3a226365014df7ef, processorArchitecture=MSIL">
       <HintPath>..\packages\Lacuna.Pki.NLogConnector.1.2.0\lib\net45\Lacuna.Pki.NLogConnector.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.T8, Version=1.0.2.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.13.5\lib\net45\Lacuna.T8.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Lacuna.T8, Version=1.0.4.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.T8.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -175,19 +173,22 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
-    <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
     <Compile Include="Controllers\CadesSignatureController.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OpenXmlSignatureController.cs" />
     <Compile Include="Controllers\PadesSignatureController.cs" />
+    <Compile Include="Controllers\XmlElementSignatureController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AuthenticationPostResponse.cs" />
     <Compile Include="Models\AuthenticationPostRequest.cs" />
+    <Compile Include="Models\OpenXmlSignatureRequest.cs" />
+    <Compile Include="Models\OpenXmlSignatureResponse.cs" />
     <Compile Include="Models\SignatureCompleteRequest.cs" />
     <Compile Include="Models\SignatureCompleteResponse.cs" />
     <Compile Include="Models\SignatureStartRequest.cs" />
@@ -199,6 +200,7 @@
   <ItemGroup>
     <Content Include="app\app.js" />
     <Content Include="app\controllers\authentication.js" />
+    <Content Include="app\controllers\open-xml-signature.js" />
     <Content Include="app\controllers\signature-results-dialog.js" />
     <Content Include="app\controllers\validation-results-dialog.js" />
     <Content Include="app\controllers\certificate-dialog.js" />
@@ -211,6 +213,7 @@
     <Content Include="app\views\dialogs\validation-results.html" />
     <Content Include="app\views\dialogs\message.html" />
     <Content Include="app\views\dialogs\certificate.html" />
+    <Content Include="app\views\open-xml-signature.html" />
     <Content Include="app\views\xml-element-signature.html" />
     <Content Include="app\views\pades-signature.html" />
     <Content Include="app\views\cades-signature.html" />

@@ -1,0 +1,22 @@
+﻿<Window x:Class="SampleWpfApp.IssueAttributeCertWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SampleWpfApp"
+        mc:Ignorable="d"
+        Title="Issue an attribute certificate" Height="277.064" Width="578.122" Loaded="Window_Loaded">
+	<Window.DataContext>
+		<local:IssueAttributeCertViewModel />
+	</Window.DataContext>
+	<Grid>
+		<Button Name="IssueButton" Content="Issue" HorizontalAlignment="Center" Margin="0,175,0,0" VerticalAlignment="Top" Width="120" Click="IssueButton_Click" Height="28"/>
+		<ComboBox x:Name="comboBox" Margin="10,36,93,0" VerticalAlignment="Top" ItemsSource="{Binding Certificates}" SelectedItem="{Binding SelectedCertificate, Mode=TwoWay}"/>
+		<Button x:Name="RefreshButton" Content="Refresh" HorizontalAlignment="Right" Margin="0,36,13,0" VerticalAlignment="Top" Width="75" Height="22" Click="RefreshButton_Click"/>
+		<Label Content="Name" HorizontalAlignment="Left" Margin="10,63,0,0" VerticalAlignment="Top"/>
+		<TextBox Height="23" Margin="10,89,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Name}" />
+		<Label Content="Choose a certificate to use as issuer" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+		<CheckBox Content="Issue a batch of certificates" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" IsChecked="{Binding Batch}"/>
+
+	</Grid>
+</Window>

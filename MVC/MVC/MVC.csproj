@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,40 +49,45 @@
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.Pki, Version=1.13.5.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.13.5\lib\net45\Lacuna.Pki.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Lacuna.Pki, Version=1.20.9.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.20.9\lib\net45\Lacuna.Pki.dll</HintPath>
     </Reference>
     <Reference Include="Lacuna.Pki.NLogConnector, Version=1.2.0.0, Culture=neutral, PublicKeyToken=3a226365014df7ef, processorArchitecture=MSIL">
       <HintPath>..\packages\Lacuna.Pki.NLogConnector.1.2.0\lib\net45\Lacuna.Pki.NLogConnector.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.T8, Version=1.0.2.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.13.5\lib\net45\Lacuna.T8.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Lacuna.T8, Version=1.2.1.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.1.20.9\lib\net45\Lacuna.T8.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.8.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.3.11\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -132,17 +138,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\BatchSignatureController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Util.cs" />
+    <Compile Include="Controllers\CodXmlSignatureController.cs" />
     <Compile Include="Controllers\AuthenticationController.cs" />
+    <Compile Include="Controllers\BatchSignatureController.cs" />
     <Compile Include="Controllers\CadesSignatureController.cs" />
+    <Compile Include="Controllers\ValidateSignatureController.cs" />
     <Compile Include="Controllers\PadesSignatureController.cs" />
     <Compile Include="Models\AuthenticationInfoModel.cs" />
     <Compile Include="Models\AuthenticationModel.cs" />
+    <Compile Include="Api\Models\BatchSignatureCompleteRequest.cs" />
+    <Compile Include="Api\Models\BatchSignatureCompleteResponse.cs" />
+    <Compile Include="Models\BatchSignatureModel.cs" />
+    <Compile Include="Api\Models\BatchSignatureStartRequest.cs" />
+    <Compile Include="Api\Models\BatchSignatureStartResponse.cs" />
     <Compile Include="Models\SignatureInfoModel.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Controllers\DownloadController.cs" />
@@ -156,10 +172,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\SampleCodEnvelope.xml" />
     <Content Include="Content\css\bootstrap-theme.css" />
     <Content Include="Content\css\bootstrap-theme.min.css" />
     <Content Include="Content\css\bootstrap.css" />
     <Content Include="Content\css\bootstrap.min.css" />
+    <Content Include="Content\js\app\batch-signature-form.js" />
     <Content Include="Content\js\app\signature-complete-form.js" />
     <Content Include="Content\js\app\signature-start-form.js" />
     <Content Include="Content\js\app\authentication-form.js" />
@@ -185,6 +203,36 @@
     <Content Include="LacunaPkiLicense.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Content\01.pdf" />
+    <Content Include="Content\02.pdf" />
+    <Content Include="Content\03.pdf" />
+    <Content Include="Content\04.pdf" />
+    <Content Include="Content\05.pdf" />
+    <Content Include="Content\06.pdf" />
+    <Content Include="Content\07.pdf" />
+    <Content Include="Content\08.pdf" />
+    <Content Include="Content\09.pdf" />
+    <Content Include="Content\10.pdf" />
+    <Content Include="Content\11.pdf" />
+    <Content Include="Content\12.pdf" />
+    <Content Include="Content\13.pdf" />
+    <Content Include="Content\14.pdf" />
+    <Content Include="Content\15.pdf" />
+    <Content Include="Content\16.pdf" />
+    <Content Include="Content\17.pdf" />
+    <Content Include="Content\18.pdf" />
+    <Content Include="Content\19.pdf" />
+    <Content Include="Content\20.pdf" />
+    <Content Include="Content\21.pdf" />
+    <Content Include="Content\22.pdf" />
+    <Content Include="Content\23.pdf" />
+    <Content Include="Content\24.pdf" />
+    <Content Include="Content\25.pdf" />
+    <Content Include="Content\26.pdf" />
+    <Content Include="Content\27.pdf" />
+    <Content Include="Content\28.pdf" />
+    <Content Include="Content\29.pdf" />
+    <Content Include="Content\30.pdf" />
     <None Include="Content\js\jquery-1.12.4.intellisense.js" />
     <Content Include="Content\js\jquery-1.12.4.js" />
     <Content Include="Content\js\jquery-1.12.4.min.js" />
@@ -200,7 +248,9 @@
     <Content Include="Content\js\respond.matchmedia.addListener.min.js" />
     <Content Include="Content\js\respond.min.js" />
     <Content Include="Content\js\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -212,18 +262,28 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\XmlElementSignature\SignatureInfo.cshtml" />
     <Content Include="Views\PadesSignature\Index.cshtml" />
     <Content Include="Views\PadesSignature\Complete.cshtml" />
     <Content Include="Views\PadesSignature\SignatureInfo.cshtml" />
     <Content Include="Content\SampleDocument.pdf" />
-    <Content Include="Views\XmlElementSignature\Index.cshtml" />
-    <Content Include="Views\XmlElementSignature\Complete.cshtml" />
+    <Content Include="Views\CodXmlSignature\Index.cshtml" />
     <Content Include="Views\Authentication\Index.cshtml" />
     <Content Include="Views\Authentication\AuthenticationInfo.cshtml" />
     <Content Include="Views\CadesSignature\Complete.cshtml" />
     <Content Include="Views\CadesSignature\SignatureInfo.cshtml" />
     <Content Include="Views\CadesSignature\Index.cshtml" />
+    <Content Include="Views\BatchSignature\Index.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodResult.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCod.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodComplete.cshtml" />
+    <Content Include="Views\XmlElementSignature\Index.cshtml" />
+    <Content Include="Views\XmlElementSignature\Complete.cshtml" />
+    <Content Include="Views\XmlElementSignature\SignatureInfo.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodehResult.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodeh.cshtml" />
+    <Content Include="Views\CodXmlSignature\SignCodehComplete.cshtml" />
+    <Content Include="Views\ValidateSignature\Xml.cshtml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -264,8 +324,8 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.8\build\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.2.6.1\build\Microsoft.Net.Compilers.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

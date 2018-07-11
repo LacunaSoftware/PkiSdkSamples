@@ -51,7 +51,7 @@ namespace WebForms {
 				},
 				BorderColor = Color.Black,
 				BorderWidth = 0.01,
-				BackgroundColor = Color.FromArgb(80, Color.LightGreen), // Yellow with 10% opacity
+				BackgroundColor = Color.FromArgb(77, Color.LightGreen), // Light green with 30% opacity
 				Elements = new List<PdfMarkElement>() {
 					new PdfMarkText() {
 						Rotation = PdfMarkRotation.D90,

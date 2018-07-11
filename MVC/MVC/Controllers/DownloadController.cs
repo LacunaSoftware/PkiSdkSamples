@@ -17,9 +17,6 @@ namespace MVC.Controllers {
 		// GET Download/File/{id}
 		[HttpGet]
 		public ActionResult File(string id) {
-			if (string.IsNullOrEmpty(id)) {
-				return HttpNotFound();
-			}
 			byte[] content;
 			string extension;
 			if (!Storage.TryGetFile(id, out content, out extension)) {
@@ -36,11 +33,25 @@ namespace MVC.Controllers {
 			return File(fileContent, "application/pdf", "Sample.pdf");
 		}
 
-		// GET Download/SampleNFe
-		[HttpGet]
+        // GET Download/Doc/{id}
+        [HttpGet]
+        public ActionResult Doc(int id) {
+            var fileContent = Storage.GetBatchDocContent(id);
+            return File(fileContent, "application/pdf", string.Format("Doc{0:D2}.pdf", id));
+        }
+
+        // GET Download/SampleNFe
+        [HttpGet]
 		public ActionResult SampleNFe() {
 			var fileContent = Storage.GetSampleNFeContent();
 			return File(fileContent, "text/xml", "SampleNFe.xml");
+		}
+
+		// GET Download/SampleCodEnvelope
+		[HttpGet]
+		public ActionResult SampleCodEnvelope() {
+			var fileContent = Storage.GetSampleCodEnvelope();
+			return File(fileContent, "text/xml", "SampleCodEnvelope.xml");
 		}
 	}
 }

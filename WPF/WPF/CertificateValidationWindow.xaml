@@ -1,0 +1,22 @@
+﻿<Window x:Class="SampleWpfApp.CertificateValidationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SampleWpfApp"
+        mc:Ignorable="d"
+        Title="CertificateValidationWindow" Height="181.92" Width="524.501" Loaded="Window_Loaded">
+	<Window.Resources>
+		<local:EnumBooleanConverter x:Key="EnumBooleanConverter"/>
+	</Window.Resources>
+	<Window.DataContext>
+		<local:CertificateValidationViewModel/>
+	</Window.DataContext>
+	<Grid>
+		<Label x:Name="label" Content="Certificate to validate:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="137"/>
+		<TextBox x:Name="CertificateTextBox" Height="23" Margin="10,36,90,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding CertificatePath}"/>
+		<Button x:Name="BrowseButton" Content="Browse" Margin="0,36,10,0" Click="BrowseButton_Click" Height="23" VerticalAlignment="Top" HorizontalAlignment="Right" Width="75"/>
+		<Button x:Name="ValidateButton" Content="Validate" HorizontalAlignment="Center" Margin="0,91,0,0" VerticalAlignment="Top" Width="96" Height="28" Click="ValidateButton_Click"/>
+
+	</Grid>
+</Window>

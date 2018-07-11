@@ -1,15 +1,16 @@
 ﻿@model MVC.Models.SignatureCompleteModel
 @{
-	ViewBag.Title = "Xml Element Signature";
+	ViewBag.Title = "XML element signature";
 }
 
-<h2>XML Element Signature</h2>
+<h2>XML element signature</h2>
 
 @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "signForm", role = "form" })) {
 	@Html.ValidationSummary("", new { @class = "text-danger" })
 
 	@* Hidden fields used to pass data from the action to the "signature form" javascript (see below) and vice-versa *@
 	@Html.HiddenFor(m => m.CertThumbBase64, new { id = "certThumb" })
+    @Html.HiddenFor(m => m.CertContentBase64, new { id = "certContent" })
 	@Html.HiddenFor(m => m.ToSignHashBase64, new { id = "toSignHash" })
 	@Html.HiddenFor(m => m.TransferDataBase64, new { id = "transferData" })
 	@Html.HiddenFor(m => m.DigestAlgorithmOid, new { id = "digestAlgorithm" })

@@ -26,7 +26,7 @@ namespace MVC {
 
 			bundles.Add(new ScriptBundle("~/bundles/app").IncludeDirectory("~/Content/js/app", "*.js"));
 
-			bundles.Add(new StyleBundle("~/Content/css").Include(
+			bundles.Add(new StyleBundle("~/Content/css/bundle").Include(
 						 "~/Content/css/bootstrap.css",
 						 "~/Content/css/bootstrap-theme.css",
 						 "~/Content/css/site.css"));

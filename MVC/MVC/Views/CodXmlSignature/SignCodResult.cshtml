@@ -1,0 +1,14 @@
+﻿@model MVC.Models.SignatureInfoModel
+@{
+   ViewBag.Title = "COD XML signature";
+}
+
+<h2>COD XML signature (COD element)</h2>
+
+<p>COD element signed successfully!</p>
+
+<p>
+	<a href="/CodXmlSignature/SignCodeh/@Model.Filename" class="btn btn-primary">Sign CODEH element</a>
+	<a href="/Download/File/@Model.Filename" class="btn btn-default">Download XML with signed COD element</a>
+	<a href="/ValidateSignature/Xml/@Model.Filename" class="btn btn-default">Validate signature</a>
+</p>
