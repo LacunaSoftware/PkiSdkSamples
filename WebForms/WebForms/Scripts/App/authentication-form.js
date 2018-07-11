@@ -47,18 +47,16 @@
 		// http://webpki.lacunasoftware.com/Help/classes/LacunaWebPKI.html#method_listCertificates
 		pki.listCertificates({
 
-			// specify that expired certificates should be ignored
-			//filter: pki.filters.isWithinValidity,
-
-			// in order to list only certificates within validity period and having a CPF (ICP-Brasil), use this instead:
-			//filter: pki.filters.all(pki.filters.hasPkiBrazilCpf, pki.filters.isWithinValidity),
-
 			// id of the select to be populated with the certificates
 			selectId: formElements.certificateSelect.attr('id'),
 
 			// function that will be called to get the text that should be displayed for each option
 			selectOptionFormatter: function (cert) {
-				return cert.subjectName + ' (expires on ' + cert.validityEnd.toDateString() + ', issued by ' + cert.issuerName + ')';
+                var s = cert.subjectName + ' (issued by ' + cert.issuerName + ')';
+                if (new Date() > cert.validityEnd) {
+                    s = '[EXPIRED] ' + s;
+                }
+                return s;
 			}
 
 		}).success(function () {

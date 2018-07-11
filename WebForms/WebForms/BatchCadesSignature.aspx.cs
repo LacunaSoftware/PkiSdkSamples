@@ -162,6 +162,9 @@ namespace WebForms {
 
 		private void completeSignature() {
 
+            // Get the ID of the document currently being signed
+            var docId = DocumentIds[DocumentIndex];
+
             PKCertificate cert;
             byte[] signatureContent;
 
@@ -174,11 +177,14 @@ namespace WebForms {
                 var cadesSigner = new CadesSigner();
 
                 // Set the document to be signed and the policy, exactly like in the previous action (SubmitCertificateButton_Click)
-                cadesSigner.SetDataDigestToSign(DigestAlgorithm.GetInstanceByOid(DigestAlgorithmField.Value), Convert.FromBase64String(ToSignHashField.Value));
+                cadesSigner.SetDataToSign(Storage.GetBatchDocContent(docId));
                 cadesSigner.SetPolicy(getSignaturePolicy());
 
                 // Set the signer certificate
                 cadesSigner.SetSigningCertificate(cert);
+
+                // Optionally, set whether the content should be encapsulated in the resulting CMS.
+                cadesSigner.SetEncapsulatedContent(false);
 
                 // Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the page
                 cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(ToSignBytesField.Value));

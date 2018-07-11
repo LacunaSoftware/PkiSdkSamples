@@ -50,8 +50,8 @@
 					client-side javascript functions "sign" and "refresh" below. Both functions return false,
 					which prevents the postback.
 				--%>
-				<asp:Button ID="SignButton" runat="server" class="btn btn-primary" Text="Assinar" OnClientClick="return sign();" />
-				<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Recarregar certificados" OnClientClick="return refresh();" />
+				<asp:Button ID="SignButton" runat="server" class="btn btn-primary" Text="Sign Batch" OnClientClick="return sign();" />
+				<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Refresh Certificates" OnClientClick="return refresh();" />
 
 			</asp:Panel>
 

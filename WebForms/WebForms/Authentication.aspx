@@ -16,8 +16,8 @@
 		<select id="certificateSelect" class="form-control"></select>
 	</div>
 
-	<asp:Button ID="SignInButton" runat="server" class="btn btn-primary" Text="Entrar" OnClientClick="return signIn();" />
-	<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Recarregar certificados" OnClientClick="return refresh();" />
+	<asp:Button ID="SignInButton" runat="server" class="btn btn-primary" Text="Sign In" OnClientClick="return signIn();" />
+	<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Refresh Certificates" OnClientClick="return refresh();" />
 	<asp:Button ID="SubmitButton" runat="server" OnClick="SubmitButton_Click" Style="display: none;" />
 
 	<script>
