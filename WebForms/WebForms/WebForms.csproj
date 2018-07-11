@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -122,7 +123,8 @@
   <ItemGroup>
     <Content Include="Authentication.aspx" />
     <Content Include="AuthenticationSuccess.aspx" />
-    <Content Include="BatchSignature.aspx" />
+    <Content Include="BatchCadesSignature.aspx" />
+    <Content Include="BatchPadesSignature.aspx" />
     <Content Include="CadesSignature.aspx" />
     <Content Include="CadesSignatureInfo.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
@@ -162,7 +164,8 @@
     <Content Include="Content\07.pdf" />
     <Content Include="Content\08.pdf" />
     <Content Include="Content\09.pdf" />
-    <Content Include="Content\10.pdf" />
+    <Content Include="Content\00.pdf" />
+    <Content Include="Content\SamplePdfSigned.p7s" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -234,12 +237,19 @@
     <Compile Include="AuthenticationSuccess.aspx.designer.cs">
       <DependentUpon>AuthenticationSuccess.aspx</DependentUpon>
     </Compile>
-    <Compile Include="BatchSignature.aspx.cs">
-      <DependentUpon>BatchSignature.aspx</DependentUpon>
+    <Compile Include="BatchCadesSignature.aspx.cs">
+      <DependentUpon>BatchCadesSignature.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="BatchSignature.aspx.designer.cs">
-      <DependentUpon>BatchSignature.aspx</DependentUpon>
+    <Compile Include="BatchCadesSignature.aspx.designer.cs">
+      <DependentUpon>BatchCadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BatchPadesSignature.aspx.cs">
+      <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BatchPadesSignature.aspx.designer.cs">
+      <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
     </Compile>
     <Compile Include="CadesSignature.aspx.cs">
       <DependentUpon>CadesSignature.aspx</DependentUpon>

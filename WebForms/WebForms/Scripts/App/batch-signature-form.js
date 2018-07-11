@@ -9,8 +9,8 @@ var batchSignatureForm = (function () {
 	var selectedCertThumbprint = null;
 
 	// -------------------------------------------------------------------------------------------------
-	// Function called by a inline javascript on the BatchSignature.aspx file informing the number of
-	// documents in the batch
+    // Function called by a inline javascript on the Batch(Pades|Cades)Signature.aspx file informing the
+    // number of documents in the batch.
 	// -------------------------------------------------------------------------------------------------
 	function setDocumentCount(count) {
 		docCount = count;
@@ -128,7 +128,8 @@ var batchSignatureForm = (function () {
 				// Fill the hidden field "certificateField" with the certificate encoding
 				formElements.certificateField.val(certEncoded);
 
-				// Fire up the click event of the button "SubmitCertificateButton" on BatchSignature.aspx's code-behind (server-side)
+                // Fire up the click event of the button "SubmitCertificateButton" on 
+                // Batch(Pades|Cades)Signature.aspx's code-behind (server-side).
 				formElements.submitCertificateButton.click();
 
 			});
@@ -153,7 +154,8 @@ var batchSignatureForm = (function () {
 			// Fill the hidden field "signatureField" with the result of the signature algorithm
 			formElements.signatureField.val(signature);
 
-			// Fire up the click event of the button "SubmitSignatureButton" on BatchSignature.aspx's code-behind (server-side)
+            // Fire up the click event of the button "SubmitSignatureButton" on 
+            // Batch(Pades|Cades)Signature.aspx's code-behind (server-side).
 			formElements.submitSignatureButton.click();
 
 		});
