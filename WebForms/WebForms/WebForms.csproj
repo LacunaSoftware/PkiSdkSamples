@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -122,9 +123,11 @@
   <ItemGroup>
     <Content Include="Authentication.aspx" />
     <Content Include="AuthenticationSuccess.aspx" />
-    <Content Include="BatchSignature.aspx" />
+    <Content Include="BatchCadesSignature.aspx" />
+    <Content Include="BatchPadesSignature.aspx" />
     <Content Include="CadesSignature.aspx" />
     <Content Include="CadesSignatureInfo.aspx" />
+    <Content Include="CadesSignatureMerge.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -150,6 +153,7 @@
     <Content Include="PdfMarksFromCades.aspx" />
     <Content Include="Scripts\App\signature-form.js" />
     <Content Include="Scripts\App\authentication-form.js" />
+    <Content Include="Scripts\lacuna-web-pki-2.9.0.js" />
     <Content Include="XmlElementSignature.aspx" />
     <Content Include="XmlElementSignatureInfo.aspx" />
     <Content Include="Content\SampleDocument.pdf" />
@@ -162,7 +166,8 @@
     <Content Include="Content\07.pdf" />
     <Content Include="Content\08.pdf" />
     <Content Include="Content\09.pdf" />
-    <Content Include="Content\10.pdf" />
+    <Content Include="Content\00.pdf" />
+    <Content Include="Content\SamplePdfSigned.p7s" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -171,8 +176,6 @@
     <Content Include="Scripts\jquery-3.1.1.slim.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
-    <Content Include="Scripts\lacuna-web-pki-2.5.0.js" />
-    <Content Include="Scripts\lacuna-web-pki-2.5.0.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
@@ -234,12 +237,19 @@
     <Compile Include="AuthenticationSuccess.aspx.designer.cs">
       <DependentUpon>AuthenticationSuccess.aspx</DependentUpon>
     </Compile>
-    <Compile Include="BatchSignature.aspx.cs">
-      <DependentUpon>BatchSignature.aspx</DependentUpon>
+    <Compile Include="BatchCadesSignature.aspx.cs">
+      <DependentUpon>BatchCadesSignature.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="BatchSignature.aspx.designer.cs">
-      <DependentUpon>BatchSignature.aspx</DependentUpon>
+    <Compile Include="BatchCadesSignature.aspx.designer.cs">
+      <DependentUpon>BatchCadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BatchPadesSignature.aspx.cs">
+      <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BatchPadesSignature.aspx.designer.cs">
+      <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
     </Compile>
     <Compile Include="CadesSignature.aspx.cs">
       <DependentUpon>CadesSignature.aspx</DependentUpon>
@@ -254,6 +264,13 @@
     </Compile>
     <Compile Include="CadesSignatureInfo.aspx.designer.cs">
       <DependentUpon>CadesSignatureInfo.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CadesSignatureMerge.aspx.cs">
+      <DependentUpon>CadesSignatureMerge.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CadesSignatureMerge.aspx.designer.cs">
+      <DependentUpon>CadesSignatureMerge.aspx</DependentUpon>
     </Compile>
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
