@@ -70,6 +70,7 @@
 								<%--<li><a href="/Upload?rc=CadesSignature">With file uploaded by user</a></li>
 								<li><a href="/Upload?rc=OpenCadesSignature">Open/validate existing signature</a></li>--%>
 								<li><a runat="server" href="~/PdfMarksFromCades">PDF marks from signature</a></li>
+                                <li><a runat="server" href="~/CadesSignatureMerge">Merge detached signatures</a></li>
 							</ul>
 						</li>
 						<li class="dropdown">

@@ -20,6 +20,7 @@
 			<%--<li><a href="/Upload?rc=CadesSignature">Create a signature with a file uploaded by user</a></li>
 			<li><a href="/Upload?rc=OpenCadesSignature">Open/validate an existing CAdES signature</a></li>--%>
 			<li><a runat="server" href="~/PdfMarksFromCades">Create a PDF with marks from its CAdES signature</a></li>
+            <li><a runat="server" href="~/CadesSignatureMerge">Merge detached signatures with an encapsulated content</a></li>
 		</ul>
 		</li>
 		<li>XML signature
