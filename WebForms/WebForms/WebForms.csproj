@@ -171,6 +171,8 @@
     <Content Include="Content\09.pdf" />
     <Content Include="Content\00.pdf" />
     <Content Include="Content\SamplePdfSigned.p7s" />
+    <Content Include="Content\SampleDetachedSignature1.p7s" />
+    <Content Include="Content\SampleDetachedSignature2.p7s" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
