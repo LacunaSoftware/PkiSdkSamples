@@ -22,15 +22,15 @@
 
 	<script>
 		<%--
-		Once the page is loaded, we'll call the init() function on the signature-form.js file passing
-        references to our page's elements and hidden fields.
+			Once the page is loaded, we'll call the init() function on the signature-form.js file passing
+			references to our page's elements and hidden fields.
 		--%>
 		$(function () {
 			authenticationForm.pageLoad({
 				<%--
-                References to the certificate combo box and the div surrounding the combo box and the
-                signature buttons.
-                --%>
+					References to the certificate combo box and the div surrounding the combo box and the
+					signature buttons.
+				--%>
 				certificateSelect: $('#certificateSelect'),
 				<%-- Hidden buttons to transfer the execution back to the server-side code behind. --%>
 				submitButton: $('#<%= SubmitButton.ClientID %>'),

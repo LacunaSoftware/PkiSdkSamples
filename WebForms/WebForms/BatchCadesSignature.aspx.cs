@@ -16,17 +16,15 @@ namespace WebForms {
 
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
-		// Class used to display each of the batch's documents on the page
+		// Class used to display each of the batch's documents on the page.
 		class DocumentItem {
 			public int Id { get; set; }
 			public string Error { get; set; }
 			public string DownloadLink { get; set; }
 		}
 
-		/*
-			We store the IDs of the batch's documents in the hidden field "DocumentIdsField". Since we don't need this data
-			on the Javascript, we could alternatively store it on the Session dictionary
-		 */
+		//	We store the IDs of the batch's documents in the hidden field "DocumentIdsField". Since we don't
+		// need this data	on the Javascript, we could alternatively store it on the Session dictionary.
 		private List<int> _documentIds;
 		protected List<int> DocumentIds {
 			get {
@@ -41,10 +39,9 @@ namespace WebForms {
 			}
 		}
 
-		/*
-			We store the index of the document currently being signed on the hidden field "DocumentIndexField". Since we don't need
-			this data on the Javascript, we could alternatively store it on the Session dictionary
-		 */
+		// We store the index of the document currently being signed on the hidden field "DocumentIndexField".
+		// Since we don't need this data on the Javascript, we could alternatively store it on the Session
+		// dictionary.
 		private int _documentIndex;
 		protected int DocumentIndex {
 			get {
@@ -63,52 +60,55 @@ namespace WebForms {
 		protected void Page_Load(object sender, EventArgs e) {
 
 			if (!IsPostBack) {
-				
-				// It is up to your application's business logic to determine which documents will compose the batch
-				DocumentIds = Enumerable.Range(1, 30).ToList(); // from 1 to 30
 
-				// Populate the DocumentsListView with the batch documents
+				// It is up to your application's business logic to determine which documents will compose the
+				// batch.
+				DocumentIds = Enumerable.Range(1, 30).ToList(); // From 1 to 30.
+
+				// Populate the DocumentsListView with the batch documents.
 				DocumentsListView.DataSource = DocumentIds.ConvertAll(i => new DocumentItem() { Id = i });
 				DocumentsListView.DataBind();
 			}
 		}
 
-		// The button "SubmitCertificateButton" is programmatically clicked by the Javascript on batch-signature-form.js when the
-		// selected certificate's encoding has been retrieved
+		// The button "SubmitCertificateButton" is programmatically clicked by the Javascript on
+		// batch-signature-form.js when the selected certificate's encoding has been retrieved.
 		protected void SubmitCertificateButton_Click(object sender, EventArgs e) {
-			
-			// Hide the certificate select (combo box) and the signature buttons
+
+			// Hide the certificate select (combo box) and the signature buttons.
 			SignatureControlsPanel.Visible = false;
-			
-			// Start the signature of the first document in the batch
+
+			// Start the signature of the first document in the batch.
 			DocumentIndex = -1;
 			startNextSignature();
 		}
 
-		// The button "SubmitSignatureButton" is programmatically clicked by the Javascript on batch-signature-form.js when the
-		// "to sign hash" of the current document has been signed with the certificate's private key
+		// The button "SubmitSignatureButton" is programmatically clicked by the Javascript on
+		// batch-signature-form.js when the "to sign hash" of the current document has been signed with the
+		// certificate's private key.
 		protected void SubmitSignatureButton_Click(object sender, EventArgs e) {
 
-			// Complete the signature
+			// Complete the signature.
 			completeSignature();
 
-			// Start the next signature
+			// Start the next signature.
 			startNextSignature();
 		}
 
 		private void startNextSignature() {
 
-			// Increment the index of the document currently being signed
+			// Increment the index of the document currently being signed.
 			DocumentIndex += 1;
 
-			// Check if we have reached the end of the batch, in which case we fill the hidden field "ToSignHashField" with value "(end)",
-			// which signals to the javascript on batch-signature-form.js that the process is completed and the page can be unblocked.
+			// Check if we have reached the end of the batch, in which case we fill the hidden field
+			// "ToSignHashField" with value "(end)", which signals to the javascript on batch-signature-form.js
+			// that the process is completed and the page can be unblocked.
 			if (DocumentIndex == DocumentIds.Count) {
 				ToSignHashField.Value = "(end)";
 				return;
 			}
 
-			// Get the ID of the document currently being signed
+			// Get the ID of the document currently being signed.
 			var docId = DocumentIds[DocumentIndex];
 
 			byte[] toSignBytes;
@@ -116,36 +116,40 @@ namespace WebForms {
 
 			try {
 
-                // Decode the user's certificate
-                var cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
+				// Decode the user's certificate.
+				var cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
 
-                // Instantiate a CadesSigner class
-                var cadesSigner = new CadesSigner();
+				// Instantiate a CadesSigner class.
+				var cadesSigner = new CadesSigner();
 
-                // Set the data to sign, which in the case of this example is a fixed sample document
-                cadesSigner.SetDataToSign(Storage.GetBatchDocContent(docId));
+				// Set the data to sign, which in the case of this example is a fixed sample document.
+				cadesSigner.SetDataToSign(Storage.GetBatchDocContent(docId));
 
-                // Set the signer certificate
-                cadesSigner.SetSigningCertificate(cert);
+				// Set the signer certificate.
+				cadesSigner.SetSigningCertificate(cert);
 
-                // Set the signature policy
-                cadesSigner.SetPolicy(getSignaturePolicy());
+				// Set the signature policy.
+				cadesSigner.SetPolicy(getSignaturePolicy());
 
-                // Generate the "to-sign-bytes". This method also yields the signature algorithm that must
-                // be used on the client-side, based on the signature policy.
-                toSignBytes = cadesSigner.GenerateToSignBytes(out signatureAlg);
+				// Generate the "to-sign-bytes". This method also yields the signature algorithm that must be
+				// used on the client-side, based on the signature policy.
+				toSignBytes = cadesSigner.GenerateToSignBytes(out signatureAlg);
 
-            } catch (ValidationException ex) {
+			}
+			catch (ValidationException ex) {
 
-				// One or more validations failed. We log the error, update the page with a summary of what happened to this document and start the next signature
+				// One or more validations failed. We log the error, update the page with a summary of what
+				// happened to this document and start the next signature.
 				logger.Error(ex, "Validation error starting the signature of a batch document");
 				setValidationError(ex.ValidationResults);
 				startNextSignature();
 				return;
 
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 
-				// An error has occurred. We log the error, update the page with a summary of what happened to this document and start the next signature
+				// An error has occurred. We log the error, update the page with a summary of what happened to
+				// this document and start the next signature.
 				logger.Error(ex, "Error starting the signature of a batch document");
 				setError(ex.Message);
 				startNextSignature();
@@ -153,69 +157,76 @@ namespace WebForms {
 
 			}
 
-            // Send to the javascript the "to sign hash" of the document (digest of the "to-sign-bytes") and the digest algorithm that must
-            // be used on the signature algorithm computation
-            ToSignBytesField.Value = Convert.ToBase64String(toSignBytes);
-            ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
+			// Send to the javascript the "to sign hash" of the document (digest of the "to-sign-bytes") and the
+			// digest algorithm that must be used on the signature algorithm computation.
+			ToSignBytesField.Value = Convert.ToBase64String(toSignBytes);
+			ToSignHashField.Value = Convert.ToBase64String(signatureAlg.DigestAlgorithm.ComputeHash(toSignBytes));
 			DigestAlgorithmField.Value = signatureAlg.DigestAlgorithm.Oid;
 		}
 
 		private void completeSignature() {
 
-            // Get the ID of the document currently being signed
-            var docId = DocumentIds[DocumentIndex];
+			// Get the ID of the document currently being signed.
+			var docId = DocumentIds[DocumentIndex];
 
-            PKCertificate cert;
-            byte[] signatureContent;
+			PKCertificate cert;
+			byte[] signatureContent;
 
 			try {
+				
+				// Decode the user's certificate.
+				cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
 
-                // Decode the user's certificate
-                cert = PKCertificate.Decode(Convert.FromBase64String(CertificateField.Value));
+				// Instantiate a CadesSigner class.
+				var cadesSigner = new CadesSigner();
 
-                // Instantiate a CadesSigner class
-                var cadesSigner = new CadesSigner();
+				// Set the document to be signed and the policy, exactly like in the previous action
+				// (SubmitCertificateButton_Click).
+				cadesSigner.SetDataToSign(Storage.GetBatchDocContent(docId));
+				cadesSigner.SetPolicy(getSignaturePolicy());
 
-                // Set the document to be signed and the policy, exactly like in the previous action (SubmitCertificateButton_Click)
-                cadesSigner.SetDataToSign(Storage.GetBatchDocContent(docId));
-                cadesSigner.SetPolicy(getSignaturePolicy());
+				// Set the signer certificate.
+				cadesSigner.SetSigningCertificate(cert);
 
-                // Set the signer certificate
-                cadesSigner.SetSigningCertificate(cert);
+				// Optionally, set whether the content should be encapsulated in the resulting CMS.
+				cadesSigner.SetEncapsulatedContent(false);
 
-                // Optionally, set whether the content should be encapsulated in the resulting CMS.
-                cadesSigner.SetEncapsulatedContent(false);
+				// Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from
+				// the page.
+				cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(ToSignBytesField.Value));
 
-                // Set the signature computed on the client-side, along with the "to-sign-bytes" recovered from the page
-                cadesSigner.SetPrecomputedSignature(Convert.FromBase64String(SignatureField.Value), Convert.FromBase64String(ToSignBytesField.Value));
+				// Call ComputeSignature(), which does all the work, including validation of the signer's
+				// certificate and of the resulting signature.
+				cadesSigner.ComputeSignature();
 
-                // Call ComputeSignature(), which does all the work, including validation of the signer's certificate and of the resulting signature
-                cadesSigner.ComputeSignature();
+				// Get the signature as an array of bytes.
+				signatureContent = cadesSigner.GetSignature();
 
-                // Get the signature as an array of bytes
-                signatureContent = cadesSigner.GetSignature();
+			}
+			catch (ValidationException ex) {
 
-            } catch (ValidationException ex) {
-
-				// One or more validations failed. We log the error and update the page with a summary of what happened to this document
+				// One or more validations failed. We log the error and update the page with a summary of what
+				// happened to this document.
 				logger.Error(ex, "Validation error completing the signature of a batch document");
 				setValidationError(ex.ValidationResults);
 				return;
 
-			} catch (Exception ex) {
+			}
+			catch (Exception ex) {
 
-				// An error has occurred. We log the error and update the page with a summary of what happened to this document
+				// An error has occurred. We log the error and update the page with a summary of what happened to
+				// this document.
 				logger.Error(ex, "Error completing the signature of a batch document");
 				setError(ex.Message);
 				return;
 
 			}
 
-            // Store the signed file
-            var file = Storage.StoreFile(signatureContent, ".p7s");
+			// Store the signed file.
+			var file = Storage.StoreFile(signatureContent, ".p7s");
 
-            // Update the page with a link to the signed file
-            var docItem = DocumentsListView.Items[DocumentIndex];
+			// Update the page with a link to the signed file.
+			var docItem = DocumentsListView.Items[DocumentIndex];
 			docItem.DataItem = new DocumentItem() {
 				Id = DocumentIds[DocumentIndex],
 				DownloadLink = "Download?file=" + file
@@ -241,22 +252,21 @@ namespace WebForms {
 			docItem.DataBind();
 		}
 
-        /**
-		 *	This method defines the signature policy that will be used on the signature.
-		 */
-        private ICadesPolicyMapper getSignaturePolicy()
-        {
+		/// <summary>
+		/// This method defines the signature policy that will be used on the signature.
+		/// </summary>
+		private ICadesPolicyMapper getSignaturePolicy() {
 
-            var policy = CadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
+			var policy = CadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
 
 #if DEBUG
-            // During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
-            // corresponds to the ICP-Brasil roots only), with our custom trust arbitrator which accepts test certificates
-            // (see Util.GetTrustArbitrator())
-            return new CadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
+			// During debug only, we return a wrapper which will overwrite the policy's default trust
+			// arbitrator (which in this case corresponds to the ICP-Brasil roots only), with our custom trust
+			// arbitrator which accepts test certificates (see Util.GetTrustArbitrator()).
+			return new CadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
 #else
 			return policy;
 #endif
-        }
+		}
 	}
 }

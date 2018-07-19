@@ -10,23 +10,20 @@ namespace WebForms.Classes {
 	public static class Util {
 
 		public static INonceStore GetNonceStore() {
-			/*
-				For simplification purposes, we're using the FileSystemNonceStore, which stores nonces as
-				0-byte files on a local filesystem folder. In a real application, the nonces would typically
-				be stored on the database. If you application uses Entity Framework, you can easily change this
-				code to store nonces on your database with the EntityFrameworkStore class (from the optional Nuget
-				package "Lacuna PKI Entity Framework Connector").
-
-				For more information, see: http://pki.lacunasoftware.com/Help/html/0195da17-db87-4d4f-8ce2-c21b140c10c3.htm
-			 */
+			
+			// For simplification purposes, we're using the FileSystemNonceStore, which stores nonces as
+			// 0-byte files on a local filesystem folder. In a real application, the nonces would typically
+			// be stored on the database. If you application uses Entity Framework, you can easily change this
+			// code to store nonces on your database with the EntityFrameworkStore class (from the optional Nuget
+			// package "Lacuna PKI Entity Framework Connector").
+			//
+			// For more information, see: http://pki.lacunasoftware.com/Help/html/0195da17-db87-4d4f-8ce2-c21b140c10c3.htm
 			return new FileSystemNonceStore(HttpContext.Current.Server.MapPath("~/App_Data"));
 		}
-
-		/*
-			This method returns the "trust arbitrator" to be used on signatures and authentications. A trust
-			arbitrator determines which root certificates shall be trusted during certificate and signature
-			validation.
-		 */
+		
+		// This method returns the "trust arbitrator" to be used on signatures and authentications. A trust
+		// arbitrator determines which root certificates shall be trusted during certificate and signature
+		// validation.
 		public static ITrustArbitrator GetTrustArbitrator() {
 			// We start by trusting the ICP-Brasil roots and the roots registered as trusted on the host Windows Server
 			var trustArbitrator = new LinkedTrustArbitrator(TrustArbitrators.PkiBrazil, TrustArbitrators.Windows);

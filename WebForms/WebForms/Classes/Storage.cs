@@ -82,13 +82,13 @@ namespace WebForms.Classes {
 			return File.ReadAllBytes(Path.Combine(ContentPath, "SamplePdfSigned.p7s"));
 		}
 
-        public static List<byte[]> GetSampleCadesDetachedSignaturesToMerge() {
-            List<byte[]> detachedSignatures = new List<byte[]>() {
-                File.ReadAllBytes(Path.Combine(ContentPath, "SampleDetachedSignature1.p7s")),
-                File.ReadAllBytes(Path.Combine(ContentPath, "SampleDetachedSignature2.p7s"))
-            };
-            return detachedSignatures;
-        }
+		public static List<byte[]> GetSampleCadesDetachedSignaturesToMerge() {
+			List<byte[]> detachedSignatures = new List<byte[]>() {
+					File.ReadAllBytes(Path.Combine(ContentPath, "SampleDetachedSignature1.p7s")),
+					File.ReadAllBytes(Path.Combine(ContentPath, "SampleDetachedSignature2.p7s"))
+				};
+			return detachedSignatures;
+		}
 
-    }
+	}
 }
