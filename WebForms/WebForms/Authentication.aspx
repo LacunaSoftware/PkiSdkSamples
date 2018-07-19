@@ -26,7 +26,7 @@
         references to our page's elements and hidden fields.
 		--%>
 		$(function () {
-			authenticationForm.init({
+			authenticationForm.pageLoad({
 				<%--
                 References to the certificate combo box and the div surrounding the combo box and the
                 signature buttons.

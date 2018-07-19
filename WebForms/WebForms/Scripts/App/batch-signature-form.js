@@ -7,10 +7,8 @@ var batchSignatureForm = (function () {
     // Auxiliary global variables.
 	var formElements = {};
 	var docCount = -1;
-    var selectedCertThumbprint = null;
-
-    // Create an instance of the LacunaWebPKI object.
-    var pki = new LacunaWebPKI();
+	var selectedCertThumbprint = null;
+	var pki = null;
 
 	// ------------------------------------------------------------------------------------------------------
     // Function called by a inline javascript on forms informing the number of documents in the batch.
@@ -53,6 +51,9 @@ var batchSignatureForm = (function () {
 
 		// Block the UI while we get things ready.
 		$.blockUI({ message: 'Initializing ...' });
+
+		// Create an instance of the LacunaWebPKI object.
+		pki = new LacunaWebPKI();
 
 		// Call the init() method on the LacunaWebPKI object, passing a callback for when the component is
         // ready to be used and another to be called when an error occurrs on any of the subsequent

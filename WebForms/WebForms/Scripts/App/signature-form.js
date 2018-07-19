@@ -6,10 +6,8 @@ var signatureForm = (function () {
     
     // Auxiliary global variables.
     var formElements = {};
-    var selectedCertThumbprint = null;
-
-    // Create an instance of the Lacuna object.
-    var pki = new LacunaWebPKI();
+	var selectedCertThumbprint = null;
+	var pki = null;
 
 	// ------------------------------------------------------------------------------------------------------
     // Function called once the page is loaded or once the update panel with the hidden fields used to pass
@@ -46,6 +44,9 @@ var signatureForm = (function () {
 
 		// Block the UI while we get things ready.
 		$.blockUI({ message: 'Initializing ...' });
+
+		// Create an instance of the Lacuna object.
+		pki = new LacunaWebPKI();
 
 		// Call the init() method on the LacunaWebPKI object, passing a callback for when the component is
         // ready to be used and another to be called when an error occurrs on any of the subsequent
