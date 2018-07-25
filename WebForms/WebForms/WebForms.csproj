@@ -140,6 +140,7 @@
     <Content Include="AuthenticationSuccess.aspx" />
     <Content Include="BatchCadesSignature.aspx" />
     <Content Include="BatchPadesSignature.aspx" />
+    <Content Include="BatchPadesSignatureWebAPI.aspx" />
     <Content Include="CadesSignature.aspx" />
     <Content Include="CadesSignatureInfo.aspx" />
     <Content Include="CadesSignatureMerge.aspx" />
@@ -270,6 +271,13 @@
     <Compile Include="BatchPadesSignature.aspx.designer.cs">
       <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
     </Compile>
+    <Compile Include="BatchPadesSignatureWebAPI.aspx.cs">
+      <DependentUpon>BatchPadesSignatureWebAPI.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BatchPadesSignatureWebAPI.aspx.designer.cs">
+      <DependentUpon>BatchPadesSignatureWebAPI.aspx</DependentUpon>
+    </Compile>
     <Compile Include="CadesSignature.aspx.cs">
       <DependentUpon>CadesSignature.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -292,6 +300,7 @@
       <DependentUpon>CadesSignatureMerge.aspx</DependentUpon>
     </Compile>
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
+    <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Default.aspx.cs">
@@ -311,6 +320,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BatchSignatureCompleteRequest.cs" />
+    <Compile Include="Models\BatchSignatureCompleteResponse.cs" />
+    <Compile Include="Models\BatchSignatureStartRequest.cs" />
+    <Compile Include="Models\BatchSignatureStartResponse.cs" />
     <Compile Include="PadesSignature.aspx.cs">
       <DependentUpon>PadesSignature.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

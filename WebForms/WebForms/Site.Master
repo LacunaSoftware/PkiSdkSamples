@@ -1,4 +1,5 @@
 ﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="WebForms.SiteMaster" %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,7 +71,7 @@
 								<%--<li><a href="/Upload?rc=CadesSignature">With file uploaded by user</a></li>
 								<li><a href="/Upload?rc=OpenCadesSignature">Open/validate existing signature</a></li>--%>
 								<li><a runat="server" href="~/PdfMarksFromCades">PDF marks from signature</a></li>
-                                <li><a runat="server" href="~/CadesSignatureMerge">Merge detached signatures</a></li>
+								<li><a runat="server" href="~/CadesSignatureMerge">Merge detached signatures</a></li>
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -84,7 +85,8 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Batch signature <span class="caret"></span></a>
 							<ul class="dropdown-menu">
 								<li><a href="/BatchPadesSignature">Simple batch of PAdES signatures</a></li>
-                                <li><a href="/BatchCadesSignature">Simple batch of CAdES signatures</a></li>
+								<li><a href="/BatchPadesSignatureWebAPI">Simple batch of PAdES signatures with WebAPI</a></li>
+								<li><a href="/BatchCadesSignature">Simple batch of CAdES signatures</a></li>
 								<%--<li><a href="/BatchSignatureOptimized">Optimized batch signature</a></li>--%>
 							</ul>
 						</li>
