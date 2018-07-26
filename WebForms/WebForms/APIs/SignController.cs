@@ -13,7 +13,7 @@ namespace WebForms.APIs {
 	public class SignController : ApiController {
 
 		private IPadesPolicyMapper getSignaturePolicy() {
-			var policy = PadesPoliciesForGeneration.GetPkiBrazilAdrBasica();
+			var policy = PadesPoliciesForGeneration.GetPadesBasic();
 
 #if DEBUG
 			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
