@@ -139,6 +139,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\BatchSignatureController.cs" />
+    <Compile Include="Api\Models\BatchSignatureCompleteRequest.cs" />
+    <Compile Include="Api\Models\BatchSignatureCompleteResponse.cs" />
+    <Compile Include="Api\Models\BatchSignatureStartRequest.cs" />
+    <Compile Include="Api\Models\BatchSignatureStartResponse.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -155,11 +159,7 @@
     <Compile Include="Controllers\PadesSignatureController.cs" />
     <Compile Include="Models\AuthenticationInfoModel.cs" />
     <Compile Include="Models\AuthenticationModel.cs" />
-    <Compile Include="Api\Models\BatchSignatureCompleteRequest.cs" />
-    <Compile Include="Api\Models\BatchSignatureCompleteResponse.cs" />
     <Compile Include="Models\BatchSignatureModel.cs" />
-    <Compile Include="Api\Models\BatchSignatureStartRequest.cs" />
-    <Compile Include="Api\Models\BatchSignatureStartResponse.cs" />
     <Compile Include="Models\CheckModel.cs" />
     <Compile Include="Models\PadesSignatureModel.cs" />
     <Compile Include="Models\SignatureInfoModel.cs" />
