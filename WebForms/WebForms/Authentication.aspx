@@ -16,37 +16,40 @@
 		<select id="certificateSelect" class="form-control"></select>
 	</div>
 
-	<asp:Button ID="SignInButton" runat="server" class="btn btn-primary" Text="Entrar" OnClientClick="return signIn();" />
-	<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Recarregar certificados" OnClientClick="return refresh();" />
+	<asp:Button ID="SignInButton" runat="server" class="btn btn-primary" Text="Sign In" OnClientClick="return signIn();" />
+	<asp:Button ID="RefreshButton" runat="server" class="btn btn-default" Text="Refresh Certificates" OnClientClick="return refresh();" />
 	<asp:Button ID="SubmitButton" runat="server" OnClick="SubmitButton_Click" Style="display: none;" />
 
 	<script>
 		<%--
-			Once the page is loaded, we'll call the init() function on the signature-form.js file passing references to
-			our page's elements and hidden fields
+		Once the page is loaded, we'll call the init() function on the signature-form.js file passing
+        references to our page's elements and hidden fields.
 		--%>
 		$(function () {
-			authenticationForm.init({
-				<%-- References to the certificate combo box and the div surrounding the combo box and the signature buttons --%>
+			authenticationForm.pageLoad({
+				<%--
+                References to the certificate combo box and the div surrounding the combo box and the
+                signature buttons.
+                --%>
 				certificateSelect: $('#certificateSelect'),
-				<%-- Hidden buttons to transfer the execution back to the server-side code behind --%>
+				<%-- Hidden buttons to transfer the execution back to the server-side code behind. --%>
 				submitButton: $('#<%= SubmitButton.ClientID %>'),
-				<%-- Hidden fields to pass data to and from the server-side code-behind --%>
+				<%-- Hidden fields to pass data to and from the server-side code-behind. --%>
 				certificateField: $('#<%= CertificateField.ClientID %>'),
 				nonceField: $('#<%= NonceField.ClientID %>'),
 				digestAlgorithmField: $('#<%= DigestAlgorithmField.ClientID %>'),
 				signatureField: $('#<%= SignatureField.ClientID %>')
 			});
 		});
-		<%-- Client-side function called when the user clicks the "Sign In" button --%>
+		<%-- Client-side function called when the user clicks the "Sign In" button. --%>
 		function signIn() {
 			authenticationForm.signIn();
-			return false; // prevent postback
+			return false; // Prevent postback.
 		}
-		<%-- Client-side function called when the user clicks the "Refresh" button --%>
+		<%-- Client-side function called when the user clicks the "Refresh" button. --%>
 		function refresh() {
 			authenticationForm.refresh();
-			return false; // prevent postback
+			return false; // Prevent postback.
 		}
 	</script>
 

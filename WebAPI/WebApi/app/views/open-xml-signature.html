@@ -1,0 +1,47 @@
+﻿<h2>Open/Validate signatures on an existing XML file</h2>
+
+<div class="col-md-4" style="padding-left: 0px;">
+    <form role="form" ng-submit="submit()">
+
+        <div class="form-group">
+            <label>Upload a file</label>
+            <input id="upload-input" type="file">
+        </div>
+
+        <button type="submit">Upload</button>
+    </form>
+</div>
+
+<div ng-show="signatures.length > 0" class="col-md-8">
+    <label for="accordion">The given file contains {{ signatures.length }} signatures</label>
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+        <div ng-repeat="signature in signatures track by $index" class="panel panel-default">
+            <div class="panel-heading" role="tab" id="signature_{{$index}}_heading">
+                <h4 class="panel-title">
+                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#signature_{{$index}}_collapse" aria-expanded="true" aria-controls="signature_{{$index}}_collapse" target="_self">
+                        {{signature.signingCertificate.subjectName.commonName + ' - '}}
+                        <span ng-show="signature.validationModel.validationResults.isValid" style="color: green; font-weight: bold;">valid</span>
+                        <span ng-show="!signature.validationModel.validationResults.isValid" style="color: red; font-weight: bold;">invalid</span>
+                    </a>
+                </h4>
+            </div>
+            <div id="signature_{{$index}}_collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="signature_{{$index}}_heading">
+                <div class="panel-body">
+                    <p>Type: {{signature.signedEntityType}}</p>
+                    <p ng-show="signature.signedElement">
+                        Signed element: {{signature.signedElement.localName}}
+                        <text ng-show="signature.signedElement.namespaceUri">(xmlns: {{signature.signedElement.namespaceUri}})</text>
+                    </p>
+                    <p>Signing time: {{signature.signingTime}}</p>
+                    <p ng-show="signature.signaturePolicyId">Signature Policy: {{signature.signaturePolicyId}}</p>
+                    <button class="btn btn-primary" ng-click="showCertificate(signature.signingCertificate)">View certificate</button>
+                    <span ng-show="signature.validationModel.validationResults"><button class="btn btn-info" ng-click="showValidationResults(signature.validationModel.validationResults)">View validation results</button></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
