@@ -1,4 +1,5 @@
 ﻿<%@ Page Title="Authentication Success" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="AuthenticationSuccess.aspx.cs" Inherits="WebForms.AuthenticationSuccess" %>
+
 <%@ PreviousPageType VirtualPath="~/Authentication.aspx" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">

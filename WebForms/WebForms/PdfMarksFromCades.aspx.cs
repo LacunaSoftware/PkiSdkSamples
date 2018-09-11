@@ -37,7 +37,7 @@ namespace WebForms {
 				markTexts.Add(new PdfTextSection() {
 					Text = getDisplayName(signer.SigningCertificate),
 					FontSize = fontSize,
-					Style = PdfTextStyle.Bold					
+					Style = PdfTextStyle.Bold
 				});
 			}
 
@@ -80,7 +80,8 @@ namespace WebForms {
 			var text = new StringBuilder();
 			if (!string.IsNullOrEmpty(certificate.PkiBrazil.Responsavel)) {
 				text.Append(certificate.PkiBrazil.Responsavel);
-			} else {
+			}
+			else {
 				text.Append(certificate.SubjectName.CommonName);
 			}
 			if (!string.IsNullOrEmpty(certificate.PkiBrazil.CPF)) {

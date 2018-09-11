@@ -1,10 +1,11 @@
 ﻿<%@ Page Title="Pades Signature" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="PadesSignatureInfo.aspx.cs" Inherits="WebForms.PadesSignatureInfo" %>
+
 <%@ PreviousPageType VirtualPath="~/PadesSignature.aspx" %>
 
 <asp:Content ID="BodyContent" ContentPlaceHolderID="MainContent" runat="server">
 	<h2>PAdES Signature</h2>
 
-	<p>File signed successfully! <a href="Download?file=<%= signatureFile.Replace(".", "_") %>">Click here to download the signed file</a></p>
+	<p>File signed successfully!</p>
 
 	<p>User certificate information:</p>
 	<ul>
@@ -21,5 +22,12 @@
 				<li>OAB: <%= certificate.PkiBrazil.OabNumero%> <%= certificate.PkiBrazil.OabUF %></li>
 			</ul>
 		</li>
+	</ul>
+
+	<h3>Actions:</h3>
+	<ul>
+		<li><a href="Download?file=<%= signatureFile.Replace(".", "_") %>">Download the signed file</a></li>
+		<li><a href="PrinterFriendlyVersion?file=<%= signatureFile %>">Download a printer-friendly version of the signed file</a></li>
+		<li><a href="OpenPadesSignature?userfile=<%= signatureFile.Replace(".", "_") %>">Open/validate the signed file</a></li>
 	</ul>
 </asp:Content>
