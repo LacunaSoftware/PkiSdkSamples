@@ -32,6 +32,7 @@
 		<li>Sign a batch of files
 		<ul>
 			<li><a href="/BatchPadesSignature">Simple batch of PAdES signatures</a></li>
+			<li><a href="/BatchPadesSignatureWebAPI">Simple batch of PAdES signatures with WebAPI</a></li>
 			<li><a href="/BatchCadesSignature">Simple batch of CAdES signatures</a></li>
 			<%--<li><a href="/BatchSignatureOptimized">Optimized batch signature</a> (better performance but more complex Javascript)</li>--%>
 		</ul>
