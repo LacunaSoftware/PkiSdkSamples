@@ -10,8 +10,8 @@
 		<li>PAdES signature
 		<ul>
 			<li><a href="/PadesSignature">Create a signature with a file already on server</a></li>
-			<%--<li><a href="/Upload?rc=PadesSignature">Create a signature with a file uploaded by user</a></li>
-			<li><a href="/Upload?rc=OpenPadesSignature">Open/validate an existing signature</a></li>--%>
+			<%--<li><a href="/Upload?rc=PadesSignature">Create a signature with a file uploaded by user</a></li>--%>
+			<li><a href="/Upload?rc=OpenPadesSignature">Open/validate an existing signature</a></li>
 		</ul>
 		</li>
 		<li>CAdES signature
