@@ -52,5 +52,17 @@ namespace SampleWpfApp {
 		private void LoadLicenseButton_Click(object sender, RoutedEventArgs e) {
 			viewModel.LoadLicense();
 		}
+
+		private void IssueAttributeCertButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.IssueAttributeCert();
+		}
+
+		private void ValidateAttributeCertButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.ValidateAttributeCert();
+		}
+
+		private void MergeCadesSignaturesButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.MergeCadesSignatures();
+		}
 	}
 }

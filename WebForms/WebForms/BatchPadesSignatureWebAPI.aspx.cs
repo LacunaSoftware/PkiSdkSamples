@@ -10,9 +10,7 @@ using System.Web.UI.WebControls;
 using WebForms.Classes;
 
 namespace WebForms {
-
-	public partial class BatchSignature : System.Web.UI.Page {
-
+	public partial class BatchPadesSignatureWebAPI : System.Web.UI.Page {
 		private static Logger logger = LogManager.GetCurrentClassLogger();
 
 		// Class used to display each of the batch's documents on the page
@@ -62,9 +60,9 @@ namespace WebForms {
 		protected void Page_Load(object sender, EventArgs e) {
 
 			if (!IsPostBack) {
-				
+
 				// It is up to your application's business logic to determine which documents will compose the batch
-				DocumentIds = Enumerable.Range(1, 10).ToList(); // from 1 to 30
+				DocumentIds = Enumerable.Range(1, 30).ToList(); // from 1 to 30
 
 				// Populate the DocumentsListView with the batch documents
 				DocumentsListView.DataSource = DocumentIds.ConvertAll(i => new DocumentItem() { Id = i });
@@ -75,10 +73,10 @@ namespace WebForms {
 		// The button "SubmitCertificateButton" is programmatically clicked by the Javascript on batch-signature-form.js when the
 		// selected certificate's encoding has been retrieved
 		protected void SubmitCertificateButton_Click(object sender, EventArgs e) {
-			
+
 			// Hide the certificate select (combo box) and the signature buttons
 			SignatureControlsPanel.Visible = false;
-			
+
 			// Start the signature of the first document in the batch
 			DocumentIndex = -1;
 			startNextSignature();
@@ -176,7 +174,7 @@ namespace WebForms {
 
 				// Retrieve the "transfer data" stored on the initial step (see method startNextSignature())
 				var transferData = Storage.GetFile(TransferDataFileIdField.Value);
-				
+
 				// We won't be needing the "transfer data" anymore, so we delete it
 				Storage.DeleteFile(TransferDataFileIdField.Value);
 
@@ -254,7 +252,7 @@ namespace WebForms {
 		 */
 		private PadesVisualRepresentation2 getVisualRepresentation(PKCertificate cert) {
 
-			return new PadesVisualRepresentation2() {
+			var visualRepresentation = new PadesVisualRepresentation2() {
 
 				// Text of the visual representation
 				Text = new PadesVisualText() {
@@ -266,23 +264,37 @@ namespace WebForms {
 					IncludeSigningTime = true,
 
 					// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
-					HorizontalAlign = PadesTextHorizontalAlign.Left
+					HorizontalAlign = PadesTextHorizontalAlign.Left,
+
+					// Optionally set the container within the signature rectangle on which to place the
+					// text. By default, the text can occupy the entire rectangle (how much of the
+					// rectangle the text will actually fill depends on the length and font size).
+					// Below, we specify that the text should respect a right margin of 1.5 cm.
+					Container = new PadesVisualRectangle() {
+						Left = 0.2,
+						Top = 0.2,
+						Right = 0.2,
+						Bottom = 0.2
+					}
 				},
 				// Background image of the visual representation
 				Image = new PadesVisualImage() {
 
 					// We'll use as background the image in Content/PdfStamp.png
 					Content = Storage.GetPdfStampContent(),
-
-					// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-					Opacity = 70,
-
 					// Align the image to the right
 					HorizontalAlign = PadesHorizontalAlign.Right
-				},
-				// Set the position of the visual representation
-				Position = PadesVisualAutoPositioning.GetFootnote()
+				}
 			};
+
+			// Position of the visual represention. We get the footnote position preset and customize it.
+			var visualPositioning = PadesVisualAutoPositioning.GetFootnote();
+			visualPositioning.Container.Height = 4.94;
+			visualPositioning.SignatureRectangleSize.Width = 8.0;
+			visualPositioning.SignatureRectangleSize.Height = 4.94;
+			visualRepresentation.Position = visualPositioning;
+
+			return visualRepresentation;
 		}
 	}
 }

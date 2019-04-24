@@ -20,14 +20,18 @@ namespace SampleWpfApp {
 	public partial class TaskProgressDialog : Window {
 
 		public static void Run(Func<TaskProgressDialog, Task> taskInvoker, Window owner = null) {
-			new TaskProgressDialog(taskInvoker, owner).ShowDialog();
+			var progressDialog = new TaskProgressDialog(taskInvoker, owner);
+			progressDialog.ShowDialog();
+			if (progressDialog.Exception != null) {
+				throw progressDialog.Exception;
+			}
 		}
 
 		public static T Run<T>(Func<TaskProgressDialog, Task<T>> taskInvoker, Window owner = null) {
 			var progressDialog = new TaskProgressDialog(taskInvoker, owner);
 			progressDialog.ShowDialog();
-			if (progressDialog.CancellationToken.IsCancellationRequested) {
-				throw new TaskCanceledException(progressDialog.Task);
+			if (progressDialog.Exception != null) {
+				throw progressDialog.Exception;
 			}
 			return ((Task<T>)progressDialog.Task).Result;
 		}
@@ -61,6 +65,8 @@ namespace SampleWpfApp {
 			}
 		}
 
+		public Exception Exception { get; private set; }
+
 		public TaskProgressDialog(Func<TaskProgressDialog, Task> taskInvoker, Window owner = null) {
 			tokenSource = new CancellationTokenSource();
 			if (owner != null) {
@@ -78,8 +84,8 @@ namespace SampleWpfApp {
 			try {
 				await Task;
 				await Task.Delay(TimeSpan.FromMilliseconds(200)); // time for user to see an eventual final 100%
-			} catch (TaskCanceledException) {
-				// do nothing
+			} catch (Exception ex) {
+				this.Exception = ex;
 			} finally {
 				this.Close();
 			}

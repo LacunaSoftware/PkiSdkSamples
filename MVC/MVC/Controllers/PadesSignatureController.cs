@@ -12,20 +12,18 @@ namespace MVC.Controllers {
     public class PadesSignatureController : Controller {
 
 		/**
-		This method defines the signature policy that will be used on the signature.
-		*/
+		 * This method defines the signature policy that will be used on the signature.
+		 */
 		private IPadesPolicyMapper getSignaturePolicy() {
-			var policy = PadesPoliciesForGeneration.GetPadesBasic(TrustArbitrators.PkiBrazil);
 
 #if DEBUG
 			// During debug only, we return a wrapper which will overwrite the policy's default trust arbitrator (which in this case
 			// corresponds to the ICP-Brasil roots only), with our custom trust arbitrator which accepts test certificates
 			// (see Util.GetTrustArbitrator())
-			return new PadesPolicyMapperWrapper(policy, Util.GetTrustArbitrator());
+			return PadesPoliciesForGeneration.GetPadesBasic(Util.GetTrustArbitrator());
 #else
-			return policy;
+			return PadesPoliciesForGeneration.GetPadesBasic(TrustArbitrators.PkiBrazil);
 #endif
-
 		}
 
 		// GET: PadesSignature

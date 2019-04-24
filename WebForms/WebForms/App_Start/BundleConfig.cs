@@ -47,8 +47,7 @@ namespace WebForms {
 			});
 
 			ScriptManager.ScriptResourceMapping.AddDefinition("WebPKI", new ScriptResourceDefinition {
-				Path = "~/Scripts/lacuna-web-pki-2.5.0.min.js",
-				DebugPath = "~/Scripts/lacuna-web-pki-2.5.0.js",
+				Path = "~/Scripts/lacuna-web-pki-2.11.0.js"
 			});
 
 			ScriptManager.ScriptResourceMapping.AddDefinition("AuthenticationForm", new ScriptResourceDefinition {

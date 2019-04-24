@@ -10,7 +10,7 @@
 namespace WebForms {
     
     
-    public partial class BatchSignature {
+    public partial class BatchPadesSignatureWebAPI {
         
         /// <summary>
         /// DocumentsListView control.
@@ -110,23 +110,5 @@ namespace WebForms {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.HiddenField TransferDataFileIdField;
-        
-        /// <summary>
-        /// SubmitCertificateButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button SubmitCertificateButton;
-        
-        /// <summary>
-        /// SubmitSignatureButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button SubmitSignatureButton;
     }
 }

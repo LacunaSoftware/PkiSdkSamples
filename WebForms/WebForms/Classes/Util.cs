@@ -1,8 +1,11 @@
 ﻿using Lacuna.Pki;
 using Lacuna.Pki.Stores;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace WebForms.Classes {
@@ -10,23 +13,20 @@ namespace WebForms.Classes {
 	public static class Util {
 
 		public static INonceStore GetNonceStore() {
-			/*
-				For simplification purposes, we're using the FileSystemNonceStore, which stores nonces as
-				0-byte files on a local filesystem folder. In a real application, the nonces would typically
-				be stored on the database. If you application uses Entity Framework, you can easily change this
-				code to store nonces on your database with the EntityFrameworkStore class (from the optional Nuget
-				package "Lacuna PKI Entity Framework Connector").
-
-				For more information, see: http://pki.lacunasoftware.com/Help/html/0195da17-db87-4d4f-8ce2-c21b140c10c3.htm
-			 */
+			
+			// For simplification purposes, we're using the FileSystemNonceStore, which stores nonces as
+			// 0-byte files on a local filesystem folder. In a real application, the nonces would typically
+			// be stored on the database. If you application uses Entity Framework, you can easily change this
+			// code to store nonces on your database with the EntityFrameworkStore class (from the optional Nuget
+			// package "Lacuna PKI Entity Framework Connector").
+			//
+			// For more information, see: http://pki.lacunasoftware.com/Help/html/0195da17-db87-4d4f-8ce2-c21b140c10c3.htm
 			return new FileSystemNonceStore(HttpContext.Current.Server.MapPath("~/App_Data"));
 		}
-
-		/*
-			This method returns the "trust arbitrator" to be used on signatures and authentications. A trust
-			arbitrator determines which root certificates shall be trusted during certificate and signature
-			validation.
-		 */
+		
+		// This method returns the "trust arbitrator" to be used on signatures and authentications. A trust
+		// arbitrator determines which root certificates shall be trusted during certificate and signature
+		// validation.
 		public static ITrustArbitrator GetTrustArbitrator() {
 			// We start by trusting the ICP-Brasil roots and the roots registered as trusted on the host Windows Server
 			var trustArbitrator = new LinkedTrustArbitrator(TrustArbitrators.PkiBrazil, TrustArbitrators.Windows);
@@ -36,6 +36,92 @@ namespace WebForms.Classes {
 			trustArbitrator.Add(new TrustedRoots(lacunaRoot));
 #endif
 			return trustArbitrator;
+		}
+
+		public static string JoinStringsPt(IEnumerable<string> strings) {
+			var text = new System.Text.StringBuilder();
+			var count = strings.Count();
+			var index = 0;
+			foreach (var s in strings) {
+				if (index > 0) {
+					if (index < count - 1) {
+						text.Append(", ");
+					} else {
+						text.Append(" e ");
+					}
+				}
+				text.Append(s);
+				++index;
+			}
+			return text.ToString();
+		}
+
+		/*
+		 * ------------------------------------
+		 * Configuration of the code generation
+		 * 
+		 * - CodeSize   : size of the code in characters
+		 * - CodeGroups : number of groups to separate the code (must be a proper divisor of the code size)
+		 * 
+		 * Examples
+		 * --------
+		 * 
+		 * - CodeSize = 12, CodeGroups = 3 : XXXX-XXXX-XXXX
+		 * - CodeSize = 12, CodeGroups = 4 : XXX-XXX-XXX-XXX
+		 * - CodeSize = 16, CodeGroups = 4 : XXXX-XXXX-XXXX-XXXX
+		 * - CodeSize = 20, CodeGroups = 4 : XXXXX-XXXXX-XXXXX-XXXXX
+		 * - CodeSize = 20, CodeGroups = 5 : XXXX-XXXX-XXXX-XXXX-XXXX
+		 * - CodeSize = 25, CodeGroups = 5 : XXXXX-XXXXX-XXXXX-XXXXX-XXXXX
+		 * 
+		 * Entropy
+		 * -------
+		 * 
+		 * The resulting entropy of the code in bits is the size of the code times 5. Here are some suggestions:
+		 * 
+		 * - 12 characters = 60 bits
+		 * - 16 characters = 80 bits
+		 * - 20 characters = 100 bits
+		 * - 25 characters = 125 bits
+		 */
+		private const int VerificationCodeSize = 16;
+		private const int VerificationCodeGroups = 4;
+
+		// This method generates a verification code, without dashes
+		public static string GenerateVerificationCode() {
+			// String with exactly 32 letters and numbers to be used on the codes. We recommend leaving this value as is.
+			const string Alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+			// Allocate a byte array large enough to receive the necessary entropy
+			var bytes = new byte[(int)Math.Ceiling(VerificationCodeSize * 5 / 8.0)];
+			// Generate the entropy with a cryptographic number generator
+			using (var rng = RandomNumberGenerator.Create()) {
+				rng.GetBytes(bytes);
+			}
+			// Convert random bytes into bits
+			var bits = new BitArray(bytes);
+			// Iterate bits 5-by-5 converting into characters in our alphabet
+			var sb = new System.Text.StringBuilder();
+			for (int i = 0; i < VerificationCodeSize; i++) {
+				int n = (bits[i] ? 1 : 0) << 4
+					| (bits[i + 1] ? 1 : 0) << 3
+					| (bits[i + 2] ? 1 : 0) << 2
+					| (bits[i + 3] ? 1 : 0) << 1
+					| (bits[i + 4] ? 1 : 0);
+				sb.Append(Alphabet[n]);
+			}
+			return sb.ToString();
+		}
+
+		public static string FormatVerificationCode(string code) {
+			// Return the code separated in groups
+			var charsPerGroup = VerificationCodeSize / VerificationCodeGroups;
+			return string.Join("-", Enumerable.Range(0, VerificationCodeGroups).Select(g => code.Substring(g * charsPerGroup, charsPerGroup)));
+		}
+
+		public static string ParseVerificationCode(string formattedCode) {
+			if (string.IsNullOrEmpty(formattedCode)) {
+				return formattedCode;
+			}
+			return Regex.Replace(formattedCode, "[^A-Za-z0-9]", "");
 		}
 
 	}

@@ -24,6 +24,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,15 +56,15 @@
       <HintPath>..\packages\AspNet.ScriptManager.jQuery.3.1.1\lib\net45\AspNet.ScriptManager.jQuery.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.Pki, Version=1.16.9.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.Pki.dll</HintPath>
+    <Reference Include="Lacuna.Pki, Version=2.1.3.0, Culture=neutral, PublicKeyToken=d63b3e133e6d3c7d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.2.1.3\lib\net45\Lacuna.Pki.dll</HintPath>
     </Reference>
     <Reference Include="Lacuna.Pki.NLogConnector, Version=1.2.0.0, Culture=neutral, PublicKeyToken=3a226365014df7ef, processorArchitecture=MSIL">
       <HintPath>..\packages\Lacuna.Pki.NLogConnector.1.2.0\lib\net45\Lacuna.Pki.NLogConnector.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Lacuna.T8, Version=1.0.4.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
-      <HintPath>..\packages\Lacuna.Pki.1.16.9\lib\net45\Lacuna.T8.dll</HintPath>
+    <Reference Include="Lacuna.T8, Version=1.2.1.0, Culture=neutral, PublicKeyToken=e53c244ad67cdbc8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lacuna.Pki.2.1.3\lib\net45\Lacuna.T8.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.2\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
@@ -78,12 +79,30 @@
       <HintPath>..\packages\NLog.4.4.0\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="QRCoder, Version=1.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.3.3\lib\net40\QRCoder.dll</HintPath>
+    </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -114,6 +133,9 @@
     <Reference Include="Microsoft.AspNet.FriendlyUrls">
       <HintPath>..\packages\Microsoft.AspNet.FriendlyUrls.Core.1.0.2\lib\net45\Microsoft.AspNet.FriendlyUrls.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QRCoder.1.3.3\lib\net40\UnityEngine.dll</HintPath>
+    </Reference>
     <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
       <Private>True</Private>
@@ -122,9 +144,13 @@
   <ItemGroup>
     <Content Include="Authentication.aspx" />
     <Content Include="AuthenticationSuccess.aspx" />
-    <Content Include="BatchSignature.aspx" />
+    <Content Include="BatchCadesSignature.aspx" />
+    <Content Include="BatchPadesSignature.aspx" />
+    <Content Include="BatchPadesSignatureWebAPI.aspx" />
     <Content Include="CadesSignature.aspx" />
     <Content Include="CadesSignatureInfo.aspx" />
+    <Content Include="CadesSignatureMerge.aspx" />
+    <Content Include="Check.aspx" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
@@ -145,11 +171,15 @@
     <Content Include="LacunaPkiLicense.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="OpenPadesSignature.aspx" />
     <Content Include="PadesSignature.aspx" />
     <Content Include="PadesSignatureInfo.aspx" />
     <Content Include="PdfMarksFromCades.aspx" />
+    <Content Include="PrinterFriendlyVersion.aspx" />
     <Content Include="Scripts\App\signature-form.js" />
     <Content Include="Scripts\App\authentication-form.js" />
+    <Content Include="Scripts\lacuna-web-pki-2.11.0.js" />
+    <Content Include="Upload.aspx" />
     <Content Include="XmlElementSignature.aspx" />
     <Content Include="XmlElementSignatureInfo.aspx" />
     <Content Include="Content\SampleDocument.pdf" />
@@ -162,7 +192,10 @@
     <Content Include="Content\07.pdf" />
     <Content Include="Content\08.pdf" />
     <Content Include="Content\09.pdf" />
-    <Content Include="Content\10.pdf" />
+    <Content Include="Content\00.pdf" />
+    <Content Include="Content\SamplePdfSigned.p7s" />
+    <Content Include="Content\SampleDetachedSignature1.p7s" />
+    <Content Include="Content\SampleDetachedSignature2.p7s" />
     <None Include="Scripts\jquery-3.1.1.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -171,8 +204,6 @@
     <Content Include="Scripts\jquery-3.1.1.slim.js" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.js" />
     <Content Include="Scripts\jquery.blockUI.js" />
-    <Content Include="Scripts\lacuna-web-pki-2.5.0.js" />
-    <Content Include="Scripts\lacuna-web-pki-2.5.0.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
@@ -218,8 +249,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="APIs\SignController.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Authentication.aspx.cs">
       <DependentUpon>Authentication.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -234,12 +267,26 @@
     <Compile Include="AuthenticationSuccess.aspx.designer.cs">
       <DependentUpon>AuthenticationSuccess.aspx</DependentUpon>
     </Compile>
-    <Compile Include="BatchSignature.aspx.cs">
-      <DependentUpon>BatchSignature.aspx</DependentUpon>
+    <Compile Include="BatchCadesSignature.aspx.cs">
+      <DependentUpon>BatchCadesSignature.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="BatchSignature.aspx.designer.cs">
-      <DependentUpon>BatchSignature.aspx</DependentUpon>
+    <Compile Include="BatchCadesSignature.aspx.designer.cs">
+      <DependentUpon>BatchCadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BatchPadesSignature.aspx.cs">
+      <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BatchPadesSignature.aspx.designer.cs">
+      <DependentUpon>BatchPadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="BatchPadesSignatureWebAPI.aspx.cs">
+      <DependentUpon>BatchPadesSignatureWebAPI.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="BatchPadesSignatureWebAPI.aspx.designer.cs">
+      <DependentUpon>BatchPadesSignatureWebAPI.aspx</DependentUpon>
     </Compile>
     <Compile Include="CadesSignature.aspx.cs">
       <DependentUpon>CadesSignature.aspx</DependentUpon>
@@ -255,7 +302,23 @@
     <Compile Include="CadesSignatureInfo.aspx.designer.cs">
       <DependentUpon>CadesSignatureInfo.aspx</DependentUpon>
     </Compile>
+    <Compile Include="CadesSignatureMerge.aspx.cs">
+      <DependentUpon>CadesSignatureMerge.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CadesSignatureMerge.aspx.designer.cs">
+      <DependentUpon>CadesSignatureMerge.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Check.aspx.cs">
+      <DependentUpon>Check.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Check.aspx.designer.cs">
+      <DependentUpon>Check.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Classes\CadesPolicyMapperWrapper.cs" />
+    <Compile Include="Classes\PadesPolicyMapperWrapper.cs" />
+    <Compile Include="Classes\SignatureModels.cs" />
     <Compile Include="Classes\Storage.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Default.aspx.cs">
@@ -275,6 +338,17 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="OpenPadesSignature.aspx.cs">
+      <DependentUpon>OpenPadesSignature.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="OpenPadesSignature.aspx.designer.cs">
+      <DependentUpon>OpenPadesSignature.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\BatchSignatureCompleteRequest.cs" />
+    <Compile Include="Models\BatchSignatureCompleteResponse.cs" />
+    <Compile Include="Models\BatchSignatureStartRequest.cs" />
+    <Compile Include="Models\BatchSignatureStartResponse.cs" />
     <Compile Include="PadesSignature.aspx.cs">
       <DependentUpon>PadesSignature.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -296,6 +370,13 @@
     <Compile Include="PdfMarksFromCades.aspx.designer.cs">
       <DependentUpon>PdfMarksFromCades.aspx</DependentUpon>
     </Compile>
+    <Compile Include="PrinterFriendlyVersion.aspx.cs">
+      <DependentUpon>PrinterFriendlyVersion.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PrinterFriendlyVersion.aspx.designer.cs">
+      <DependentUpon>PrinterFriendlyVersion.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Site.Master.cs">
       <DependentUpon>Site.Master</DependentUpon>
@@ -303,6 +384,13 @@
     </Compile>
     <Compile Include="Site.Master.designer.cs">
       <DependentUpon>Site.Master</DependentUpon>
+    </Compile>
+    <Compile Include="Upload.aspx.cs">
+      <DependentUpon>Upload.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Upload.aspx.designer.cs">
+      <DependentUpon>Upload.aspx</DependentUpon>
     </Compile>
     <Compile Include="XmlElementSignature.aspx.cs">
       <DependentUpon>XmlElementSignature.aspx</DependentUpon>
@@ -321,6 +409,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

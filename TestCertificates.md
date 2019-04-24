@@ -17,6 +17,10 @@ Download the file [TestCertificates.zip](TestCertificates.zip?raw=true) to get t
 * Pierre de Fermat
     * Email: test@lacunasoftware.com
     * ICP-Brasil mock certificate with CPF 47363361886
+* Wayne Enterprises, Inc 
+	* Email: test@wayneenterprises.com
+    * ICP-Brasil mock certificate with CNPJ 34785515000166	
+	* Legal representative: Bruce Wayne mock certificate with CPF 47891178631
 
 If you need a certificate with a particular information, [contact us](http://support.lacunasoftware.com/).
 
