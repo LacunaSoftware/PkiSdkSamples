@@ -25,35 +25,50 @@ namespace WebApi.Controllers {
 			http://pki.lacunasoftware.com/Help/html/98095ec7-2742-4d1f-9709-681c684eb13b.htm
 		 */
 		private PadesVisualRepresentation2 getVisualRepresentation(PKCertificate cert) {
-			return new PadesVisualRepresentation2() {
 
-				// Text of the visual representation
+			// Create a visual representation.
+			var visualRepresentation = new PadesVisualRepresentation2() {
+
+				// Text of the visual representation.
 				Text = new PadesVisualText() {
-
-					// used to compose the message
-					CustomText = String.Format("Digitally signed by {0}", cert.SubjectName.CommonName),
-
-					// Specify that the signing time should also be rendered
+					CustomText = string.Format("Signed by {0} ({1})", cert.SubjectName.CommonName, cert.PkiBrazil.CPF),
+					FontSize = 13.0,
+					// Specify that the signing time should also be rendered.
 					IncludeSigningTime = true,
-
-					// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not set the default is Left
-					HorizontalAlign = PadesTextHorizontalAlign.Left
+					// Optionally set the horizontal alignment of the text ('Left' or 'Right'), if not 
+					// set the default is 'Left'.
+					HorizontalAlign = PadesTextHorizontalAlign.Left,
+					// Optionally, set the container within the signature rectangle on which to place 
+					// the text. By default, the text can occupy the entire rectangle (how much of the 
+					// rectangle the text will actually fill depends on the length and font size). 
+					// Below, we specify that text should respect a right margin of 1.5 cm.
+					Container = new PadesVisualRectangle() {
+						Left = 0.2,
+						Top = 0.2,
+						Right = 0.2,
+						Bottom = 0.2
+					}
 				},
-				// Background image of the visual representation
 				Image = new PadesVisualImage() {
 
-					// We'll use as background the image in Content/PdfStamp.png
+					// We'll use as background the image in Content/PdfStamp.png.
 					Content = Storage.GetPdfStampContent(),
-
-					// Opacity is an integer from 0 to 100 (0 is completely transparent, 100 is completely opaque).
-					Opacity = 70,
-
-					// Align the image to the right
-					HorizontalAlign = PadesHorizontalAlign.Right
+					// Align the image to the right horizontally.
+					HorizontalAlign = PadesHorizontalAlign.Right,
+					// Align the image to center vertically.
+					VerticalAlign = PadesVerticalAlign.Center
 				},
-				// Set the position of the visual representation
-				Position = PadesVisualAutoPositioning.GetFootnote()
 			};
+
+			// Position of the visual representation. We get the footnote position preset and
+			// customize it.
+			var visualPositioning = PadesVisualAutoPositioning.GetFootnote();
+			visualPositioning.Container.Height = 4.94;
+			visualPositioning.SignatureRectangleSize.Width = 8.0;
+			visualPositioning.SignatureRectangleSize.Height = 4.94;
+			visualRepresentation.Position = visualPositioning;
+
+			return visualRepresentation;
 		}
 
 		[HttpPost, Route("Api/PadesSignature/Start")]
@@ -71,7 +86,11 @@ namespace WebApi.Controllers {
 				var padesSigner = new PadesSigner();
 
 				// Set the PDF to sign, which in the case of this example is a fixed sample document
-				padesSigner.SetPdfToSign(Storage.GetSampleDocContent());
+				if (!string.IsNullOrEmpty(request.FileId)) {
+					padesSigner.SetPdfToSign(Storage.GetFile(request.FileId));
+				} else {
+					padesSigner.SetPdfToSign(Storage.GetSampleDocContent());
+				}
 
 				// Set the signer certificate
 				padesSigner.SetSigningCertificate(cert);

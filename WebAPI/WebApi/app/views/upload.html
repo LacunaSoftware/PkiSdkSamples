@@ -1,0 +1,10 @@
+﻿<h2>Upload a file</h2>
+
+<form role="form">
+
+    <div class="progress" ng-show="progress">
+        <div class="progress-bar progress-bar-striped {{progress < 100 ? 'active' : 'progress-bar-success'}}" role="progressbar" style="width: {{progress}}%;" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100">{{progress}}%</div>
+    </div>
+
+    <input type="file" ng-file-select="onFileSelect($files)" />
+</form>

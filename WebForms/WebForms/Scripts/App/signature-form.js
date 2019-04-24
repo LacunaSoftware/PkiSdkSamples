@@ -95,6 +95,7 @@ var signatureForm = (function () {
 
 			// Once the certificates have been listed, unblock the UI.
 			$.unblockUI();
+
 		});
 	}
 
