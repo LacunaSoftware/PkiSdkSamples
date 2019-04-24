@@ -1,19 +1,7 @@
 ﻿<h2>Open/Validate signatures on an existing XML file</h2>
 
-<div class="col-md-4" style="padding-left: 0px;">
-    <form role="form" ng-submit="submit()">
-
-        <div class="form-group">
-            <label>Upload a file</label>
-            <input id="upload-input" type="file">
-        </div>
-
-        <button type="submit">Upload</button>
-    </form>
-</div>
-
-<div ng-show="signatures.length > 0" class="col-md-8">
-    <label for="accordion">The given file contains {{ signatures.length }} signatures</label>
+<div ng-show="signatures.length > 0">
+    <label for="accordion">The given file contains {{ signatures.length }} signatures:</label>
 
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 

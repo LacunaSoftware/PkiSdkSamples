@@ -45,7 +45,11 @@ namespace WebApi.Controllers {
 				var cadesSigner = new CadesSigner();
 
 				// Set the data to sign, which in the case of this example is a fixed sample document
-				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
+				if (!string.IsNullOrEmpty(request.FileId)) {
+					cadesSigner.SetDataToSign(Storage.GetFile(request.FileId));
+				} else {
+					cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
+				}
 
 				// Set the signer certificate
 				cadesSigner.SetSigningCertificate(cert);
@@ -87,7 +91,12 @@ namespace WebApi.Controllers {
 				var cadesSigner = new CadesSigner();
 
 				// Set the document to be signed and the policy, exactly like in the Start action
-				cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
+				if (!string.IsNullOrEmpty(request.FileId)) {
+					cadesSigner.SetDataToSign(Storage.GetFile(request.FileId));
+				} else {
+					cadesSigner.SetDataToSign(Storage.GetSampleDocContent());
+				}
+				
 				cadesSigner.SetPolicy(getSignaturePolicy());
 
 				// Set signer's certificate

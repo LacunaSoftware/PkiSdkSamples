@@ -1,5 +1,5 @@
 ﻿'use strict';
-app.controller('padesSignatureController', ['$scope', '$http', 'blockUI', 'util', function ($scope, $http, blockUI, util) {
+app.controller('padesSignatureController', ['$scope', '$http', '$routeParams', 'blockUI', 'util', function ($scope, $http, $routeParams, blockUI, util) {
 
 	$scope.certificates = [];
 	$scope.selectedCertificate = null;
@@ -86,7 +86,7 @@ app.controller('padesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called when the user clicks the "Sign" button
 	// -------------------------------------------------------------------------------------------------
 	$scope.sign = function () {
-		if ($scope.selectedCertificate == null) {
+		if (!$scope.selectedCertificate) {
 			util.showMessage('Message', 'Please select a certificate');
 			return;
 		}
@@ -103,11 +103,17 @@ app.controller('padesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called once the user's certificate encoding has been read
 	// -------------------------------------------------------------------------------------------------
 	var onCertificateRetrieved = function (cert) {
-		$http.post('Api/PadesSignature/Start', {
+		var body = {
 			certificate: cert
-		}).then(function (response) {
-			onSignatureStartCompleted(cert, response.data);
-		}, util.handleServerError);
+		};
+		if ($routeParams.fileId) {
+			body['fileId'] = $routeParams.fileId;
+		}
+
+		$http.post('Api/PadesSignature/Start', body)
+			.then(function (response) {
+				onSignatureStartCompleted(cert, response.data);
+			}, util.handleServerError);
 	};
 
 	// -------------------------------------------------------------------------------------------------
@@ -127,12 +133,14 @@ app.controller('padesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called once the signature of the "to-sign-bytes" is completed
 	// -------------------------------------------------------------------------------------------------
 	var onSignDataCompleted = function (startResponse, cert, sign) {
-		$http.post('Api/PadesSignature/Complete', {
+		var body = {
 			certificate: cert,
 			signature: sign,
 			toSignBytes: startResponse.toSignBytes,
 			transferDataFileId: startResponse.transferDataFileId
-		}).then(onSignatureCompleteCompleted, util.handleServerError);
+		};
+		$http.post('Api/PadesSignature/Complete', body)
+			.then(onSignatureCompleteCompleted, util.handleServerError);
 	};
 
 	// -------------------------------------------------------------------------------------------------

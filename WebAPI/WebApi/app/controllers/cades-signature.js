@@ -1,5 +1,5 @@
 ﻿'use strict';
-app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util', function ($scope, $http, blockUI, util) {
+app.controller('cadesSignatureController', ['$scope', '$http', '$routeParams', 'blockUI', 'util', function ($scope, $http, $routeParams, blockUI, util) {
 	
 	$scope.certificates = [];
 	$scope.selectedCertificate = null;
@@ -86,7 +86,7 @@ app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called when the user clicks the "Sign" button
 	// -------------------------------------------------------------------------------------------------
 	$scope.sign = function () {
-		if ($scope.selectedCertificate == null) {
+		if (!$scope.selectedCertificate) {
 			util.showMessage('Message', 'Please select a certificate');
 			return;
 		}
@@ -103,11 +103,17 @@ app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called once the user's certificate encoding has been read
 	// -------------------------------------------------------------------------------------------------
 	var onCertificateRetrieved = function (cert) {
-		$http.post('Api/CadesSignature/Start', {
+		var body = {
 			certificate: cert
-		}).then(function (response) {
-			onSignatureStartCompleted(cert, response.data);
-		}, util.handleServerError);
+		};
+		if ($routeParams.fileId) {
+			body['fileId'] = $routeParams.fileId;
+		}
+
+		$http.post('Api/CadesSignature/Start', body)
+			.then(function (response) {
+				onSignatureStartCompleted(cert, response.data);
+			}, util.handleServerError);
 	};
 
 	// -------------------------------------------------------------------------------------------------
@@ -127,11 +133,17 @@ app.controller('cadesSignatureController', ['$scope', '$http', 'blockUI', 'util'
 	// Function called once the signature of the "to-sign-bytes" is completed
 	// -------------------------------------------------------------------------------------------------
 	var onSignDataCompleted = function (toSign, cert, sign) {
-		$http.post('Api/CadesSignature/Complete', {
+		var body = {
 			certificate: cert,
 			signature: sign,
 			toSignBytes: toSign
-		}).then(onSignatureCompleteCompleted, util.handleServerError);
+		};
+		if ($routeParams.fileId) {
+			body['fileId'] = $routeParams.fileId;
+		}
+
+		$http.post('Api/CadesSignature/Complete', body)
+			.then(onSignatureCompleteCompleted, util.handleServerError);
 	};
 
 	// -------------------------------------------------------------------------------------------------
