@@ -5,6 +5,6 @@ using System.Web;
 
 namespace WebApi.Models {
     public class OpenXmlSignatureRequest {
-        public byte[] FileContent { get; set; }
+        public string FileId { get; set; }
     }
 }

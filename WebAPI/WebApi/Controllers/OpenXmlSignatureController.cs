@@ -15,11 +15,20 @@ namespace WebApi.Controllers {
 		[HttpPost]
 		public IHttpActionResult Post(OpenXmlSignatureRequest request) {
 
-			if (request.FileContent == null || request.FileContent.Length < 1) {
+			// This sample requires the FileId field is valid and corresponds to an existing file.
+			if (string.IsNullOrEmpty(request.FileId)) {
+				return BadRequest();
+			}
+
+			// Verifies the existence of the FileId and read its content.
+			byte[] content;
+			if (!Storage.TryGetFile(request.FileId, out content)) {
 				return NotFound();
 			}
 
-			var xmlSignatureLocator = new XmlSignatureLocator(request.FileContent);
+			// Get an instance of the XmlSignatureLocator class, which is responsible to open the 
+			// signed XML.
+			var xmlSignatureLocator = new XmlSignatureLocator(content);
 			var signatures = xmlSignatureLocator.GetSignatures();
 			var validationPolicy = XmlPolicySpec.GetXmlDSigBasic(Util.GetTrustArbitrator());
 			var vrs = signatures.ToDictionary(s => s, s => s.Validate(validationPolicy));

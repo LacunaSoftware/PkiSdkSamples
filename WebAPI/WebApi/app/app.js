@@ -7,17 +7,22 @@ app.config(['$routeProvider', function ($routeProvider) {
 		controller: 'homeController'
     });
 
+    $routeProvider.when('/upload/:rc', {
+        templateUrl: 'app/views/upload.html',
+        controller: 'uploadController'
+    });
+
 	$routeProvider.when('/authentication', {
 		templateUrl: 'app/views/authentication.html',
 		controller: 'authenticationController'
 	});
 
-	$routeProvider.when('/pades-signature', {
+	$routeProvider.when('/pades-signature/:fileId?', {
 		templateUrl: 'app/views/pades-signature.html',
 		controller: 'padesSignatureController'
 	});
 
-	$routeProvider.when('/cades-signature', {
+	$routeProvider.when('/cades-signature/:fileId?', {
 		templateUrl: 'app/views/cades-signature.html',
 		controller: 'cadesSignatureController'
 	});
@@ -27,7 +32,7 @@ app.config(['$routeProvider', function ($routeProvider) {
 		controller: 'xmlElementSignatureController'
     });
 
-    $routeProvider.when('/open-xml-signature', {
+    $routeProvider.when('/open-xml-signature/:fileId?', {
         templateUrl: 'app/views/open-xml-signature.html',
         controller: 'openXmlSignatureController'
     });
@@ -105,3 +110,20 @@ app.factory('util', ['$uibModal', 'blockUI', function ($modal, blockUI) {
 		handleServerError: handleServerError
 	};
 }]);
+
+app.directive('ngFileSelect', function () {
+    return {
+        link: function ($scope, element) {
+
+            element.bind('change', function (e) {
+                var list = (e.srcElement || e.target).files;
+                if (list.length > 0) {
+                    $scope.$apply(function () {
+                        $scope.file = list[0];
+                        $scope.upload();
+                    });
+                }
+            });
+        }
+    };
+});

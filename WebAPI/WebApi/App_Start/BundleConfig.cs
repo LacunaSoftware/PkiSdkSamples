@@ -28,10 +28,6 @@ namespace WebApi {
 				"~/Scripts/respond.js"
 			));
 
-			bundles.Add(new ScriptBundle("~/bundles/webpki").Include(
-				"~/Scripts/lacuna-web-pki-{version}.js"
-			));
-
 			bundles.Add(new ScriptBundle("~/bundles/app")
 				.Include("~/app/app.js")
 				.IncludeDirectory("~/app/controllers", "*.js")

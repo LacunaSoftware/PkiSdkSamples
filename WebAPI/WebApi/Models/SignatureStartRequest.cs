@@ -7,5 +7,7 @@ namespace WebApi.Models {
 	public class SignatureStartRequest {
 
 		public byte[] Certificate { get; set; }
+
+		public string FileId { get; set; }
 	}
 }

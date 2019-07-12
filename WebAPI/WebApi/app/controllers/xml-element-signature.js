@@ -22,8 +22,8 @@ app.controller('xmlElementSignatureController', ['$scope', '$http', 'blockUI', '
 		// http://webpki.lacunasoftware.com/Help/classes/LacunaWebPKI.html#method_init
 		pki.init({
 			ready: loadCertificates,
-			defaultError: onWebPkiError, // generic error callback
-			angularScope: $scope // Pass Angularjs scope for WebPKI
+			defaultError: onWebPkiError, // Generic error callback;
+			angularScope: $scope         // Pass Angularjs scope for WebPKI.
 		});
 
 	};

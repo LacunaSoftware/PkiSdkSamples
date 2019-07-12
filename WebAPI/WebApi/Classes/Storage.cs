@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Web;
 
 namespace WebApi.Classes {
@@ -24,6 +25,11 @@ namespace WebApi.Classes {
 		}
 
 		// Função que simula a recuperação de um arquivo previamente armazenado
+		public static bool TryGetFile(string fileId, out byte[] content) {
+			string extension;
+			return TryGetFile(fileId, out content, out extension);
+		}
+
 		public static bool TryGetFile(string fileId, out byte[] content, out string extension) {
 			var filename = fileId.Replace('_', '.');
 			var path = HttpContext.Current.Server.MapPath("~/App_Data/" + filename);
@@ -36,6 +42,15 @@ namespace WebApi.Classes {
 			extension = fileInfo.Extension;
 			content = File.ReadAllBytes(path);
 			return true;
+		}
+
+		public static string GenerateFileId(string originalFilename) {
+			var sb = new StringBuilder();
+			sb.Append(Path.GetFileNameWithoutExtension(originalFilename));
+			sb.Append('.');
+			sb.Append(Guid.NewGuid());
+			sb.Append(Path.GetExtension(originalFilename));
+			return sb.ToString();
 		}
 
 		public static byte[] GetFile(string fileId, out string extension) {
