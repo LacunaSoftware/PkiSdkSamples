@@ -113,7 +113,6 @@ namespace WebForms.Classes {
 			} catch {
 
 			}
-			SigningTime = signerInfo.SigningTime;
 		}
 	}
 
@@ -128,6 +127,7 @@ namespace WebForms.Classes {
 		public PadesSignerInfoModel(PadesSignerInfo signerInfo) : base(signerInfo.Signer) {
 			IsDocumentTimestamp = signerInfo.IsTsp;
 			SignatureFieldName = signerInfo.SignatureFieldName;
+			SigningTime = signerInfo.SigningTime;
 		}
 	}
 
