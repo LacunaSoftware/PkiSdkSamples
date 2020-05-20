@@ -64,5 +64,9 @@ namespace SampleWpfApp {
 		private void MergeCadesSignaturesButton_Click(object sender, RoutedEventArgs e) {
 			viewModel.MergeCadesSignatures();
 		}
+
+		private void AzureKeyVaultButton_Click(object sender, RoutedEventArgs e) {
+			viewModel.ShowAzureKeyVaultUtilities();
+		}
 	}
 }

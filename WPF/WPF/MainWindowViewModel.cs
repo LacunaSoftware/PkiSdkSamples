@@ -146,6 +146,12 @@ namespace SampleWpfApp {
 			}
 		}
 
+		public void ShowAzureKeyVaultUtilities() {
+			if (checkLicenseLoaded()) {
+				new AzureKeyVaultWindow().Show();
+			}
+		}
+
 		public void LoadLicense() {
 
 			var openFileDialog = new OpenFileDialog() {
