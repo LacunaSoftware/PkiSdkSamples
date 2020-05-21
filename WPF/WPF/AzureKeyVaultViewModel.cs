@@ -52,6 +52,19 @@ namespace SampleWpfApp {
 			}
 		}
 
+		private string csrSubject;
+		public string CsrSubject {
+			get {
+				return this.csrSubject;
+			}
+			set {
+				if (value != csrSubject) {
+					this.csrSubject = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
 		private string log;
 		public string Log {
 			get {
@@ -69,6 +82,7 @@ namespace SampleWpfApp {
 
 		public void Initialize(Window owner) {
 			this.owner = owner;
+			CsrSubject = "CN=Undefined";
 		}
 
 		public async Task IssueCsrAsync(string appSecret) {
@@ -85,6 +99,9 @@ namespace SampleWpfApp {
 				var csrGenerator = new CsrGenerator() {
 					PublicKey = key.PublicKey,
 				};
+				if (!string.IsNullOrEmpty(CsrSubject)) {
+					csrGenerator.Subject = NameGenerator.GenerateFromDNString(CsrSubject, NameGeneratorTypePolicies.Utf8StringsWhenNecessary);
+				}
 				var toSignData = csrGenerator.GetToSignBytes();
 				var csrSignature = key.GetSignatureCsp(digestAlg).SignData(toSignData);
 				csrGenerator.SetPrecomputedSignature(key.PublicKey.Algorithm.GetSignatureAlgorithm(digestAlg), csrSignature);
