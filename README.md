@@ -10,6 +10,7 @@ Choose one of the following sample projects:
 * [ASP.NET Web Forms](WebForms/)
 * [ASP.NET Web API / Single Page Application](WebAPI/)
 * [WPF Desktop App](WPF/)
+* [Console](Console/)
 
 To run the samples, you will need a license. If you don't have one, request a free trial license at
 [our website](http://www.lacunasoftware.com/en/home/contact).
