@@ -40,13 +40,13 @@ namespace ConsoleApp {
 			[Option('r', "reprocess", Required = false, HelpText = "Sign remaing unsigned files")]
 			public bool Reprocess { get; set; }
 
-			[Option('S', "source", Required = false, HelpText = "Source directory")]
+			[Option('s', "source", Required = false, HelpText = "Source directory")]
 			public string SourceDir { get; set; }
 
-			[Option('D', "destination", Required = false, HelpText = "Destination directory")]
+			[Option('d', "destination", Required = false, HelpText = "Destination directory")]
 			public string DestinationDir { get; set; }
 
-			[Option('C', "certificate", Required = false, HelpText = "Signer certificate thumbprint")]
+			[Option('c', "certificate", Required = false, HelpText = "Signer certificate thumbprint")]
 			public string CertThumbprint { get; set; }
 
 			// 0,0 is the right bottom corner
@@ -104,7 +104,7 @@ namespace ConsoleApp {
 			if (isTest) {
 				Util.CheckTestDirectories(documentsInputDir, signedDocumentsOutputDir);
 				deleteFiles(documentsInputDir, signedDocumentsOutputDir);
-				pdfGenerate(testCount, documentsInputDir);
+				PdfGenerate(testCount, documentsInputDir);
 			} else {
 				if (!Directory.Exists(documentsInputDir) && string.IsNullOrWhiteSpace(options.File)) {
 					Console.WriteLine($"Error! The directory was not found: {documentsInputDir}");
@@ -166,7 +166,7 @@ namespace ConsoleApp {
 				var policy = getSignaturePolicy().GetPolicy(cert.Certificate);
 				policy.SignerSpecs.AttributeGeneration.EnableLtv = false;
 
-				if (!signFile(options.File, cert, policy, visual, "", "Signed_"+options.File)) {
+				if (!SignFile(options.File, cert, policy, visual, "", "Signed_"+options.File)) {
 					Console.WriteLine($"Error signing file");
 					return;
 				} else {
@@ -196,7 +196,8 @@ namespace ConsoleApp {
 				policy.SignerSpecs.AttributeGeneration.EnableLtv = false;
 				// --------------
 				Parallel.ForEach(files, new ParallelOptions() { MaxDegreeOfParallelism = 2 }, (file) => {
-					if (!signFile(file, certWithKey, policy, visual, outputDir)) {
+
+					if (!SignFile(file, certWithKey, policy, visual, outputDir)) {
 						errorFiles.Add(file);
 						var e = Interlocked.Increment(ref fileErrors);
 						Console.SetCursorPosition(0, Console.CursorTop);
@@ -216,7 +217,7 @@ namespace ConsoleApp {
 				Console.WriteLine();
 				Console.WriteLine($"Reprocessing {errorFiles.Count:N0} files");
 				foreach (var errorFile in errorFiles) {
-					signFile(errorFile, certWithKey, policy, visual, outputDir);
+					SignFile(errorFile, certWithKey, policy, visual, outputDir);
 				}
 			} catch (Exception ex) {
 				Log(ex.ToString());
@@ -231,7 +232,7 @@ namespace ConsoleApp {
 			Console.ReadLine();
 		}
 
-		private static bool signFile(string file, PKCertificateWithKey certWithKey, PadesPolicySpec policy, PadesVisualRepresentation2 visual, string outputDir, string outputName=null) {
+		private static bool SignFile(string file, PKCertificateWithKey certWithKey, PadesPolicySpec policy, PadesVisualRepresentation2 visual, string outputDir, string outputName=null) {
 			var signer = new PadesSigner();
 			signer.SetSigningCertificate(certWithKey);
 			signer.SetPdfToSign(File.ReadAllBytes(file));
@@ -252,7 +253,7 @@ namespace ConsoleApp {
 			return true;
 		}
 
-		private static void pdfGenerate(int n, string documentsInputDir) {
+		private static void PdfGenerate(int n, string documentsInputDir) {
 			Console.WriteLine($"Generating {n.ToString("N0")} PDFs for TEST");
 			for (int i = 0; i < n; i++) {
 				File.Copy(Util.GetResourcePath(orginalTestPdf), Path.Combine(documentsInputDir, $"{Guid.NewGuid()}.pdf"));
