@@ -3,6 +3,7 @@ Lacuna PKI SDK sample console application
 
 This folder contains a sample console application that shows how to use the
 [Lacuna PKI SDK](https://www.lacunasoftware.com/en/products/pki_sdk).
+This sample also presents the inclusion of metadata in accordance with Brazilian Decree nº 10.278/2020.
 
 For other technologies, please visit the [repository root](https://github.com/LacunaSoftware/PkiSdkSamples).
 
