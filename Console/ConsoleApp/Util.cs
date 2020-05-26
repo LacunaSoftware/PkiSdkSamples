@@ -1,7 +1,9 @@
-﻿using System;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Text;
+using System.Linq;
 
 namespace ConsoleApp {
 	class Util {
@@ -34,5 +36,11 @@ namespace ConsoleApp {
 			}
 		}
 
+		public static string GetSubjectFromKeywords(IEnumerable<string> keywords)
+			=> string.Join(", ", keywords.Select(w => JsonConvert.SerializeObject(w)));
+
+		public static string FormatForDocument(DateTimeOffset date, string timezone, string culture)
+			=> TimeZoneInfo.ConvertTime(date, TimeZoneConverter.TZConvert.GetTimeZoneInfo(timezone))
+				.ToString(CultureInfo.GetCultureInfo(culture));
 	}
 }
