@@ -13,6 +13,11 @@ using Lacuna.Pki.Pades;
 using Lacuna.Pki.Pkcs11;
 using Lacuna.Pki.Stores;
 using Newtonsoft.Json;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using System.Security.Cryptography;
+using iText.Pdfa;
+using iText.IO.Colors;
 
 namespace ConsoleApp {
 
@@ -58,6 +63,9 @@ namespace ConsoleApp {
 
 			[Option('p', "token-pin", Required = false, HelpText = "Token's pin")]
 			public string Pin { get; set; }
+
+			[Option('m', "metadata", Required = false, HelpText = "JSON with the pdf's to be added metadata")]
+			public string Metadata { get; set; }
 		}
 
 
@@ -103,7 +111,7 @@ namespace ConsoleApp {
 
 			if (isTest) {
 				Util.CheckTestDirectories(documentsInputDir, signedDocumentsOutputDir);
-				deleteFiles(documentsInputDir, signedDocumentsOutputDir);
+				DeleteFiles(documentsInputDir, signedDocumentsOutputDir);
 				PdfGenerate(testCount, documentsInputDir);
 			} else {
 				if (!Directory.Exists(documentsInputDir) && string.IsNullOrWhiteSpace(options.File)) {
@@ -158,15 +166,32 @@ namespace ConsoleApp {
 			}
 
 			Console.WriteLine($"Signer: {cert.Certificate.SubjectDisplayName} (thumbprint: {Util.ToHex(cert.Certificate.ThumbprintSHA1)})");
+
+			Metadata metadata = null;
+			if (!string.IsNullOrEmpty(options.Metadata) && Util.FileExists(options.Metadata))
+			{
+				try
+				{
+					var metadataContent = File.ReadAllBytes(options.Metadata);
+					var metadataJson = Encoding.UTF8.GetString(metadataContent);
+					metadata = JsonConvert.DeserializeObject<MetadataModel>(metadataJson).ToEntity();
+				}
+				catch (Exception ex)
+				{
+					Log(ex.ToString());
+					Console.WriteLine($"Error parsing metadata file: {ex}");
+				}
+			}
+
 			if (string.IsNullOrWhiteSpace(options.File)) {
 				Console.WriteLine("Getting things ready.");
-				sign(cert, documentsInputDir, signedDocumentsOutputDir, options.Reprocess, options.VisualRep);
+				Sign(cert, documentsInputDir, signedDocumentsOutputDir, options.Reprocess, options.VisualRep, metadata);
 			} else {
-				var visual = createVisualRepresentation(cert.Certificate, options.VisualRep);
-				var policy = getSignaturePolicy().GetPolicy(cert.Certificate);
+				var visual = CreateVisualRepresentation(cert.Certificate, options.VisualRep, (metadata != null));
+				var policy = GetSignaturePolicy().GetPolicy(cert.Certificate);
 				policy.SignerSpecs.AttributeGeneration.EnableLtv = false;
 
-				if (!SignFile(options.File, cert, policy, visual, "", "Signed_"+options.File)) {
+				if (!SignFile(options.File, cert, policy, visual, metadata, "", "Signed_"+options.File)) {
 					Console.WriteLine($"Error signing file");
 					return;
 				} else {
@@ -177,7 +202,7 @@ namespace ConsoleApp {
 			store.Dispose();
 		}
 
-		static void sign(PKCertificateWithKey certWithKey, string inputDir, string outputDir, bool reprocess, string visualRep) {
+		static void Sign(PKCertificateWithKey certWithKey, string inputDir, string outputDir, bool reprocess, string visualRep, Metadata metadata) {
 			var sw = Stopwatch.StartNew();
 			Console.WriteLine("Listing files to be signed.");
 			var files = Directory.EnumerateFiles(inputDir,"*.pdf").ToList();
@@ -191,13 +216,13 @@ namespace ConsoleApp {
 			//Console.WriteLine($"----------------------------------------------------------".Pastel(Color.ForestGreen));
 			var errorFiles = new ConcurrentBag<string>();
 			try {
-				var visual = createVisualRepresentation(certWithKey.Certificate, visualRep);
-				var policy = getSignaturePolicy().GetPolicy(certWithKey.Certificate);
+				var visual = CreateVisualRepresentation(certWithKey.Certificate, visualRep, (metadata != null));
+				var policy = GetSignaturePolicy().GetPolicy(certWithKey.Certificate);
 				policy.SignerSpecs.AttributeGeneration.EnableLtv = false;
 				// --------------
 				Parallel.ForEach(files, new ParallelOptions() { MaxDegreeOfParallelism = 2 }, (file) => {
 
-					if (!SignFile(file, certWithKey, policy, visual, outputDir)) {
+					if (!SignFile(file, certWithKey, policy, visual, metadata, outputDir)) {
 						errorFiles.Add(file);
 						var e = Interlocked.Increment(ref fileErrors);
 						Console.SetCursorPosition(0, Console.CursorTop);
@@ -217,7 +242,7 @@ namespace ConsoleApp {
 				Console.WriteLine();
 				Console.WriteLine($"Reprocessing {errorFiles.Count:N0} files");
 				foreach (var errorFile in errorFiles) {
-					SignFile(errorFile, certWithKey, policy, visual, outputDir);
+					SignFile(errorFile, certWithKey, policy, visual, metadata, outputDir);
 				}
 			} catch (Exception ex) {
 				Log(ex.ToString());
@@ -232,10 +257,23 @@ namespace ConsoleApp {
 			Console.ReadLine();
 		}
 
-		private static bool SignFile(string file, PKCertificateWithKey certWithKey, PadesPolicySpec policy, PadesVisualRepresentation2 visual, string outputDir, string outputName=null) {
+		private static bool SignFile(string file, PKCertificateWithKey certWithKey, PadesPolicySpec policy, PadesVisualRepresentation2 visual, Metadata metadata, string outputDir, string outputName=null) {
+			var documentoToSign = File.ReadAllBytes(file);
+			if (metadata != null)
+			{
+				using(var buffer = new MemoryStream())
+				{
+					using (var stream = new MemoryStream(documentoToSign))
+					{
+						DoConvertToPdfA(stream, metadata, buffer);
+					}
+					documentoToSign = buffer.ToArray();
+				}
+			}
+			
 			var signer = new PadesSigner();
 			signer.SetSigningCertificate(certWithKey);
-			signer.SetPdfToSign(File.ReadAllBytes(file));
+			signer.SetPdfToSign(documentoToSign);
 			signer.SetPolicy(policy);
 			signer.SetVisualRepresentation(visual);
 			signer.SetCertificateValidationConfigurator(ConfigureNoValidation);
@@ -262,7 +300,7 @@ namespace ConsoleApp {
 			Console.WriteLine($"{n.ToString("N0")} generated files.");
 		}
 
-		private static void deleteFiles(string documentsOutputDir, string signedDocumentsOutputDir) {
+		private static void DeleteFiles(string documentsOutputDir, string signedDocumentsOutputDir) {
 			var files = Directory.EnumerateFiles(signedDocumentsOutputDir).ToList();
 			if (files.Count > 0) {
 				Console.WriteLine("Deleting signed files.");
@@ -284,10 +322,17 @@ namespace ConsoleApp {
 			}
 		}
 
-		private static PadesVisualRepresentation2 createVisualRepresentation(PKCertificate signerCertificate, string visualRep) {
+		private static PadesVisualRepresentation2 CreateVisualRepresentation(PKCertificate signerCertificate, string visualRep, bool metadata= false) {
 			var name = signerCertificate.PkiBrazil.CompanyName ?? signerCertificate.PkiBrazil.Responsavel ?? signerCertificate.SubjectDisplayName;
 			var sb = new StringBuilder();
-			sb.AppendLine($"Digitally signed by:\n{name.ToUpper()}");
+			if (metadata)
+			{
+				sb.AppendLine($"Document scanned in accordance with Decree no. 10.278/2020 by {name}");
+			}
+			else
+			{
+				sb.AppendLine($"Digitally signed by:\n{name.ToUpper()}");
+			}
 
 			var position = PadesVisualAutoPositioning.GetFootnote();
 			position.HorizontalDirection = AutoPositioningHorizontalDirections.RightToLeft;
@@ -295,9 +340,8 @@ namespace ConsoleApp {
 			PadesVisualRepresentationModel2 vrModel;
 
 			if (!string.IsNullOrEmpty(visualRep) && Util.FileExists(visualRep)) {
-				byte[] vrContent;
 				try {
-					vrContent = File.ReadAllBytes(visualRep);
+					var vrContent = File.ReadAllBytes(visualRep);
 					var visualRepJson = Encoding.UTF8.GetString(vrContent);
 					vrModel = JsonConvert.DeserializeObject<PadesVisualRepresentationModel2>(visualRepJson);
 				} catch (Exception ex) {
@@ -312,7 +356,7 @@ namespace ConsoleApp {
 			return vrModel.ToEntity(sb.ToString());
 		}
 
-		private static IPadesPolicyMapper getSignaturePolicy() {
+		private static IPadesPolicyMapper GetSignaturePolicy() {
 			return PadesPoliciesForGeneration.GetPadesBasic(GetTrustArbitrator());
 		}
 
@@ -354,6 +398,118 @@ namespace ConsoleApp {
 					File.AppendAllText(logErro, $"{file}\n");
 				}
 			}
+		}
+
+		private static void DoConvertToPdfA(Stream pdfInput, Metadata metadata, Stream pdfAOutput)
+		{
+
+			var conformance = PdfAConformanceLevel.PDF_A_2B;
+
+			using (var originalPdf = new PdfDocument(new PdfReader(pdfInput)))
+			{
+
+				var IccProfile = Convert.FromBase64String("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");
+				var pdfADocument = new PdfADocument(new PdfWriter(pdfAOutput), conformance, new PdfOutputIntent("Custom", "", "https://www.color.org", "sRGB IEC61966-2.1", new MemoryStream(IccProfile)));
+				using (var newDocument = new Document(pdfADocument))
+				{
+					newDocument.SetMargins(0, 0, 0, 0);
+
+					// copy pages
+					originalPdf.CopyPagesTo(1, originalPdf.GetNumberOfPages(), newDocument.GetPdfDocument());
+
+					// add metadata
+					AddMetadata(originalPdf, newDocument, metadata);
+
+					// save on close
+				}
+			}
+		}
+
+		private static void AddMetadata(PdfDocument originalDocument, Document document, Metadata metadata)
+		{
+
+			var documentInfo = document.GetPdfDocument().GetDocumentInfo();
+
+			// desc
+			documentInfo.SetAuthor(metadata.Dict[MetadataKeys.Creator]);
+			documentInfo.SetTitle(metadata.Dict[MetadataKeys.Title]);
+
+			if (metadata.Keywords?.Any() == true)
+			{
+				documentInfo.SetSubject(Util.GetSubjectFromKeywords(metadata.Keywords));
+			}
+
+			// adm
+			// itext default add methods insert dates with offset info, so no need for timezoneinfo config
+			documentInfo.AddCreationDate();
+			documentInfo.AddModDate();
+
+			// custom
+			foreach (var m in metadata.Dict)
+			{
+				documentInfo.SetMoreInfo(m.Key, m.Value);
+			}
+
+			// images hashes
+			var digestAlgorithm = DigestAlgorithm.GetInstanceByHashAlgorithmName(new HashAlgorithmName("SHA256"));
+			var formattedHashes = new List<string>();
+
+			foreach (var pageIndex in Enumerable.Range(1, originalDocument.GetNumberOfPages()))
+			{
+				var pageImage = GetPageImage(originalDocument, pageIndex);
+				formattedHashes.Add(FormatImageHash(pageIndex, digestAlgorithm, digestAlgorithm.ComputeHash(pageImage)));
+			}
+
+			documentInfo.SetKeywords(string.Join(" ", formattedHashes));
+
+			// creator tool
+			var creatorToolPropName = "CreatorTool";
+			var creatorToolPropValue = "ConsoleAppSample";
+			var meta = iText.Kernel.XMP.XMPMetaFactory.ParseFromBuffer(document.GetPdfDocument().GetXmpMetadata(true));
+			meta.SetProperty(iText.Kernel.XMP.XMPConst.NS_XMP, creatorToolPropName, creatorToolPropValue);
+			document.GetPdfDocument().SetXmpMetadata(meta);
+		}
+		
+		private static byte[] GetPageImage(PdfDocument originalDocument, int pageIndex)
+		{
+
+			var pageImages = new List<byte[]>();
+
+			var page = originalDocument.GetPage(pageIndex);
+			var pageDic = page.GetPdfObject();
+			var resources = pageDic.GetAsDictionary(PdfName.Resources);
+			var xObjects = resources.GetAsDictionary(PdfName.XObject);
+			var xNames = xObjects.KeySet().GetEnumerator();
+
+			while (xNames.MoveNext())
+			{
+				var imgRef = xNames.Current;
+				if (xObjects.Get(imgRef) is PdfDictionary imgDict && imgDict.Get(PdfName.Subtype) == PdfName.Image)
+				{
+					var imageSource = xObjects.GetAsStream(imgRef);
+					pageImages.Add(imageSource.GetBytes(false));
+				}
+			}
+
+			if (pageImages.Count == 0)
+			{
+				throw new Exception($"Could not get image of page {pageIndex}");
+			}
+			else if (pageImages.Count == 1)
+			{
+				return pageImages.First();
+			}
+			else
+			{
+				// If more than one image is found, return the largest
+				var maxLength = pageImages.Max(i => i.Length);
+				return pageImages.First(i => i.Length == maxLength);
+			}
+		}
+
+		private static string FormatImageHash(int index, DigestAlgorithm digestAlgorithm, byte[] digestValue)
+		{
+			return $"{index}:{digestAlgorithm.Name}:{BitConverter.ToString(digestValue).ToLower().Replace("-", string.Empty)}";
 		}
 
 	}
