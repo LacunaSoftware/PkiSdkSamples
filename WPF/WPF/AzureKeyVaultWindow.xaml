@@ -1,0 +1,30 @@
+﻿<Window x:Class="SampleWpfApp.AzureKeyVaultWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SampleWpfApp"
+        mc:Ignorable="d"
+        Title="AzureKeyVaultWindow" Height="701" Width="839" Loaded="Window_Loaded">
+	<Window.DataContext>
+		<local:AzureKeyVaultViewModel />
+	</Window.DataContext>
+	<Grid>
+		<Label Content="Endpoint (DNS Name)" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+		<TextBox Height="23" Margin="10,36,10,0" TextWrapping="Wrap" Text="{Binding Endpoint}" VerticalAlignment="Top"/>
+		<Label Content="Application ID" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
+		<TextBox Height="23" Margin="10,90,10,0" TextWrapping="Wrap" Text="{Binding AppId}" VerticalAlignment="Top"/>
+		<Label Content="Application secret" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top"/>
+		<PasswordBox Name="AppSecretPasswordBox" Height="23" Margin="10,144,10,0" VerticalAlignment="Top"/>
+		<Label Content="Key name" HorizontalAlignment="Left" Margin="10,172,0,0" VerticalAlignment="Top"/>
+		<TextBox Height="23" Margin="10,198,10,0" TextWrapping="Wrap" Text="{Binding KeyName}" VerticalAlignment="Top"/>
+		<StackPanel Margin="0,304,0,0" Height="28" VerticalAlignment="Top" HorizontalAlignment="Center" Orientation="Horizontal">
+			<Button Content="Generate CSR" Width="100" Name="GenerateCsrButton" Click="GenerateCsrButton_Click" />
+			<Button Content="Test Key" Width="100" Margin="20,0,0,0" Name="TestKeyButton" Click="TestKeyButton_Click"/>
+		</StackPanel>
+		<TextBox Name="LogTextBox" Margin="10,363,10,10" Text="{Binding Log}" AcceptsReturn="True" IsReadOnly="True" FontFamily="Consolas" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+		<Label Content="CSR Subject DN (optional)" HorizontalAlignment="Left" Margin="10,226,0,0" VerticalAlignment="Top"/>
+		<TextBox Height="23" Margin="10,252,10,0" TextWrapping="Wrap" Text="{Binding CsrSubject}" VerticalAlignment="Top"/>
+
+	</Grid>
+</Window>

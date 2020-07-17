@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>1.4.1</Version>
+    <Company>Lacuna Software</Company>
+    <Copyright>Lacuna Software</Copyright>
+    <PackageId>ConsoleApp</PackageId>
+    <AssemblyVersion>1.4.1.0</AssemblyVersion>
+    <FileVersion>1.4.1.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\2MBytes.pdf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\2MBytes.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.7.82" />
+    <PackageReference Include="itext7" Version="7.1.11" />
+    <PackageReference Include="Lacuna.Pki" Version="2.6.0" />
+    <PackageReference Include="Lacuna.Pki.Pkcs11" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Pastel" Version="1.3.1" />
+    <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
+  </ItemGroup>
+
+</Project>
