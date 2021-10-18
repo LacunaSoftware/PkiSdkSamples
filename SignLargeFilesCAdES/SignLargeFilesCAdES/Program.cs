@@ -37,7 +37,12 @@ public class Program {
 
 
 	public static int Main(string[] args) {
-		PkiConfig.LoadLicense(Convert.FromBase64String("======= Ask for a license at support@lacunasoftware.com ========="));
+		var license = "======= Ask for a license at support@lacunasoftware.com =========";
+		if(license == "======= Ask for a license at support@lacunasoftware.com =========") {
+			Console.WriteLine("License not set");
+			return 0;
+		}
+		PkiConfig.LoadLicense(Convert.FromBase64String(license));
 
 		return CommandLine.Parser.Default.ParseArguments<ListOptions, SignOptions, ValidadeOptions>(args)
 		  .MapResult(
@@ -59,6 +64,7 @@ public class Program {
 		if(vr.IsValid) {
 			Console.WriteLine("");
 			Console.WriteLine($"{opts.SignatureFile} is a valid signature for {opts.InputFile}");
+			Console.WriteLine($"Hash algorithm SHA256 value : {String.Concat(digest.Select(b => b.ToString("X2"))) }");
 			Console.WriteLine($"Signed by {cadesSI.SigningCertificate.SubjectDisplayName}");
 			Console.WriteLine($"Signature date: {cadesSI.SigningTime:dd/MM/yyyy HH:mm:ss} GMT");
 		} else {
