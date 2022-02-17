@@ -284,6 +284,9 @@
     <Content Include="Views\CodXmlSignature\SignCodehComplete.cshtml" />
     <Content Include="Views\ValidateSignature\Xml.cshtml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\sdk-demo-mvc - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\sdk-demo-mvc - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\sdk-demo-mvc - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

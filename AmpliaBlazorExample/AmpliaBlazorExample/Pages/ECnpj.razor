@@ -1,0 +1,208 @@
+﻿@page "/ecnpj"
+@using AmpliaBlazorExample.Model
+@using Bogus
+@using Bogus.Extensions.Brazil
+@using Lacuna.Amplia.Api.CertificateFormatting
+@using Lacuna.Amplia.Api.Orders
+@using Lacuna.Amplia.Client
+@using Lacuna.Pki
+@using Lacuna.Pki.Stores
+@using System.Security.Cryptography
+@using System.IO
+
+@inject IJSRuntime JS
+@inject IConfiguration config
+
+<PageTitle>Emissão eCNPJ</PageTitle>
+
+
+<h2>Dados Empresa</h2>
+    <div class="form-group" style="margin:5px">
+        <button class="btn btn-secondary" style="margin-right:15px" @onclick="RandomData">Gerar Dados Aleatórios</button>
+        <button class="btn btn-secondary" @onclick="ClearData">Limpar Dados</button>
+   </div>
+
+
+<EditForm Model="@pj" OnValidSubmit="ValidateForm">
+    <DataAnnotationsValidator />
+    <div class="mb-3">
+        <label for="Name" class="form-label">Razão Social</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.CompanyName" />
+        </div>
+        <ValidationMessage For="@(() => pj.CompanyName)" />
+    </div>
+    <div class="mb-3">
+        <label for="Address" class="form-label">CNPJ</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.Cnpj" />
+        </div>
+        <ValidationMessage For="@(() => pj.Cnpj)" />
+    </div>
+    <div class="mb-3">
+        <label for="Name" class="form-label">Nome Responsável</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.Name" />
+        </div>
+        <ValidationMessage For="@(() => pj.Name)" />
+    </div>
+    <div class="mb-3">
+        <label for="Name" class="form-label">CPF Responsável</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.Cpf" />
+        </div>
+        <ValidationMessage For="@(() => pj.Cpf)" />
+    </div>
+    <div class="mb-3">
+        <label for="Emailid" class="form-label">E-mail</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.EmailAddress" />
+        </div>
+        <ValidationMessage For="@(() => pj.EmailAddress)" />
+    </div>
+    <div class="mb-3">
+        <label for="Cellnumber" class="form-label">País</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.Country" />
+        </div>
+        <ValidationMessage For="@(() => pj.Country)" />
+    </div>
+    <div class="mb-3">
+        <label for="Cellnumber" class="form-label">Organização</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.Organization" />
+        </div>
+        <ValidationMessage For="@(() => pj.Organization)" />
+    </div>
+    <div class="mb-3">
+        <label for="Cellnumber" class="form-label">Unidade</label>
+        <div class="col-md-4">
+            <InputText class="form-control" @bind-Value="pj.OrganizationalUnits" />
+        </div>
+        <ValidationMessage For="@(() => pj.OrganizationalUnits)" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Gerar Certificado</button>
+        <label>@messageIssuing</label>
+    </div>
+</EditForm>
+ @if(CertificateOk){
+     <div class="form-group" style="margin:15px" >
+       <button class="btn btn-primary" disabled="@(!CertificateOk)" @onclick="DownloadPfx">Download PFX</button>
+       <button class="btn btn-primary" disabled="@(!CertificateOk)" @onclick="DownloadCer">Download CER</button>
+    </div>
+ }
+@code {
+
+    protected PjModel pj = new();
+    protected byte[]? pfx;
+    protected Lacuna.Amplia.Client.Certificate? certificate;
+    protected bool CertificateOk = false;
+    protected bool DataValid = false;
+    private string? message;
+    private string messageIssuing="";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    protected async Task ValidateForm() {
+        await CertGen();
+    }
+
+    protected async Task ClearData() {
+        pj = new();
+    }
+
+
+    protected async Task CertGen() {
+
+        messageIssuing = "Emitindo certificado ...";
+        // Licença do SDK Lacuna.Pki carregada automaticamente do arquivo LacunaPkiLicense.config
+
+        // Credenciais de teste do cliente do Amplia
+        var ampliaEntpoint = new Uri(config["AmpliaEndpoint"]);
+        var apiKey = config["AmpliaApiKey"];
+        var caId = new Guid(config["AmpliaCaId"]);
+
+        // Instanciar Amplia Client
+        var ampliaClient = new AmpliaClient(ampliaEntpoint, apiKey);
+
+        // Criar pedido de emissao de certificado
+        var order = await ampliaClient.CreateOrderAsync(new CreateOrderRequest2<PkiBrazilCertificateParameters>() {
+                CAId = caId,
+                Kind = Lacuna.Amplia.Api.CertificateKinds.PublicKey,
+                Validity = TimeSpan.FromDays(365),
+                Parameters = new PkiBrazilCertificateParameters() {
+                    EmailAddress = pj.EmailAddress,
+                    Cnpj = pj.Cnpj,
+                    CompanyName = pj.CompanyName.RemoveAccents(),
+                    Cpf = pj.Cpf,
+                    Name = pj.Name.RemoveAccents(),
+                    Country = pj.Country,
+                    Organization = pj.Organization,
+                    OrganizationalUnits = new List<string>() { pj.OrganizationalUnits }
+                }
+            });
+        // Gerar par de chaves e CSR do usuário
+        using var rsa = RSA.Create(2048);
+        var csr = CreateCsr(rsa);
+
+        // Emitir certificado
+        certificate = await ampliaClient.IssueCertificateAsync(order.Id, csr.GetPemEncoded(), Lacuna.Amplia.Api.KeyMedia.PC);
+
+        // Gerar PFX com chave privada e o certificado emitido
+        var pkCertificate = PKCertificate.Decode(certificate.Content);
+        var p12Gen = new Pkcs12Generator();
+        p12Gen.AddKeyEntry("user", rsa, new[] { pkCertificate });
+        pfx = p12Gen.Generate("");
+        CertificateOk = true;
+        messageIssuing = "Certificado Emitido!";
+  //      await JS.InvokeVoidAsync("alert", "Certificado Emitido");
+    }
+
+    private async Task DownloadPfx() {
+        await DownloadFileFromStream(pfx,$"{pj.CompanyName}.pfx");
+    }
+
+    private async Task DownloadCer() {
+        await DownloadFileFromStream(certificate.Content,$"{pj.CompanyName}.cer");
+    }
+
+
+    private async Task DownloadFileFromStream(byte[] binaryData,string name)    {
+        var fileStream = new MemoryStream(binaryData);
+        var fileName = name;
+        using var streamRef = new DotNetStreamReference(stream: fileStream);
+        await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+    }
+
+    public void RandomData()
+    {
+        var faker = new Faker("pt_BR");
+        pj.CompanyName = faker.Company.CompanyName();
+        pj.Cnpj = faker.Company.Cnpj();
+        pj.EmailAddress = "pessoa@mailinator.com";
+        pj.Name = faker.Person.FullName;
+        pj.Organization = "Lacuna Ltda";
+        pj.OrganizationalUnits = "TI";
+        pj.Country = "BR";
+        pj.Cpf = faker.Person.Cpf();
+        DataValid = true;
+    }
+
+		private static Csr CreateCsr(RSA a) {
+			var pkey = PublicKey.GetInstance(a);
+			var sigAlg = pkey.Algorithm.GetSignatureAlgorithm(DigestAlgorithm.SHA256);
+			var gen = new CsrGenerator {
+				PublicKey = pkey,
+				Subject = NameGenerator.GenerateWithCommonNameOnly("Sample Test")
+			};
+			var tosign = gen.GetToSignBytes();
+			var sig = PrivateKey.GetInstance(a).GetSignatureCsp(sigAlg.DigestAlgorithm).SignData(tosign);
+			gen.SetPrecomputedSignature(sigAlg, sig, tosign);
+
+			return gen.GenerateCsr();
+		}
+}

@@ -1,0 +1,15 @@
+
+*.vsidx
+
+AmpliaBlazorExample/.vs/
+
+
+
+AmpliaBlazorExample/AmpliaBlazorExample/bin/
+AmpliaBlazorExample/AmpliaBlazorExample/obj/
+
+AmpliaBlazorExample/AmpliaBlazorExample/Properties/PublishProfiles/
+
+AmpliaBlazorExample/AmpliaBlazorExample/appsettings.Development.json
+
+MVC/MVC/Properties/PublishProfiles/
