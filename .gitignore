@@ -13,3 +13,6 @@ AmpliaBlazorExample/AmpliaBlazorExample/Properties/PublishProfiles/
 AmpliaBlazorExample/AmpliaBlazorExample/appsettings.Development.json
 
 MVC/MVC/Properties/PublishProfiles/
+
+SignerService/obj/
+SignerService/bin/
