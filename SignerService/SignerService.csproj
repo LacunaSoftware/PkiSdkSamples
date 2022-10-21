@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-SignerService-bfea8f7a-2d7c-440c-a15b-ca702108e7ee</UserSecretsId>
+    <AssemblyName>Lacuna.SignerService</AssemblyName>
+    <RootNamespace>Lacuna.SignerService</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Lacuna.Pki" Version="2.13.0" />
+    <PackageReference Include="Maoli" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0-rc.2.22472.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="6.0.1" />
+  </ItemGroup>
+</Project>
