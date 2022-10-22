@@ -46,9 +46,9 @@ public class DirectoryWatcher : BackgroundService {
 					logger.LogError(ex, "File {file} error", file);
 				}
 			}
+			logger.LogInformation("Directory Watcher Started");
 			while (!stoppingToken.IsCancellationRequested) {
-				logger.LogDebug("DirectoryWatcher Running");
-				await Task.Delay(TimeSpan.FromSeconds(15), stoppingToken);
+				await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
 				while (documentService.TryNext(out var document)) {
 					Debug.Assert(document != null, nameof(document) + " != null");
 					if (!await sign(document)) {
@@ -107,10 +107,6 @@ public class DirectoryWatcher : BackgroundService {
 				logger.LogError("RootPathInput is null or empty");
 				Environment.Exit(1);
 			}
-			if (string.IsNullOrEmpty(configuration["RootPathLogs"])) {
-				logger.LogError("RootPathLogs is null or empty");
-				Environment.Exit(1);
-			}
 			if (string.IsNullOrEmpty(configuration["RootPathSigned"])) {
 				logger.LogError("RootPathSigned is null or empty");
 				Environment.Exit(1);
@@ -126,10 +122,6 @@ public class DirectoryWatcher : BackgroundService {
 			if (!Directory.Exists(configuration["RootPathInput"])) {
 				Directory.CreateDirectory(configuration["RootPathInput"]!);
 				logger.LogInformation("Input Directory {RootPathInput} created", configuration["RootPathInput"]);
-			}
-			if (!Directory.Exists(configuration["RootPathLogs"])) {
-				Directory.CreateDirectory(configuration["RootPathLogs"]!);
-				logger.LogInformation("Log Directory {RootPathLogs} created", configuration["RootPathLogs"]);
 			}
 			if (!Directory.Exists(configuration["RootPathSigned"])) {
 				Directory.CreateDirectory(configuration["RootPathSigned"]!);
