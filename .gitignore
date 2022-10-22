@@ -16,3 +16,10 @@ MVC/MVC/Properties/PublishProfiles/
 
 SignerService/obj/
 SignerService/bin/
+
+SignerService/.vs
+
+
+SignerService/Properties/PublishProfiles/FolderProfile.pubxml.user
+
+SignerService/SignerService.csproj.user

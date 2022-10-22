@@ -17,8 +17,17 @@ public class DocumentService {
 		this.logger = logger;
 		this.configuration = configuration;
 		PkiConfig.BinaryLicense = Convert.FromBase64String(configuration["PkiSDKLicense"] ?? string.Empty);
-		var certStore = WindowsCertificateStore.LoadPersonalCurrentUser();
+		WindowsCertificateStore certStore;
+		if (configuration["CertificateStore"] == "LocalMachine") {
+			certStore = WindowsCertificateStore.LoadPersonalLocalMachine();
+		} else {
+			certStore = WindowsCertificateStore.LoadPersonalCurrentUser();
+		}
 		certificates = certStore.GetCertificatesWithKey().Where(c => c.Certificate.PkiBrazil.CPF != null).ToList();
+		logger.LogInformation("{certificates} certificates with CPF found", certificates.Count);
+		foreach (var certificate in certificates) {
+			logger.LogInformation("{cpf}:{SubjectDisplayName}:{Responsavel}:{ThumbprintSHA1}", certificate.Certificate.PkiBrazil.CpfFormatted,certificate.Certificate.SubjectDisplayName,certificate.Certificate.PkiBrazil.Responsavel,certificate.Certificate.ThumbprintSHA1);
+		}
 	}
 	private ConcurrentQueue<DocumentModel?> documentQueue { get; } = new();
 
@@ -37,7 +46,7 @@ public class DocumentService {
 			logger.LogError("Path {path} not contains cpf", Path.GetFullPath(fileName));
 			return;
 		}
-		var cpf = parts[^1].Trim();
+		var cpf = parts[^1].Trim().GetOnlyDigits();
 		var thumbprint = string.Empty;
 		var section = configuration.GetSection("Certificates");
 		var certificateConfigured = section.GetChildren().FirstOrDefault(c => c.Key == cpf);
