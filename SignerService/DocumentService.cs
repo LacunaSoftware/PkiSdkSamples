@@ -23,10 +23,15 @@ public class DocumentService {
 		} else {
 			certStore = WindowsCertificateStore.LoadPersonalCurrentUser();
 		}
-		certificates = certStore.GetCertificatesWithKey().Where(c => c.Certificate.PkiBrazil.CPF != null).ToList();
-		logger.LogInformation("{certificates} certificates with CPF found", certificates.Count);
+
+		if (configuration["OnlyPkiBrazilCertificates"] == "True") {
+			certificates = certStore.GetCertificatesWithKey().Where(c => c.Certificate.PkiBrazil.CPF != null).ToList();
+		} else {
+			certificates = certStore.GetCertificatesWithKey().ToList();
+		}
+		logger.LogInformation("{certificates} certificates found", certificates.Count);
 		foreach (var certificate in certificates) {
-			logger.LogInformation("{cpf}:{SubjectDisplayName}:{Responsavel}:{ThumbprintSHA1}", certificate.Certificate.PkiBrazil.CpfFormatted,certificate.Certificate.SubjectDisplayName,certificate.Certificate.PkiBrazil.Responsavel,certificate.Certificate.ThumbprintSHA1);
+			logger.LogInformation("{cpf}:{SubjectDisplayName}:{Responsavel}:{ThumbprintSHA1}", certificate.Certificate.PkiBrazil.CpfFormatted, certificate.Certificate.SubjectDisplayName, certificate.Certificate.PkiBrazil.Responsavel, certificate.Certificate.ThumbprintSHA1);
 		}
 	}
 	private ConcurrentQueue<DocumentModel?> documentQueue { get; } = new();
@@ -51,15 +56,15 @@ public class DocumentService {
 		var section = configuration.GetSection("Certificates");
 		var certificateConfigured = section.GetChildren().FirstOrDefault(c => c.Key == cpf);
 		if (certificateConfigured != null) {
-			thumbprint = certificateConfigured.Value??string.Empty;
+			thumbprint = certificateConfigured.Value ?? string.Empty;
 		}
 		PKCertificateWithKey? certificate;
 		if (string.IsNullOrEmpty(thumbprint)) {
 			certificate = certificates.FirstOrDefault(c => c.Certificate.PkiBrazil.CPF.GetOnlyDigits() == cpf);
 		} else {
-			certificate = certificates.FirstOrDefault(c => 
-				c.Certificate.PkiBrazil.CPF.GetOnlyDigits() == cpf && 
-				(PkiUtil.EncodeToHexString(c.Certificate.ThumbprintSHA1).Equals(thumbprint,StringComparison.OrdinalIgnoreCase) ||
+			certificate = certificates.FirstOrDefault(c =>
+				c.Certificate.PkiBrazil.CPF.GetOnlyDigits() == cpf &&
+				(PkiUtil.EncodeToHexString(c.Certificate.ThumbprintSHA1).Equals(thumbprint, StringComparison.OrdinalIgnoreCase) ||
 				PkiUtil.EncodeToHexString(c.Certificate.ThumbprintSHA256).Equals(thumbprint, StringComparison.OrdinalIgnoreCase))
 			);
 		}
@@ -81,7 +86,7 @@ public class DocumentService {
 			var destFileName = Path.Combine(configuration["RootPathTemp"] ?? string.Empty, $"{Path.GetFileNameWithoutExtension(document.TempFileName)}{DateTime.Now:yyyy_MM_dd_HH_mm_ss}.{Path.GetExtension(document.TempFileName)}");
 			File.Move(document.TempFileName, destFileName);
 		} catch (Exception e) {
-			logger.LogError(e,"document {document}", document.FileName);
+			logger.LogError(e, "document {document}", document.FileName);
 		}
 	}
 
