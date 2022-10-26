@@ -10,13 +10,16 @@ namespace Lacuna.SignerService;
 public class DocumentService {
 	private readonly ILogger<DocumentService> logger;
 	private readonly IConfiguration configuration;
-	private readonly List<PKCertificateWithKey> certificates;
+	private List<PKCertificateWithKey> certificates;
 
 
 	public DocumentService(ILogger<DocumentService> logger, IConfiguration configuration) {
 		this.logger = logger;
 		this.configuration = configuration;
-		PkiConfig.BinaryLicense = Convert.FromBase64String(configuration["PkiSDKLicense"] ?? string.Empty);
+	}
+	private ConcurrentQueue<DocumentModel?> documentQueue { get; } = new();
+
+	public void LazyInitializer() {
 		WindowsCertificateStore certStore;
 		if (configuration["CertificateStore"] == "LocalMachine") {
 			certStore = WindowsCertificateStore.LoadPersonalLocalMachine();
@@ -34,7 +37,6 @@ public class DocumentService {
 			logger.LogInformation("{cpf}:{SubjectDisplayName}:{Responsavel}:{ThumbprintSHA1}", certificate.Certificate.PkiBrazil.CpfFormatted, certificate.Certificate.SubjectDisplayName, certificate.Certificate.PkiBrazil.Responsavel, certificate.Certificate.ThumbprintSHA1);
 		}
 	}
-	private ConcurrentQueue<DocumentModel?> documentQueue { get; } = new();
 
 	public bool HasDocuments() {
 		return !documentQueue.IsEmpty;

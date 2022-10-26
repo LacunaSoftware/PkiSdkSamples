@@ -3,6 +3,15 @@ using System.Diagnostics;
 using Lacuna.Pki;
 using Lacuna.Pki.Pades;
 using System.Runtime.ConstrainedExecution;
+using RestSharp;
+using Lacuna.SignerService.Models;
+using System.ComponentModel;
+using System.Text.Json;
+using HttpTracer;
+using HttpTracer.Logger;
+using RestSharp.Serializers.Json;
+using System.Threading;
+
 
 namespace Lacuna.SignerService;
 
@@ -10,15 +19,31 @@ public class DirectoryWatcher : BackgroundService {
 	private readonly IConfiguration configuration;
 	private readonly ILogger<DirectoryWatcher> logger;
 	private readonly DocumentService documentService;
+	private readonly RestClient restClient;
+	private string userId = string.Empty;
+	private string sdkLicenseHash = string.Empty;
 
 	public DirectoryWatcher(IConfiguration configuration, ILogger<DirectoryWatcher> logger, DocumentService documentService) {
 		this.configuration = configuration;
 		this.logger = logger;
 		this.documentService = documentService;
+
+		var options = new RestClientOptions("https://billing-api.lacunasoftware.com/") {
+			ThrowOnAnyError = true,
+			MaxTimeout = 60000,
+//			ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new ConsoleLogger(), HttpMessageParts.All)
+		};
+		restClient = new RestClient(options)
+			.AddDefaultHeader("Content-Type", "application/json")
+			.AddDefaultHeader("Accept", "application/json");
+		restClient.UseSystemTextJson(new JsonSerializerOptions {
+			PropertyNameCaseInsensitive = true,
+		});
+
+
 	}
 	protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
-		Init();
-
+		await initAsync();
 		using var watcher = new FileSystemWatcher(configuration["RootPathInput"] ?? string.Empty);
 		watcher.NotifyFilter = NotifyFilters.Attributes
 									  | NotifyFilters.CreationTime
@@ -53,12 +78,12 @@ public class DirectoryWatcher : BackgroundService {
 				}
 			}
 
-			logger.LogInformation("Directory Watcher Started");
+			logger.LogInformation("Directory Watcher Started. Listening directory {RootPathInput} ", configuration["RootPathInput"]);
 			while (!stoppingToken.IsCancellationRequested) {
 				await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
 				while (documentService.TryNext(out var document)) {
 					Debug.Assert(document != null, nameof(document) + " != null");
-					if (!await sign(document)) {
+					if (!await sign(document, stoppingToken)) {
 						documentService.MoveFileToError(document);
 					}
 				}
@@ -72,7 +97,7 @@ public class DirectoryWatcher : BackgroundService {
 		}
 	}
 
-	private async Task<bool> sign(DocumentModel document) {
+	private async Task<bool> sign(DocumentModel document, CancellationToken cancellationToken) {
 		try {
 			var sw = Stopwatch.StartNew();
 			File.Move(document.FileName, document.TempFileName);
@@ -89,6 +114,11 @@ public class DirectoryWatcher : BackgroundService {
 			await File.WriteAllBytesAsync(document.SignedFileName, signatureContent);
 			File.Delete(document.TempFileName);
 			logger.LogInformation("file {file} signed in {timespan} s", document.FileName, sw.Elapsed.TotalSeconds.ToString("N1"));
+			RestRequest request = new RestRequest("api/SdkPaayo")
+				.AddJsonBody(new SdkPaYGModel() {
+					Success = true, UserId = this.userId, TypeCode = "PADES", SdkHash = this.sdkLicenseHash, Details = document.Certificate.Certificate.SubjectDisplayName
+				});
+			var response = await restClient.PostAsync<SdkPaYGReturnModel>(request,cancellationToken);
 			return true;
 		} catch (Exception e) {
 			logger.LogError(e, "Error on signing document: {Document} message: {ErrorMessage} ", document.FileName, e.Message);
@@ -113,15 +143,47 @@ public class DirectoryWatcher : BackgroundService {
 		return trustArbitrator;
 	}
 
-
-
 	private void OnChanged(object sender, FileSystemEventArgs e) {
 		logger.LogInformation("file {file} {ChangeType}", e.FullPath, e.ChangeType);
 		documentService.Enqueue(e.FullPath);
 	}
 
-	private void Init() {
+	private async Task initAsync() {
 		try {
+			var sdkLicense = string.Empty;
+			if (string.IsNullOrEmpty(configuration["accessToken"])) {
+				logger.LogError("accessToken is null or empty");
+				Environment.Exit(1);
+			}
+			if (string.IsNullOrEmpty(configuration["userId"])) {
+				logger.LogError("userId is null or empty");
+				Environment.Exit(1);
+			}
+			if (!string.IsNullOrEmpty(configuration["PkiSDKLicense"])) {
+				sdkLicense = configuration["PkiSDKLicense"] ?? string.Empty;
+				PkiConfig.BinaryLicense = Convert.FromBase64String(sdkLicense);
+			} else {
+				var license = await restClient.GetJsonAsync<SdkPaayo>($"api/SdkPaayo/{configuration["userId"]}/{configuration["accessToken"]}");
+				if (license == null) {
+					logger.LogError($"Service could not get SDK license to {configuration["userId"]}.");
+					Environment.Exit(1);
+				}
+				sdkLicense = license.SdkLicense;
+				if (string.IsNullOrEmpty(sdkLicense)) {
+					logger.LogError("Service could not get SDK license to {userId}, error {error}.", configuration["userId"], license.ErrorMessage);
+					Environment.Exit(1);
+				}
+				PkiConfig.BinaryLicense = Convert.FromBase64String(license.SdkLicense);
+			}
+
+			userId = configuration["userId"];
+			sdkLicenseHash = sdkLicense.Sha256();
+		} catch (Exception ex) {
+			logger.LogError(ex, "Error on obtain Pki SDK License!");
+			Environment.Exit(1);
+		}
+		try {
+			documentService.LazyInitializer();
 			if (string.IsNullOrEmpty(configuration["RootPathTemp"])) {
 				logger.LogError("RootPathTemp is null or empty");
 				Environment.Exit(1);
