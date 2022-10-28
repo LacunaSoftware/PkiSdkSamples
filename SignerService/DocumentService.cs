@@ -43,17 +43,18 @@ public class DocumentService {
 	}
 
 	public void Enqueue(string fileName) {
-		var document = new DocumentModel() {
-			FileName = fileName,
-			TempFileName = Path.Combine(configuration["RootPathTemp"] ?? string.Empty, Path.GetFileName(fileName)),
-			SignedFileName = Path.Combine(configuration["RootPathSigned"] ?? string.Empty, Path.GetFileName(fileName)),
-		};
 		var parts = new DirectoryInfo(Path.GetDirectoryName(fileName) ?? string.Empty).Split().ToList();
 		if (parts.Count < 2 || !Cpf.Validate(parts[^1])) {
 			logger.LogError("Path {path} not contains cpf", Path.GetFullPath(fileName));
 			return;
 		}
 		var cpf = parts[^1].Trim().GetOnlyDigits();
+		var document = new DocumentModel() {
+			FileName = fileName,
+			TempFileName = Path.Combine(configuration["RootPathTemp"] ?? string.Empty, Path.GetFileName(fileName)),
+			SignedFileName = Path.Combine(configuration["RootPathSigned"] ?? string.Empty,cpf, Path.GetFileName(fileName)),
+		};
+		Directory.CreateDirectory(Path.GetDirectoryName(document.SignedFileName)!);
 		var thumbprint = string.Empty;
 		var section = configuration.GetSection("Certificates");
 		var certificateConfigured = section.GetChildren().FirstOrDefault(c => c.Key == cpf);
@@ -72,6 +73,7 @@ public class DocumentService {
 		}
 		if (certificate == null) {
 			logger.LogError("Certificate for cpf:{cpf} and thumbprint:{thumbprint} not found", cpf, thumbprint);
+			MoveFileToError(document, $"Certificate for cpf:{cpf} and thumbprint:{thumbprint} not found");
 			return;
 		}
 		document.Certificate = certificate;
@@ -83,10 +85,12 @@ public class DocumentService {
 		return result;
 	}
 
-	public void MoveFileToError(DocumentModel document) {
+	public void MoveFileToError(DocumentModel document, string errorMessage) {
 		try {
-			var destFileName = Path.Combine(configuration["RootPathTemp"] ?? string.Empty, $"{Path.GetFileNameWithoutExtension(document.TempFileName)}{DateTime.Now:yyyy_MM_dd_HH_mm_ss}.{Path.GetExtension(document.TempFileName)}");
+			var destFileName = Path.Combine(configuration["RootPathError"] ?? string.Empty, $"{Path.GetFileNameWithoutExtension(document.TempFileName)}{DateTime.Now:yyyy_MM_dd_HH_mm_ss}{Path.GetExtension(document.TempFileName)}");
+			var errorFileName = Path.Combine(configuration["RootPathError"] ?? string.Empty, $"{Path.GetFileNameWithoutExtension(document.TempFileName)}{DateTime.Now:yyyy_MM_dd_HH_mm_ss}{Path.GetExtension(document.TempFileName)}.Error");
 			File.Move(document.TempFileName, destFileName);
+			File.WriteAllLines(errorFileName,new List<string>() {errorMessage});
 		} catch (Exception e) {
 			logger.LogError(e, "document {document}", document.FileName);
 		}
