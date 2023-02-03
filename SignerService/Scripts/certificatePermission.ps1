@@ -1,5 +1,5 @@
-﻿$serviceUser = "WIN-HVE6V411JS0\SignerServiceUser"
-$certificate = Get-ChildItem Cert:\LocalMachine\My | Where-Object Thumbprint -eq "592a1cf36c6a18e2aab61590c92a177f8c7e599c"
+﻿$serviceUser = "Server2019\ServiceUser"
+$certificate = Get-ChildItem Cert:\LocalMachine\My | Where-Object Thumbprint -eq "1b32bccc4844f623571bfc892a0860a080062392"
 
 $privateKey = [System.Security.Cryptography.X509Certificates.RSACertificateExtensions]::GetRSAPrivateKey($certificate)
 $containerName = ""

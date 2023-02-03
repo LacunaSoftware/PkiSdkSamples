@@ -4,7 +4,6 @@ namespace Lacuna.SignerService;
 
 public class DocumentModel {
 	public string FileName { get; set; } = null!;
-
 	public string Name => Path.GetFileName(FileName);
 
 	public string Date {
@@ -14,8 +13,8 @@ public class DocumentModel {
 		}
 	}
 
-	public string TempFileName { get; set; }
-	public string SignedFileName { get; set; }
-	public PKCertificateWithKey Certificate { get; set; }
-
+	public string TempFileName { get; init; } = null!;
+	public string? SignedFileName { get; init; }
+	public PKCertificateWithKey? Certificate { get; set; } 
+	public string SignerId { get; init; } = null!;
 }

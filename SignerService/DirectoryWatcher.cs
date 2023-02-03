@@ -161,17 +161,18 @@ public class DirectoryWatcher : BackgroundService {
 				sdkLicense = configuration["PkiSDKLicense"] ?? string.Empty;
 				PkiConfig.BinaryLicense = Convert.FromBase64String(sdkLicense);
 			} else {
-				var license = await restClient.GetJsonAsync<SdkPaayo>($"api/SdkPaayo/{configuration["userId"]}");
-				if (license == null) {
-					logger.LogError($"Service could not get SDK license to {configuration["userId"]}.");
+				var request = new RestRequest($"api/SdkPaayo/{configuration["userId"]}");
+				var license = await restClient.ExecuteGetAsync<SdkPaayo>(request);
+				if (license.Data == null) {
+					logger.LogError("Service could not get SDK license to {userId}. Error {Error}", configuration["userId"], license.ErrorException?.ToString());
 					Environment.Exit(1);
 				}
-				sdkLicense = license.SdkLicense;
+				sdkLicense = license.Data.SdkLicense;
 				if (string.IsNullOrEmpty(sdkLicense)) {
-					logger.LogError("Service could not get SDK license to {userId}, error {error}.", configuration["userId"], license.ErrorMessage);
+					logger.LogError("Service could not get SDK license to {userId}, error {error}.", configuration["userId"], license.Data.ErrorMessage);
 					Environment.Exit(1);
 				}
-				PkiConfig.BinaryLicense = Convert.FromBase64String(license.SdkLicense);
+				PkiConfig.BinaryLicense = Convert.FromBase64String(license.Data.SdkLicense);
 			}
 
 			userId = configuration["userId"] ?? string.Empty;
