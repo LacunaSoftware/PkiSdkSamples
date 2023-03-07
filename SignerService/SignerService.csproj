@@ -7,6 +7,11 @@
     <UserSecretsId>dotnet-SignerService-bfea8f7a-2d7c-440c-a15b-ca702108e7ee</UserSecretsId>
     <AssemblyName>Lacuna.SignerService</AssemblyName>
     <RootNamespace>Lacuna.SignerService</RootNamespace>
+    <Authors>Lacuna Software</Authors>
+    <Company>Lacuna Software</Company>
+    <Product>Signer Service</Product>
+    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <FileVersion>1.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

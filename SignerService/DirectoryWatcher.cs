@@ -6,6 +6,7 @@ using System.Runtime.ConstrainedExecution;
 using RestSharp;
 using Lacuna.SignerService.Models;
 using System.ComponentModel;
+using System.Reflection;
 using System.Text.Json;
 using HttpTracer;
 using HttpTracer.Logger;
@@ -148,7 +149,9 @@ public class DirectoryWatcher : BackgroundService {
 
 	private async Task initAsync() {
 		try {
-			var sdkLicense = string.Empty;
+         var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
+         logger.LogInformation($"Lacuna Signer Service version: {version}");
+         var sdkLicense = string.Empty;
 			if (string.IsNullOrEmpty(configuration["apiKey"])) {
 				logger.LogError("apiKey is null or empty");
 				Environment.Exit(1);
