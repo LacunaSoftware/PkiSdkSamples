@@ -12,7 +12,7 @@ using HttpTracer;
 using HttpTracer.Logger;
 using RestSharp.Serializers.Json;
 using System.Threading;
-
+using System.Text.RegularExpressions;
 
 namespace Lacuna.SignerService;
 
@@ -97,34 +97,49 @@ public class DirectoryWatcher : BackgroundService {
 	}
 
 	private async Task<bool> signAsync(DocumentModel document, CancellationToken cancellationToken) {
-		try {
-			var sw = Stopwatch.StartNew();
-			File.Move(document.FileName, document.TempFileName);
-			var padesSigner = new PadesSigner();
-			padesSigner.SetPdfToSign(document.TempFileName);
-			var policy = getSignaturePolicy().GetPolicy(document.Certificate.Certificate);
-			padesSigner.SetPolicy(policy);
-			padesSigner.SetSigningCertificate(document.Certificate);
-			if (configuration.GetSection("PadesVisualRepresentation").Exists()) {
-				padesSigner.SetVisualRepresentation(Util.GetVisualRepresentation(document.Certificate.Certificate, configuration, logger));
-			}
-			padesSigner.ComputeSignature();
-			var signatureContent = padesSigner.GetPadesSignature();
-			await File.WriteAllBytesAsync(document.SignedFileName, signatureContent, cancellationToken);
-			File.Delete(document.TempFileName);
-			logger.LogInformation("file {file} signed in {timespan} s", document.FileName, sw.Elapsed.TotalSeconds.ToString("N1"));
-			RestRequest request = new RestRequest("api/SdkPaayo")
-				.AddJsonBody(new SdkPaYGModel() {
-					Success = true, UserId = this.userId, TypeCode = "PADES", SdkHash = this.sdkLicenseHash, Details = document.Certificate.Certificate.SubjectDisplayName
-				});
-			var response = await restClient.PostAsync<SdkPaYGReturnModel>(request,cancellationToken);
-			return true;
-		} catch (Exception e) {
-			logger.LogError(e, "Error on signing document: {Document} message: {ErrorMessage} ", document.FileName, e.Message);
-			documentService.MoveFileToError(document, $"Error on signing document: {document.FileName} message:{e.Message} ");
-		}
-		return false;
-	}
+        try
+        {
+            var sw = Stopwatch.StartNew();
+            var numberOfPages = GetNumberOfPdfPages(document.FileName);
+            File.Move(document.FileName, document.TempFileName);
+            var fileToSign = document.TempFileName;
+            var padesSigner = new PadesSigner();
+            padesSigner.SetPdfToSign(document.TempFileName);
+            for (int i = 1; i <= numberOfPages; i++)
+            {
+                var policy = getSignaturePolicy().GetPolicy(document.Certificate.Certificate);
+                padesSigner.SetPolicy(policy);
+                padesSigner.SetSigningCertificate(document.Certificate);
+                if (configuration.GetSection("PadesVisualRepresentation").Exists())
+                {
+                    padesSigner.SetVisualRepresentation(Util.GetVisualRepresentation(document.Certificate.Certificate, configuration, logger, PageNumber: i));
+                }
+                padesSigner.ComputeSignature();
+                var signatureContent = padesSigner.GetPadesSignature();
+                await File.WriteAllBytesAsync(document.SignedFileName, signatureContent, cancellationToken);
+                padesSigner = new PadesSigner();
+                padesSigner.SetPdfToSign(document.SignedFileName);
+            }
+            File.Delete(document.TempFileName);
+            logger.LogInformation("file {file} signed in {timespan} s", document.FileName, sw.Elapsed.TotalSeconds.ToString("N1"));
+            RestRequest request = new RestRequest("api/SdkPaayo")
+                .AddJsonBody(new SdkPaYGModel()
+                {
+                    Success = true,
+                    UserId = this.userId,
+                    TypeCode = "PADES",
+                    SdkHash = this.sdkLicenseHash,
+                    Details = document.Certificate.Certificate.SubjectDisplayName
+                });
+            var response = await restClient.PostAsync<SdkPaYGReturnModel>(request, cancellationToken);
+            return true;
+        } catch (Exception e)
+        {
+            logger.LogError(e, "Error on signing document: {Document} message: {ErrorMessage} ", document.FileName, e.Message);
+            documentService.MoveFileToError(document, $"Error on signing document: {document.FileName} message:{e.Message} ");
+        }
+        return false;
+    }
 
 	private IPadesPolicyMapper getSignaturePolicy() {
 		return PadesPoliciesForGeneration.GetPadesBasic(GetTrustArbitrator());
@@ -224,4 +239,14 @@ public class DirectoryWatcher : BackgroundService {
 			Environment.Exit(1);
 		}
 	}
+
+    public int GetNumberOfPdfPages(string fileName)
+    {
+        using (StreamReader sr = new StreamReader(File.OpenRead(fileName)))
+        {
+            Regex regex = new(@"/Type\s*/Page[^s]");
+            MatchCollection matches = regex.Matches(sr.ReadToEnd());
+            return matches.Count;
+        }
+    }
 }

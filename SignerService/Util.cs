@@ -32,8 +32,8 @@ public static class Util {
 		return double.TryParse(value, out var result) ? result : defaultValue;
 	}
 
-	public static PadesVisualRepresentation2 GetVisualRepresentation(Lacuna.Pki.PKCertificate cert, IConfiguration configuration, ILogger logger) {
-		var section = configuration.GetSection("PadesVisualRepresentation");
+	public static PadesVisualRepresentation2 GetVisualRepresentation(Lacuna.Pki.PKCertificate cert, IConfiguration configuration, ILogger logger, int PageNumber = -1) {
+	var section = configuration.GetSection("PadesVisualRepresentation");
 
 		// Create a visual representation.
 		var visualRepresentation = new PadesVisualRepresentation2() {
@@ -47,13 +47,13 @@ public static class Util {
 				Container = new PadesVisualRectangle() { Left = 0.2, Top = 0.2, Right = 0.2, Bottom = 0.2 }
 			},
 			Position = new PadesVisualManualPositioning() {
-				PageNumber = (section["PageNumber"] ?? string.Empty).ToInt(-1),
+				PageNumber = PageNumber != -1 ? PageNumber : (section["PageNumber"] ?? string.Empty).ToInt(-1),
 				SignatureRectangle = new PadesVisualRectangle() {
 					Width = (section["Width"] ?? string.Empty).ToDouble(6.5),
 					Height = (section["Height"] ?? string.Empty).ToDouble(1.1),
 					Right = (section["Right"] ?? string.Empty).ToDouble(0),
 					Bottom = (section["Bottom"] ?? string.Empty).ToDouble(2),
-				},
+                },
 				MeasurementUnits = PadesMeasurementUnits.Centimeters,
 			}
 		};
@@ -62,7 +62,7 @@ public static class Util {
 				// We'll use as background the image in Content/PdfStamp.png
 				Content = File.ReadAllBytes(section["SignImagePath"]!),
 				// Align image to the right horizontally.
-				HorizontalAlign = PadesHorizontalAlign.Right,
+				HorizontalAlign = PadesHorizontalAlign.Left,
 				// Align image to center vertically.
 				VerticalAlign = PadesVerticalAlign.Center
 			};
