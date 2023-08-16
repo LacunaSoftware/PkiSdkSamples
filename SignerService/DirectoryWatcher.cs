@@ -100,26 +100,27 @@ public class DirectoryWatcher : BackgroundService {
         try
         {
             var sw = Stopwatch.StartNew();
-            var numberOfPages = GetNumberOfPdfPages(document.FileName);
             File.Move(document.FileName, document.TempFileName);
-            var fileToSign = document.TempFileName;
             var padesSigner = new PadesSigner();
             padesSigner.SetPdfToSign(document.TempFileName);
-            for (int i = 1; i <= numberOfPages; i++)
-            {
-                var policy = getSignaturePolicy().GetPolicy(document.Certificate.Certificate);
-                padesSigner.SetPolicy(policy);
-                padesSigner.SetSigningCertificate(document.Certificate);
-                if (configuration.GetSection("PadesVisualRepresentation").Exists())
-                {
-                    padesSigner.SetVisualRepresentation(Util.GetVisualRepresentation(document.Certificate.Certificate, configuration, logger, PageNumber: i));
-                }
-                padesSigner.ComputeSignature();
-                var signatureContent = padesSigner.GetPadesSignature();
-                await File.WriteAllBytesAsync(document.SignedFileName, signatureContent, cancellationToken);
-                padesSigner = new PadesSigner();
-                padesSigner.SetPdfToSign(document.SignedFileName);
+
+            if (configuration.GetSection("SignAllPages").Exists() && configuration.GetValue<bool>("SignAllPages").Equals(true))
+			{
+	            
+                var numberOfPages = GetNumberOfPdfPages(document.TempFileName);
+                for (int i = 1; i <= numberOfPages; i++)
+				{
+                    await PerformSignature(document, padesSigner, cancellationToken, i);
+					padesSigner = new PadesSigner();
+                    padesSigner.SetPdfToSign(document.SignedFileName);
+				}
             }
+			else
+			{
+                padesSigner.SetPdfToSign(document.TempFileName);
+                await PerformSignature(document, padesSigner, cancellationToken);
+            }
+
             File.Delete(document.TempFileName);
             logger.LogInformation("file {file} signed in {timespan} s", document.FileName, sw.Elapsed.TotalSeconds.ToString("N1"));
             RestRequest request = new RestRequest("api/SdkPaayo")
@@ -141,7 +142,21 @@ public class DirectoryWatcher : BackgroundService {
         return false;
     }
 
-	private IPadesPolicyMapper getSignaturePolicy() {
+    private async Task PerformSignature(DocumentModel document, PadesSigner padesSigner, CancellationToken cancellationToken, int i = -1)
+    {
+        var policy = getSignaturePolicy().GetPolicy(document.Certificate.Certificate);
+        padesSigner.SetPolicy(policy);
+        padesSigner.SetSigningCertificate(document.Certificate);
+        if (configuration.GetSection("PadesVisualRepresentation").Exists())
+        {
+            padesSigner.SetVisualRepresentation(Util.GetVisualRepresentation(document.Certificate.Certificate, configuration, logger, i));
+        }
+        padesSigner.ComputeSignature();
+        var signatureContent = padesSigner.GetPadesSignature();
+        await File.WriteAllBytesAsync(document.SignedFileName, signatureContent, cancellationToken);
+    }
+
+    private IPadesPolicyMapper getSignaturePolicy() {
 		return PadesPoliciesForGeneration.GetPadesBasic(GetTrustArbitrator());
 	}
 
