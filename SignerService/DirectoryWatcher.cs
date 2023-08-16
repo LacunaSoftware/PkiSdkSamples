@@ -102,11 +102,11 @@ public class DirectoryWatcher : BackgroundService {
             var sw = Stopwatch.StartNew();
             File.Move(document.FileName, document.TempFileName);
             var padesSigner = new PadesSigner();
-            padesSigner.SetPdfToSign(document.TempFileName);
 
             if (configuration.GetSection("SignAllPages").Exists() && configuration.GetValue<bool>("SignAllPages").Equals(true))
 			{
 	            
+				padesSigner.SetPdfToSign(document.TempFileName);
                 var numberOfPages = GetNumberOfPdfPages(document.TempFileName);
                 for (int i = 1; i <= numberOfPages; i++)
 				{
