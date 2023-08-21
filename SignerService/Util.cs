@@ -1,4 +1,5 @@
 ﻿using Lacuna.Pki.Pades;
+using Lacuna.SignerService.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,53 +33,92 @@ public static class Util {
 		return double.TryParse(value, out var result) ? result : defaultValue;
 	}
 
-	public static PadesVisualRepresentation2 GetVisualRepresentation(Lacuna.Pki.PKCertificate cert, IConfiguration configuration, ILogger logger) {
-		var section = configuration.GetSection("PadesVisualRepresentation");
+	public static PadesVisualRepresentation2 GetVisualRepresentation(Lacuna.Pki.PKCertificate cert, IConfiguration configuration, ILogger logger)
+    {
+        var section = configuration.GetSection("PadesVisualRepresentation");
+        string additionalText = GetCustomSignerText(cert, configuration, logger);
 
-		// Create a visual representation.
-		var visualRepresentation = new PadesVisualRepresentation2() {
+        // Create a visual representation.
+        var visualRepresentation = new PadesVisualRepresentation2()
+        {
 
-			// Text of the visual representation.
-			Text = new PadesVisualText() {
-				CustomText = $"Assinado por {cert.SubjectDisplayName} ({cert.PkiBrazil.CPF})",
-				FontSize = 9.0,
-				IncludeSigningTime = true,
-				HorizontalAlign = PadesTextHorizontalAlign.Left,
-				Container = new PadesVisualRectangle() { Left = 0.2, Top = 0.2, Right = 0.2, Bottom = 0.2 }
-			},
-			Position = new PadesVisualManualPositioning() {
-				PageNumber = (section["PageNumber"] ?? string.Empty).ToInt(-1),
-				SignatureRectangle = new PadesVisualRectangle() {
-					Width = (section["Width"] ?? string.Empty).ToDouble(6.5),
-					Height = (section["Height"] ?? string.Empty).ToDouble(1.1),
-					Right = (section["Right"] ?? string.Empty).ToDouble(0),
-					Bottom = (section["Bottom"] ?? string.Empty).ToDouble(2),
-				},
-				MeasurementUnits = PadesMeasurementUnits.Centimeters,
-			}
-		};
-		if (File.Exists(section["SignImagePath"] ?? string.Empty)) {
-			visualRepresentation.Image = new PadesVisualImage() {
-				// We'll use as background the image in Content/PdfStamp.png
-				Content = File.ReadAllBytes(section["SignImagePath"]!),
-				// Align image to the right horizontally.
-				HorizontalAlign = PadesHorizontalAlign.Right,
-				// Align image to center vertically.
-				VerticalAlign = PadesVerticalAlign.Center
-			};
-		} else {
-			logger.LogError("GetVisualRepresentationForPkiSdk Image {file} not found", section["SignImagePath"]);
-		}
+            // Text of the visual representation.
+            Text = new PadesVisualText()
+            {
+                CustomText = $"Assinado por {cert.SubjectDisplayName} \nCPF: {cert.PkiBrazil.CPF}\nAutenticação ICP-Brasil \n{additionalText ?? ""}",
+                FontSize = 9.0,
+                IncludeSigningTime = true,
+                HorizontalAlign = PadesTextHorizontalAlign.Left,
+                Container = new PadesVisualRectangle() { Left = 0.1, Top = 0.1, Right = 0.1, Bottom = 0.1 }
+            },
+            Position = new PadesVisualManualPositioning()
+            {
+                PageNumber = (section["PageNumber"] ?? string.Empty).ToInt(-1),
+                SignatureRectangle = new PadesVisualRectangle()
+                {
+                    Width = (section["Width"] ?? string.Empty).ToDouble(6.5),
+                    Height = (section["Height"] ?? string.Empty).ToDouble(1.1),
+                    Right = (section["Right"] ?? string.Empty).ToDouble(0),
+                    Bottom = (section["Bottom"] ?? string.Empty).ToDouble(2),
+                },
+                MeasurementUnits = PadesMeasurementUnits.Centimeters,
+            }
+        };
+        if (File.Exists(section["SignImagePath"] ?? string.Empty))
+        {
+            visualRepresentation.Image = new PadesVisualImage()
+            {
+                // We'll use as background the image in Content/PdfStamp.png
+                Content = File.ReadAllBytes(section["SignImagePath"]!),
+                // Align image to the right horizontally.
+                HorizontalAlign = PadesHorizontalAlign.Right,
+                // Align image to center vertically.
+                VerticalAlign = PadesVerticalAlign.Center
+            };
+        }
+        else
+        {
+            logger.LogError("GetVisualRepresentationForPkiSdk Image {file} not found", section["SignImagePath"]);
+        }
 
-		// Position of the visual representation. We get the footnote position preset and customize it.
-		//var visualPositioning = PadesVisualAutoPositioning.GetFootnote();
-		//visualPositioning.Container.Height = 4.94;
-		//visualPositioning.SignatureRectangleSize.Width = 8.0;
-		//visualPositioning.SignatureRectangleSize.Height = 4.94;
-		//visualRepresentation.Position = visualPositioning;
-		return visualRepresentation;
-	}
-	public static string Sha256(this string value) {
+
+
+        // Position of the visual representation. We get the footnote position preset and customize it.
+        //var visualPositioning = PadesVisualAutoPositioning.GetFootnote();
+        //visualPositioning.Container.Height = 4.94;
+        //visualPositioning.SignatureRectangleSize.Width = 8.0;
+        //visualPositioning.SignatureRectangleSize.Height = 4.94;
+        //visualRepresentation.Position = visualPositioning;
+        return visualRepresentation;
+    }
+
+    private static string GetCustomSignerText(Pki.PKCertificate cert, IConfiguration configuration, ILogger logger)
+    {
+        var additionalText = "";
+
+        var customSigners = configuration.GetSection("CustomVisualRepresentation:CustomSigners").Get<List<CustomSigner>>();
+
+        if (customSigners != null && customSigners.Count > 0)
+        {
+            foreach (var signer in customSigners)
+            {
+                logger.LogInformation("CPF: " + signer.CPF);
+                logger.LogInformation("CustomText: " + signer.CustomText);
+                if (signer.CPF.Equals(cert.PkiBrazil.CPF))
+                {
+                    additionalText = signer.CustomText;
+                }
+            }
+        }
+        else
+        {
+            logger.LogInformation("No custom signers found.");
+        }
+
+        return additionalText;
+    }
+
+    public static string Sha256(this string value) {
 		var sb = new StringBuilder();
 		using (var hash = SHA256.Create()) {
 			Encoding enc = Encoding.UTF8;
