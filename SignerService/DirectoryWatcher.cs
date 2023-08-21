@@ -12,7 +12,7 @@ using HttpTracer;
 using HttpTracer.Logger;
 using RestSharp.Serializers.Json;
 using System.Threading;
-using System.Text.RegularExpressions;
+using iTextSharp.text.pdf;
 
 namespace Lacuna.SignerService;
 
@@ -119,8 +119,9 @@ public class DirectoryWatcher : BackgroundService {
                 padesSigner.SetPdfToSign(document.TempFileName);
                 await PerformSignature(document, padesSigner, cancellationToken);
             }
-
-            File.Delete(document.TempFileName);
+			File.SetAttributes(document.TempFileName, FileAttributes.Normal);
+            
+			File.Delete(document.TempFileName);
             logger.LogInformation("file {file} signed in {timespan} s", document.FileName, sw.Elapsed.TotalSeconds.ToString("N1"));
             RestRequest request = new RestRequest("api/SdkPaayo")
                 .AddJsonBody(new SdkPaYGModel()
@@ -137,6 +138,11 @@ public class DirectoryWatcher : BackgroundService {
         {
             logger.LogError(e, "Error on signing document: {Document} message: {ErrorMessage} ", document.FileName, e.Message);
             documentService.MoveFileToError(document, $"Error on signing document: {document.FileName} message:{e.Message} ");
+
+            FileAttributes attr = (new FileInfo(document.TempFileName)).Attributes;
+            Console.Write("UnAuthorizedAccessException: Unable to access file. ");
+            if ((attr & FileAttributes.ReadOnly) > 0)
+                Console.Write("The file is read-only.");
         }
         return false;
     }
@@ -254,13 +260,9 @@ public class DirectoryWatcher : BackgroundService {
 		}
 	}
 
-    public int GetNumberOfPdfPages(string fileName)
+    public static int GetNumberOfPdfPages(string fileName)
     {
-        using (StreamReader sr = new StreamReader(File.OpenRead(fileName)))
-        {
-            Regex regex = new(@"/Type\s*/Page[^s]");
-            MatchCollection matches = regex.Matches(sr.ReadToEnd());
-            return matches.Count;
-        }
+		using (PdfReader pdfReader = new(fileName))
+			return pdfReader.NumberOfPages;
     }
 }
