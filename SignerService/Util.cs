@@ -85,18 +85,9 @@ public static class Util {
 
     private static string GetCustomSignerText(Pki.PKCertificate cert, IConfiguration configuration, ILogger logger)
     {
-        var additionalText = "";
-
         var customSigners = configuration.GetSection("CustomVisualRepresentation:CustomSigners").Get<List<CustomSigner>>();
-
-		if (customSigners != null && customSigners.Count > 0)
-		{
-			foreach (var signer in customSigners)
-			{
-					return signer.CPF.Equals(cert.PkiBrazil.CPF) ? $"\n{signer.CustomText}" : "";
-			}
-		}
-        return additionalText;
+        var matchSigner = customSigners.FirstOrDefault(signer => signer.CPF.Equals(cert.PkiBrazil.CPF));
+		return matchSigner != null ? $"\n{matchSigner.CustomText}" : "";
     }
 
     public static string Sha256(this string value) {
