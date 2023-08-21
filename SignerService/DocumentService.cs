@@ -109,7 +109,6 @@ public class DocumentService {
          } else {
             File.Move(document.FileName, destFileName);
          }
-
          File.WriteAllLines(errorFileName, new List<string>() { errorMessage });
       } catch (Exception e) {
          logger.LogError(e, "document {document}", document.FileName);
