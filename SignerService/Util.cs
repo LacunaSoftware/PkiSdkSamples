@@ -36,7 +36,12 @@ public static class Util {
     public static PadesVisualRepresentation2 GetVisualRepresentation(Lacuna.Pki.PKCertificate cert, IConfiguration configuration, ILogger logger, int PageNumber = -1) {
         var section = configuration.GetSection("PadesVisualRepresentation");
         string additionalText = GetCustomSignerText(cert, configuration, logger);
+		if (additionalText != "")
+		{
+            logger.LogInformation($"CustomSignerText is {additionalText.Replace("\n", "")}");
+        }
         // Create a visual representation.
+		logger.LogInformation("setting padesVisualRepresentation");
         var visualRepresentation = new PadesVisualRepresentation2()
         {
 
@@ -60,7 +65,8 @@ public static class Util {
 			}
 		};
 		if (File.Exists(section["SignImagePath"] ?? string.Empty)) {
-			visualRepresentation.Image = new PadesVisualImage() {
+            logger.LogInformation("setting padesVisualRepresentation image");
+            visualRepresentation.Image = new PadesVisualImage() {
 				// We'll use as background the image in Content/PdfStamp.png
 				Content = File.ReadAllBytes(section["SignImagePath"]!),
 				// Align image to the right horizontally.
@@ -69,11 +75,8 @@ public static class Util {
 				VerticalAlign = PadesVerticalAlign.Center
 			};
 		} else {
-			logger.LogError("GetVisualRepresentationForPkiSdk Image {file} not found", section["SignImagePath"]);
+			logger.LogWarning("GetVisualRepresentationForPkiSdk Image {file} not found", section["SignImagePath"]);
 		}
-
-
-
         // Position of the visual representation. We get the footnote position preset and customize it.
         //var visualPositioning = PadesVisualAutoPositioning.GetFootnote();
         //visualPositioning.Container.Height = 4.94;
