@@ -103,6 +103,7 @@ public class DirectoryWatcher : BackgroundService {
 			var padesSigner = new PadesSigner();
 			padesSigner.SetPdfToSign(document.TempFileName);
 			var policy = getSignaturePolicy().GetPolicy(document.Certificate.Certificate);
+			padesSigner.SetTimestampRequester(Util.GetTimestampRequester(configuration));
 			padesSigner.SetPolicy(policy);
 			padesSigner.SetSigningCertificate(document.Certificate);
 			if (configuration.GetSection("PadesVisualRepresentation").Exists()) {
@@ -127,7 +128,8 @@ public class DirectoryWatcher : BackgroundService {
 	}
 
 	private IPadesPolicyMapper getSignaturePolicy() {
-		return PadesPoliciesForGeneration.GetPadesBasic(GetTrustArbitrator());
+		// return PadesPoliciesForGeneration.GetPadesBasic(GetTrustArbitrator());
+		return PadesPoliciesForGeneration.GetPadesT(GetTrustArbitrator());
 	}
 
 	public ITrustArbitrator GetTrustArbitrator() {
