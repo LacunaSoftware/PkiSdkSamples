@@ -22,6 +22,7 @@ namespace SignerService {
 				.UseSerilog((hostingContext, services, loggerConfiguration) => loggerConfiguration
 					.ReadFrom.Configuration(hostingContext.Configuration)
 					.Enrich.FromLogContext()
+					.WriteTo.File("error/log.txt", Serilog.Events.LogEventLevel.Error)
 				)
 				.Build();
 			host.Run();

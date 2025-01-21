@@ -1,0 +1,5 @@
+2025-01-21 11:04:42.544 -03:00 [ERR] Error on obtain Pki SDK License!
+Lacuna.Pki.LicenseException: The license has expired on 2024-12-06 15:00:00Z
+   at Lacuna.Pki.Util.Licensing.LicenseManager.SetLicense(License a, Boolean b)
+   at Lacuna.Pki.PkiConfig.LoadLicense(Byte[] content)
+   at Lacuna.SignerService.DirectoryWatcher.initAsync() in D:\Projetos\PkiSdkSamples\SignerService\DirectoryWatcher.cs:line 186
