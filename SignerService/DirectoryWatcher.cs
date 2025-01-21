@@ -12,6 +12,7 @@ using HttpTracer;
 using HttpTracer.Logger;
 using RestSharp.Serializers.Json;
 using System.Threading;
+using Serilog.Core;
 
 
 namespace Lacuna.SignerService;
@@ -149,7 +150,7 @@ public class DirectoryWatcher : BackgroundService {
 		documentService.Enqueue(e.FullPath);
 	}
 
-	private async Task initAsync() {
+	public async Task initAsync() {
 		try {
          var version = Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? string.Empty;
          logger.LogInformation($"Lacuna Signer Service version: {version}");
@@ -165,7 +166,10 @@ public class DirectoryWatcher : BackgroundService {
 			if (!string.IsNullOrEmpty(configuration["PkiSDKLicense"])) {
 				sdkLicense = configuration["PkiSDKLicense"] ?? string.Empty;
 				PkiConfig.BinaryLicense = Convert.FromBase64String(sdkLicense);
-			} else {
+                PkiConfig.LoadLicense(Convert.FromBase64String(sdkLicense));
+                var exp = Lacuna.Pki.Util.PkiInfo.License.Expiration;
+                logger.LogInformation("SDK License Expiration: " + exp.ToString());
+            } else {
 				var request = new RestRequest($"api/SdkPaayo/{configuration["userId"]}");
 				var license = await restClient.ExecuteGetAsync<SdkPaayo>(request);
 				if (license.Data == null) {
@@ -176,9 +180,13 @@ public class DirectoryWatcher : BackgroundService {
 				if (string.IsNullOrEmpty(sdkLicense)) {
 					logger.LogError("Service could not get SDK license to {userId}, error {error}.", configuration["userId"], license.Data.ErrorMessage);
 					Environment.Exit(1);
+
 				}
 				PkiConfig.BinaryLicense = Convert.FromBase64String(license.Data.SdkLicense);
-			}
+				PkiConfig.LoadLicense(Convert.FromBase64String(sdkLicense));
+				var exp = Lacuna.Pki.Util.PkiInfo.License.Expiration;
+				logger.LogInformation("SDK License Expiration: " + exp.ToString());
+            }
 
 			userId = configuration["userId"] ?? string.Empty;
 			sdkLicenseHash = sdkLicense.Sha256();
