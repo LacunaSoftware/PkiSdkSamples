@@ -20,7 +20,7 @@ namespace SignerService {
                     logging.AddConfiguration(context.Configuration.GetSection("Logging"));
                 })
                 .UseSerilog((hostingContext, services, loggerConfiguration) => {
-                    var errorLogFilePath = hostingContext.Configuration.GetValue<string>("LogErrorPath");
+                    var errorLogFilePath = hostingContext.Configuration.GetValue<string>("LogErrorPath", "error.txt");
                     loggerConfiguration
                         .ReadFrom.Configuration(hostingContext.Configuration)
                         .Enrich.FromLogContext()
