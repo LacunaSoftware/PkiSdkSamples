@@ -83,7 +83,7 @@ public static class Util
         }
         else
         {
-            logger.LogError("GetVisualRepresentationForPkiSdk Image {file} not found", section["SignImagePath"]);
+            logger.LogWarning("GetVisualRepresentationForPkiSdk Image {file} not found", section["SignImagePath"]);
         }
 
         // Position of the visual representation. We get the footnote position preset and customize it.
