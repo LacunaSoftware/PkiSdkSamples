@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-SignerService-bfea8f7a-2d7c-440c-a15b-ca702108e7ee</UserSecretsId>
@@ -26,5 +26,9 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="error\" />
   </ItemGroup>
 </Project>

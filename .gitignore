@@ -23,3 +23,4 @@ SignerService/.vs
 SignerService/Properties/PublishProfiles/FolderProfile.pubxml.user
 
 SignerService/SignerService.csproj.user
+/SignerService/Code100/*
