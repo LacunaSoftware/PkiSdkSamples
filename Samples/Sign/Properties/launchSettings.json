@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Sign": {
+      "commandName": "Project",
+      "commandLineArgs": "sign c:\\temp\\Doc1.pdf \"LACUNA SOFTWARE LTDA:20658903000171\"\r\n"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}

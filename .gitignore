@@ -24,3 +24,8 @@ SignerService/Properties/PublishProfiles/FolderProfile.pubxml.user
 
 SignerService/SignerService.csproj.user
 /SignerService/Code100/*
+Samples/.vs/*
+Samples/Sign/bin/*
+Samples/Sign/obj/*
+
+
