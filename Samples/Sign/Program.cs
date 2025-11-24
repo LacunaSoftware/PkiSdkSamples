@@ -7,9 +7,12 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Reflection;
-using PdfSharp.Pdf;
+using CsvHelper;
+using CsvHelper.Configuration;
 using PdfSharp.Pdf.IO;
+
 
 namespace Lacuna.Sign;
 
@@ -28,6 +31,9 @@ internal class Program {
              .WithExample("sign", "doc1.pdf", "CommonName")
              .WithExample("sign", "doc1.pdf", "CommonName", "-d 2025-01-03")
              .WithExample("sign", "doc1.pdf", "CommonName", "-d 2025-01-03", "-l");
+         config.AddCommand<SignListCommand>("signList")
+            .WithDescription("Sign File List")
+            .WithExample("signList", "fileList.csv");
          config.AddCommand<ListCommand>("list")
              .WithDescription("List certificates with key")
              .WithExample("list");
@@ -69,6 +75,7 @@ internal class Program {
          [Description("Sign Date.")]
          [CommandOption("-d|--SignDate")]
          public string? SignDate { get; init; }
+
          [Description("File to sign.")]
          [CommandArgument(0, "<FileName>")]
          public required string FileName { get; init; }
@@ -77,8 +84,7 @@ internal class Program {
          [CommandArgument(1, "<Certificate>")]
          public required string Certificate { get; init; }
 
-         [CommandOption("-l|--left")]
-         public bool? Left { get; set; }
+         [CommandOption("-l|--left")] public bool? Left { get; set; }
       }
 
       public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings, CancellationToken cancellationToken) {
@@ -107,12 +113,14 @@ internal class Program {
             PkiConfig.TimeProvider = new TimeMachine(DateTimeOffset.Now - signDate);
          }
          if (signDate != DateTimeOffset.MinValue) {
-            var document = PdfReader.Open(settings.FileName);
-            var info = document.Info;
-            info.CreationDate = signDate.DateTime;
-            info.ModificationDate = signDate.DateTime;
-            document.Save(settings.FileName);
-            Thread.Sleep(100);
+            if (!PdfSignatureUtils.IsPdfDigitallySigned(settings.FileName)) {
+               var document = PdfReader.Open(settings.FileName);
+               var info = document.Info;
+               info.CreationDate = signDate.DateTime;
+               info.ModificationDate = signDate.DateTime;
+               document.Save(settings.FileName);
+               Thread.Sleep(100);
+            }
          }
          var signedFile = Sign(settings.FileName, signingCert, settings.Left);
          if (signDate != DateTimeOffset.MinValue) {
@@ -134,8 +142,6 @@ internal class Program {
          stream.CopyTo(memoryStream);
          return memoryStream.ToArray();
       }
-
-
       public string Sign(string fileName, PKCertificateWithKey signingCert, bool? left) {
          var image = LoadEmbeddedImage("Lacuna.Sign.PdfStamp.png");
 
@@ -144,54 +150,50 @@ internal class Program {
          signer.SetCertificateValidationConfigurator(PkiUtil.OfflineSignerConfigurator);
          signer.SetSigningCertificate(signingCert);
          signer.SetPdfToSign(pdfBytes);
+
          var policy = PadesPolicySpec.GetBasic();
          policy.SignerSpecs.AttributeGeneration.EnableLtv = false;
          signer.SetPolicy(policy);
          PadesVisualRectangle signatureRectangle;
-         if(left.HasValue && left.Value) {
-            signatureRectangle = new PadesVisualRectangle() {
-               Width = 6, // Largura = 7cm
-               Height = 3, // Altura = 3cm
-               Right = 2.50, // Distância da margem esquerda = 2.50cm
-               Bottom = 2.50 // Distância da margem inferior = 2.50cm
-            };
-         } else  {
+         if (left.HasValue && left.Value) {
             signatureRectangle = new PadesVisualRectangle() {
                Width = 6, // Largura = 7cm
                Height = 3, // Altura = 3cm
                Left = 2.50, // Distância da margem esquerda = 2.50cm
                Bottom = 2.50 // Distância da margem inferior = 2.50cm
             };
+         } else {
+            signatureRectangle = new PadesVisualRectangle() {
+               Width = 6, // Largura = 7cm
+               Height = 3, // Altura = 3cm
+               Right = 2.50, // Distância da margem esquerda = 2.50cm
+               Bottom = 2.50 // Distância da margem inferior = 2.50cm
+            };
          }
 
          var visual = new PadesVisualRepresentation2() {
-                  Position = new PadesVisualManualPositioning() {
-                     MeasurementUnits = PadesMeasurementUnits.Centimeters,
-                     PageNumber = -1,                                    // Define inserção na última página do documento
-                     SignatureRectangle = new PadesVisualRectangle() {
-                        Width = 6,                                      // Largura = 7cm
-                        Height = 3,                                     // Altura = 3cm
-                        Right = 2.50,                                    // Distância da margem esquerda = 2.50cm
-                        Bottom = 2.50                                   // Distância da margem inferior = 2.50cm
-                     }
-                  },
-                  Text = new PadesVisualText() {
-                     FontSize = 10,                                        // Tamanho da fonte = 10
-                     CustomText = $"Assinado digitalmente por\n{signingCert.Certificate.PkiBrazil.Responsavel}",
-                     IncludeSigningTime = true,
-                     Container = new PadesVisualRectangle() {                // Define container do texto
-                        Left = 0,
-                        Top = 0,
-                        Right = 1.5,
-                        Bottom = 0.5
-                     }
-                  },
+            Position = new PadesVisualManualPositioning() {
+               MeasurementUnits = PadesMeasurementUnits.Centimeters,
+               PageNumber = -1,                                    // Define inserção na última página do documento
+               SignatureRectangle = signatureRectangle
+            },
+            Text = new PadesVisualText() {
+               FontSize = 10,                                        // Tamanho da fonte = 10
+               CustomText = $"Assinado digitalmente por\n{signingCert.Certificate.PkiBrazil.Responsavel}",
+               IncludeSigningTime = true,
+               Container = new PadesVisualRectangle() {                // Define container do texto
+                  Left = 0,
+                  Top = 0,
+                  Right = 1.5,
+                  Bottom = 0.5
+               }
+            },
 
-                  Image = new PadesVisualImage() {
-                     Content = image,
-                     HorizontalAlign = PadesHorizontalAlign.Right
-                  }
-               };
+            Image = new PadesVisualImage() {
+               Content = image,
+               HorizontalAlign = PadesHorizontalAlign.Right
+            }
+         };
          signer.SetVisualRepresentation(visual);
 
          signer.ComputeSignature();
@@ -204,17 +206,59 @@ internal class Program {
 
    }
 
-   internal class TimeMachine : IPkiTimeProvider {
+   internal sealed class SignListCommand : Command<SignListCommand.Settings> {
+      public sealed class Settings : CommandSettings {
+         [Description("File list to sign.")]
+         [CommandArgument(0, "<FileListName>")]
+         public required string FileListName { get; init; }
 
-      public DateTimeOffset Now => DateTimeOffset.Now - timeAgo;
+      }
 
-      private readonly TimeSpan timeAgo;
+      public override int Execute([NotNull] CommandContext context, [NotNull] Settings settings, CancellationToken cancellationToken) {
+         if (!File.Exists(settings.FileListName)) {
+            AnsiConsole.Markup($"[red]File {settings.FileListName} not found[/]");
+            return 0;
+         }
 
-      public TimeMachine(TimeSpan timeAgo) {
-         this.timeAgo = timeAgo;
+         var sw = Stopwatch.StartNew();
+         var records = ReadCsv(settings.FileListName);
+         if (records.Count == 0) {
+            AnsiConsole.MarkupLine("[yellow]No records found in CSV.[/]");
+            return 0;
+         }
+
+         foreach (var fileToSign in records) {
+            var signCommand = new SignCommand();
+            var signSettings = new SignCommand.Settings() {
+               FileName = fileToSign.FileToSign,
+               Certificate = fileToSign.Certificate,
+               SignDate = fileToSign.SignatureDate,
+               Left = fileToSign.Position.ToLower() == "left" ? true : fileToSign.Position.ToLower() == "right" ? false : null,
+            };
+            signCommand.Execute(context, signSettings, cancellationToken);
+         }
+
+         return 0;
       }
    }
 
+   private static List<SigningRecord> ReadCsv(string csvPath) {
+      var config = new CsvConfiguration(CultureInfo.InvariantCulture) {
+         HasHeaderRecord = true,
+         MissingFieldFound = null,
+         HeaderValidated = null,
+         Delimiter = ";",
+      };
+
+      using var reader = new StreamReader(csvPath);
+      using var csv = new CsvReader(reader, config);
+      return csv.GetRecords<SigningRecord>().ToList();
+   }
 }
+
+internal class TimeMachine(TimeSpan timeAgo) : IPkiTimeProvider {
+   public DateTimeOffset Now => DateTimeOffset.Now - timeAgo;
+}
+
 
 
