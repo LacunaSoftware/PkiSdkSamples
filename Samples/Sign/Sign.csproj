@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <RootNamespace>Lacuna.Sign</RootNamespace>
+    <UserSecretsId>ef2f2edc-8379-439f-a41f-16807c6c4e24</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,10 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Lacuna.Pki" Version="2.21.0-alpha01" />
-    <PackageReference Include="Spectre.Console" Version="0.51.1" />
-    <PackageReference Include="Spectre.Console.Cli" Version="0.51.1" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.3" />
+    <PackageReference Include="Lacuna.Pki" Version="2.21.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0" />
+    <PackageReference Include="PDFsharp" Version="6.2.3" />
+    <PackageReference Include="Spectre.Console" Version="0.54.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.53.0" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.0" />
   </ItemGroup>
 
 </Project>
