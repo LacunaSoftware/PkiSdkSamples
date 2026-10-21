@@ -35,17 +35,17 @@ public class DirectoryWatcher : BackgroundService
         var options = new RestClientOptions("https://billing-api.lacunasoftware.com/")
         {
             ThrowOnAnyError = false,
-            MaxTimeout = 60000,
+            Timeout = TimeSpan.FromMilliseconds(60000),
             //			ConfigureMessageHandler = handler => new HttpTracerHandler(handler, new ConsoleLogger(), HttpMessageParts.All)
         };
-        restClient = new RestClient(options)
+        restClient = new RestClient(options, configureSerialization: s => s.UseSystemTextJson(new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+        }));
+        restClient
             .AddDefaultHeader("Content-Type", "application/json")
             .AddDefaultHeader("Accept", "application/json")
             .AddDefaultHeader("X-API-KEY", configuration["apiKey"] ?? string.Empty);
-        restClient.UseSystemTextJson(new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-        });
 
 
     }
